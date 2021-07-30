@@ -3,24 +3,36 @@ import { Line, Pie } from "react-chartjs-2";
 
 const rand = () => Math.floor(Math.random() * 255);
 
+const green = "#62bc6c";
+const red = "#f2563c";
+const blue = "#4e85f5";
+
 const genData = () => ({
-  labels: ["January", "February", "March", "April", "May", "June"],
+  labels: [
+    "Component ID 1",
+    "Component ID 2",
+    "Component ID 3",
+    "Component ID 4",
+    "Component ID 5",
+    "Component ID 6",
+  ],
   datasets: [
     {
       type: "line",
-      label: "Dataset 1",
-      borderColor: `rgb(${rand()}, ${rand()}, ${rand()})`,
-      borderWidth: 2,
+      borderColor: "black",
+      pointBackgroundColor: [green, red, green, blue, red, green],
+      pointBorderColor: [green, red, green, blue, red, green],
+      pointRadius: 10,
+      borderWidth: 1,
       fill: false,
-      data: [rand(), rand(), rand(), rand(), rand(), rand()],
-    },
-    {
-      type: "scatter",
-      label: "Dataset 2",
-      backgroundColor: `rgb(${rand()}, ${rand()}, ${rand()})`,
-      data: [rand(), rand(), rand(), rand(), rand(), rand()],
-      borderColor: "red",
-      borderWidth: 5,
+      data: [
+        { x: rand(), y: rand() },
+        { x: rand(), y: rand() },
+        { x: rand(), y: rand() },
+        { x: rand(), y: rand() },
+        { x: rand(), y: rand() },
+        { x: rand(), y: rand() },
+      ],
     },
     // {
     //   type: "bar",
@@ -32,47 +44,51 @@ const genData = () => ({
 });
 
 const genData2 = () => ({
-  labels: ["January", "February", "March", "April", "May", "June", "July"],
+  labels: [
+    "Component ID 1",
+    "Component ID 2",
+    "Component ID 3",
+    "Component ID 4",
+    "Component ID 5",
+    "Component ID 6",
+  ],
   datasets: [
     {
-      label: "Dataset 1",
-      borderColor: `rgb(${rand()}, ${rand()}, ${rand()})`,
+      borderColor: "black",
+      backgroundColor: [green, red, green, blue, red, green],
       borderWidth: 2,
-      data: [rand(), rand(), rand(), rand(), rand(), rand()],
+      data: [20, 10, 10, 5, 45, 10],
     },
   ],
 });
 
 const options = {
   plugins: {
+    tooltip: {
+      bodyFontSize: 16,
+    },
     legend: {
       display: false,
     },
   },
-  // scales: {
-  //   yAxes: [
-  //     {
-  //       ticks: {
-  //         beginAtZero: true,
-  //       },
-  //     },
-  //   ],
-  // },
 };
 
 const optionsPie = {
   responsive: true,
   maintainAspectRatio: true,
   plugins: {
+    tooltip: {
+      bodyFontSize: 36,
+    },
     legend: {
       display: false,
     },
   },
 };
 
-const data = genData();
+let data = genData();
 
-const data2 = genData2();
+let data2 = genData2();
 
 const Plots = () => {
   const [clickedDataset, setClickedDataset] = useState("");
