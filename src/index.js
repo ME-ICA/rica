@@ -9,10 +9,10 @@ import Plots from "./Plots";
 import "./styles.css";
 
 const carpetsjson = [
-  { name: "Optimally combined", path: "/figures/carpet_optcom.svg" },
-  { name: "Denoised", path: "/figures/carpet_denoised.svg" },
-  { name: "Accepted", path: "/figures/carpet_accepted.svg" },
-  { name: "Rejected", path: "/figures/carpet_rejected.svg" },
+  { name: "Optimally combined", path: "./figures/carpet_optcom.svg" },
+  { name: "Denoised", path: "./figures/carpet_denoised.svg" },
+  { name: "Accepted", path: "./figures/carpet_accepted.svg" },
+  { name: "Rejected", path: "./figures/carpet_rejected.svg" },
 ];
 
 class App extends Component {
