@@ -5,168 +5,114 @@ const acceptedColor = "#62bc6c";
 const rejedtecColor = "#f2563c";
 const ignoredColor = "#4e85f5";
 
+const data = [
+  {
+    x: "IC 1",
+    var: 30,
+    kappa: 40,
+    rho: 10,
+    status: "accepted",
+    color: acceptedColor,
+  },
+  {
+    x: "IC 2",
+    var: 25,
+    kappa: 30,
+    rho: 5,
+    status: "rejected",
+    color: rejedtecColor,
+  },
+  {
+    x: "IC 3",
+    var: 20,
+    kappa: 10,
+    rho: 2,
+    status: "accepted",
+    color: acceptedColor,
+  },
+  {
+    x: "IC 4",
+    var: 10,
+    kappa: 35,
+    rho: 7,
+    status: "ignored",
+    color: ignoredColor,
+  },
+  {
+    x: "IC 5",
+    var: 10,
+    kappa: 25,
+    rho: 8,
+    status: "accepted",
+    color: acceptedColor,
+  },
+  {
+    x: "IC 6",
+    var: 5,
+    kappa: 12,
+    rho: 2,
+    status: "rejected",
+    color: rejedtecColor,
+  },
+];
+
 let kappa_rho = {
-  labels: [
-    "Component ID 1",
-    "Component ID 2",
-    "Component ID 3",
-    "Component ID 4",
-    "Component ID 5",
-    "Component ID 6",
-  ],
+  labels: data.map((e) => e.x),
   datasets: [
     {
       type: "scatter",
       borderColor: "black",
-      pointBackgroundColor: [
-        acceptedColor,
-        rejedtecColor,
-        acceptedColor,
-        ignoredColor,
-        rejedtecColor,
-        acceptedColor,
-      ],
-      pointBorderColor: [
-        acceptedColor,
-        rejedtecColor,
-        acceptedColor,
-        ignoredColor,
-        rejedtecColor,
-        acceptedColor,
-      ],
+      pointBackgroundColor: data.map((e) => e.color),
+      pointBorderColor: data.map((e) => e.color),
       pointRadius: 10,
       borderWidth: 1,
       fill: false,
-      data: [
-        { x: 2.5, y: 3 },
-        { x: 4, y: 3.5 },
-        { x: 3, y: 3 },
-        { x: 4.5, y: 3.7 },
-        { x: 5, y: 4.2 },
-        { x: 5.7, y: 5.2 },
-      ],
+      data: data.map((e) => ({ x: e.rho, y: e.kappa })),
     },
   ],
 };
 
 let rho = {
-  labels: [
-    "Component ID 1",
-    "Component ID 2",
-    "Component ID 3",
-    "Component ID 4",
-    "Component ID 5",
-    "Component ID 6",
-  ],
+  labels: data.map((e) => e.x),
   datasets: [
     {
       type: "line",
       borderColor: "black",
-      pointBackgroundColor: [
-        acceptedColor,
-        rejedtecColor,
-        acceptedColor,
-        ignoredColor,
-        rejedtecColor,
-        acceptedColor,
-      ],
-      pointBorderColor: [
-        acceptedColor,
-        rejedtecColor,
-        acceptedColor,
-        ignoredColor,
-        rejedtecColor,
-        acceptedColor,
-      ],
+      pointBackgroundColor: data.map((e) => e.color),
+      pointBorderColor: data.map((e) => e.color),
       pointRadius: 10,
       borderWidth: 1,
       fill: false,
-      data: [
-        { x: 2.5, y: 3 },
-        { x: 4, y: 3.5 },
-        { x: 3, y: 3 },
-        { x: 4.5, y: 3.7 },
-        { x: 5, y: 4.2 },
-        { x: 5.7, y: 5.2 },
-      ],
+      data: data.map((e) => e.rho),
     },
   ],
 };
 
 let kappa = {
-  labels: [
-    "Component ID 1",
-    "Component ID 2",
-    "Component ID 3",
-    "Component ID 4",
-    "Component ID 5",
-    "Component ID 6",
-  ],
+  labels: data.map((e) => e.x),
   datasets: [
     {
       type: "line",
       borderColor: "black",
-      pointBackgroundColor: [
-        acceptedColor,
-        rejedtecColor,
-        acceptedColor,
-        ignoredColor,
-        rejedtecColor,
-        acceptedColor,
-      ],
-      pointBorderColor: [
-        acceptedColor,
-        rejedtecColor,
-        acceptedColor,
-        ignoredColor,
-        rejedtecColor,
-        acceptedColor,
-      ],
+      pointBackgroundColor: data.map((e) => e.color),
+      pointBorderColor: data.map((e) => e.color),
       pointRadius: 10,
       borderWidth: 1,
       fill: false,
-      data: [
-        { x: 2.5, y: 3 },
-        { x: 4, y: 3.5 },
-        { x: 3, y: 3 },
-        { x: 4.5, y: 3.7 },
-        { x: 5, y: 4.2 },
-        { x: 5.7, y: 5.2 },
-      ],
+      data: data.map((e) => e.kappa),
     },
   ],
 };
 
 let variance = {
-  labels: [
-    "Component ID 1",
-    "Component ID 2",
-    "Component ID 3",
-    "Component ID 4",
-    "Component ID 5",
-    "Component ID 6",
-  ],
+  labels: data.map((e) => e.x),
   datasets: [
     {
-      label: [
-        "accepted",
-        "rejected",
-        "accepted",
-        "ignored",
-        "rejected",
-        "accepted",
-      ],
+      label: data.map((e) => e.status),
       borderColor: "black",
-      backgroundColor: [
-        acceptedColor,
-        rejedtecColor,
-        acceptedColor,
-        ignoredColor,
-        rejedtecColor,
-        acceptedColor,
-      ],
+      backgroundColor: data.map((e) => e.color),
       borderWidth: 2,
-      data: [20, 10, 10, 5, 45, 10],
+      data: data.map((e) => e.var),
     },
   ],
 };
