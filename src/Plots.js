@@ -1,60 +1,7 @@
 import React, { useState } from "react";
 import { Line, Pie } from "react-chartjs-2";
 
-const acceptedColor = "#62bc6c";
-const rejedtecColor = "#f2563c";
-const ignoredColor = "#4e85f5";
-
-const data = [
-  {
-    x: "IC 1",
-    var: 30,
-    kappa: 40,
-    rho: 10,
-    status: "accepted",
-    color: acceptedColor,
-  },
-  {
-    x: "IC 2",
-    var: 25,
-    kappa: 30,
-    rho: 5,
-    status: "rejected",
-    color: rejedtecColor,
-  },
-  {
-    x: "IC 3",
-    var: 20,
-    kappa: 10,
-    rho: 2,
-    status: "accepted",
-    color: acceptedColor,
-  },
-  {
-    x: "IC 4",
-    var: 10,
-    kappa: 35,
-    rho: 7,
-    status: "ignored",
-    color: ignoredColor,
-  },
-  {
-    x: "IC 5",
-    var: 10,
-    kappa: 25,
-    rho: 8,
-    status: "accepted",
-    color: acceptedColor,
-  },
-  {
-    x: "IC 6",
-    var: 5,
-    kappa: 12,
-    rho: 2,
-    status: "rejected",
-    color: rejedtecColor,
-  },
-];
+const data = [$componentsData];
 
 let kappa_rho = {
   labels: data.map((e) => e.x),
@@ -64,7 +11,7 @@ let kappa_rho = {
       borderColor: "black",
       pointBackgroundColor: data.map((e) => e.color),
       pointBorderColor: data.map((e) => e.color),
-      pointRadius: 10,
+      pointRadius: 5,
       borderWidth: 1,
       fill: false,
       data: data.map((e) => ({ x: e.rho, y: e.kappa })),
@@ -76,14 +23,14 @@ let rho = {
   labels: data.map((e) => e.x),
   datasets: [
     {
-      type: "line",
+      type: "scatter",
       borderColor: "black",
       pointBackgroundColor: data.map((e) => e.color),
       pointBorderColor: data.map((e) => e.color),
-      pointRadius: 10,
+      pointRadius: 5,
       borderWidth: 1,
       fill: false,
-      data: data.map((e) => e.rho),
+      data: data.map((e) => ({ x: e.rho_rank, y: e.rho })),
     },
   ],
 };
@@ -92,14 +39,14 @@ let kappa = {
   labels: data.map((e) => e.x),
   datasets: [
     {
-      type: "line",
+      type: "scatter",
       borderColor: "black",
       pointBackgroundColor: data.map((e) => e.color),
       pointBorderColor: data.map((e) => e.color),
-      pointRadius: 10,
+      pointRadius: 5,
       borderWidth: 1,
       fill: false,
-      data: data.map((e) => e.kappa),
+      data: data.map((e) => ({ x: e.kappa_rank, y: e.kappa })),
     },
   ],
 };
@@ -108,10 +55,10 @@ let variance = {
   labels: data.map((e) => e.x),
   datasets: [
     {
-      label: data.map((e) => e.status),
+      label: data.map((e) => e.classification),
       borderColor: "black",
       backgroundColor: data.map((e) => e.color),
-      borderWidth: 2,
+      borderWidth: 0.5,
       data: data.map((e) => e.var),
     },
   ],
@@ -130,6 +77,17 @@ const options_kappa_rho = {
         weight: "bold",
       },
     },
+    zoom: {
+      zoom: {
+        wheel: {
+          enabled: true,
+        },
+        pinch: {
+          enabled: true,
+        },
+        mode: "xy",
+      },
+    },
   },
 };
 
@@ -146,6 +104,17 @@ const options_rho = {
         weight: "bold",
       },
     },
+    zoom: {
+      zoom: {
+        wheel: {
+          enabled: true,
+        },
+        pinch: {
+          enabled: true,
+        },
+        mode: "xy",
+      },
+    },
   },
 };
 
@@ -160,6 +129,17 @@ const options_kappa = {
       font: {
         size: 20,
         weight: "bold",
+      },
+    },
+    zoom: {
+      zoom: {
+        wheel: {
+          enabled: true,
+        },
+        pinch: {
+          enabled: true,
+        },
+        mode: "xy",
       },
     },
   },
@@ -225,9 +205,14 @@ const Plots = () => {
     if (!element.length) return;
 
     const { datasetIndex, index } = element[0];
-    let componentStatus = variance.datasets[datasetIndex].label[index];
+    let componentClassification = variance.datasets[datasetIndex].label[index];
 
-    setClickedElement(`${variance.labels[index]} - ${componentStatus}`);
+    var numb = variance.labels[index].match(/\d/g);
+    numb = numb.join("");
+    if (numb < 10) {
+      numb = `0$${numb}`;
+    }
+    setClickedElement(`./figures/comp_0$${numb}.png`);
   };
 
   // const getElementsAtEvent = (elements) => {
@@ -238,56 +223,56 @@ const Plots = () => {
 
   return (
     <center>
-      <div className="plot-container">
-        <div className="plot-box">
-          <Line
-            data={kappa_rho}
-            height={200}
-            width={300}
-            options={options_kappa_rho}
-            // getDatasetAtEvent={getDatasetAtEvent}
-            getElementAtEvent={getElementAtEvent}
-            // getElementsAtEvent={getElementsAtEvent}
-          />
+      <div className="plot-container-out">
+        <div className="plot-container-in">
+          <div className="plot-box">
+            <Line
+              data={kappa_rho}
+              height={200}
+              width={300}
+              options={options_kappa_rho}
+              // getDatasetAtEvent={getDatasetAtEvent}
+              getElementAtEvent={getElementAtEvent}
+              // getElementsAtEvent={getElementsAtEvent}
+            />
+          </div>
+          <div className="plot-box">
+            <Pie
+              data={variance}
+              height={20}
+              width={20}
+              options={optionsPie}
+              // getDatasetAtEvent={getDatasetAtEvent}
+              getElementAtEvent={getElementAtEvent}
+              // getElementsAtEvent={getElementsAtEvent}
+            />
+          </div>
+          <div className="plot-box">
+            <Line
+              data={rho}
+              height={200}
+              width={300}
+              options={options_rho}
+              // getDatasetAtEvent={getDatasetAtEvent}
+              getElementAtEvent={getElementAtEvent}
+              // getElementsAtEvent={getElementsAtEvent}
+            />
+          </div>
+          <div className="plot-box">
+            <Line
+              data={kappa}
+              height={200}
+              width={300}
+              options={options_kappa}
+              // getDatasetAtEvent={getDatasetAtEvent}
+              getElementAtEvent={getElementAtEvent}
+              // getElementsAtEvent={getElementsAtEvent}
+            />
+          </div>
         </div>
-        <div className="plot-box">
-          <Pie
-            data={variance}
-            height={20}
-            width={20}
-            options={optionsPie}
-            // getDatasetAtEvent={getDatasetAtEvent}
-            getElementAtEvent={getElementAtEvent}
-            // getElementsAtEvent={getElementsAtEvent}
-          />
+        <div className="component-plots-image">
+          <img className="imgComponentPlot" alt="" src={clickedElement} />
         </div>
-        <div className="plot-box">
-          <Line
-            data={rho}
-            height={200}
-            width={300}
-            options={options_rho}
-            // getDatasetAtEvent={getDatasetAtEvent}
-            getElementAtEvent={getElementAtEvent}
-            // getElementsAtEvent={getElementsAtEvent}
-          />
-        </div>
-        <div className="plot-box">
-          <Line
-            data={kappa}
-            height={200}
-            width={300}
-            options={options_kappa}
-            // getDatasetAtEvent={getDatasetAtEvent}
-            getElementAtEvent={getElementAtEvent}
-            // getElementsAtEvent={getElementsAtEvent}
-          />
-        </div>
-      </div>
-      <div className="text-center">
-        <p>{clickedElement}</p>
-        {/* <p>{clickedDataset}</p> */}
-        {/* <p>{clickedElements}</p> */}
       </div>
     </center>
   );

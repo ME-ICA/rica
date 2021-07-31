@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^12.8.3",
     "bootstrap": "^5.0.2",
     "chart.js": "^3.5.0",
+    "chartjs-plugin-zoom": "^1.1.1",
     "react": "^17.0.2",
     "react-bootstrap": "^2.0.0-beta.4",
     "react-chartjs-2": "^3.0.4",

@@ -59,10 +59,10 @@ body {
 }
 
 .tab {
-  padding: 25px;
+  /* padding: 25px; */
   color: var(--c1);
-  margin-left: 10%;
-  margin-right: 10%;
+  margin-left: 5%;
+  margin-right: 5%;
   text-align: justify;
 }
 
@@ -121,8 +121,16 @@ li.selected {
   color: var(--c3);
 }
 
-.plot-container {
-  margin: 20px auto;
+.plot-container-out {
+  /* margin: 20px auto; */
+  width: 100%;
+  height: auto;
+  background-color: #fff;
+  display: table;
+}
+
+.plot-container-in {
+  /* margin: 20px auto; */
   width: 50%;
   height: auto;
   background-color: #fff;
@@ -133,6 +141,7 @@ li.selected {
   grid-row-gap: 6%;
   float: left;
   position: absolute;
+  /* display: table-cell; */
 }
 
 .plot-box {
@@ -148,4 +157,16 @@ li.selected {
   width: 100%;
   height: 99%;
   position: relative;
+}
+
+.component-plots-image {
+  display: flex;
+  width: 45%;
+  float: right;
+  margin-top: 5%;
+}
+
+.imgComponentPlot {
+  max-width: 100% !important;
+  width: 100%;
 }
