@@ -5,12 +5,6 @@ const acceptedColor = "#62bc6c";
 const rejedtecColor = "#f2563c";
 const ignoredColor = "#4e85f5";
 
-let data = [];
-let kappa_rho = [];
-let variance = [];
-let kappa = [];
-let rho = [];
-
 function parseData(data) {
   console.log(data);
   let kappa_rho = {
@@ -19,10 +13,8 @@ function parseData(data) {
       {
         type: "scatter",
         borderColor: "black",
-        // pointBackgroundColor: data.map((e) => e.color),
-        // pointBorderColor: data.map((e) => e.color),
-        pointBackgroundColor: acceptedColor,
-        pointBorderColor: acceptedColor,
+        pointBackgroundColor: data.map((e) => e.color),
+        pointBorderColor: data.map((e) => e.color),
         pointRadius: 5,
         borderWidth: 1,
         fill: false,
@@ -72,7 +64,7 @@ function parseData(data) {
         borderColor: "black",
         backgroundColor: data.map((e) => e.color),
         borderWidth: 0.5,
-        data: data.map((e) => e.var),
+        data: data.map((e) => e["variance explained"]),
       },
     ],
   };
