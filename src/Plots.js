@@ -77,7 +77,7 @@ function parseData(data) {
     ],
   };
 
-  return kappa_rho, variance, kappa, rho;
+  return [kappa_rho, variance, kappa, rho];
 }
 
 const options_kappa_rho = {
@@ -222,10 +222,11 @@ const Plots = (data) => {
   //   kappa,
   //   rho = parseData(this.props.component_data);
   const compData = data["componentData"];
-  let kappa_rho,
-    variance,
-    kappa,
-    rho = parseData(compData);
+  let parsed_data = parseData(compData);
+  let kappa_rho = parsed_data[0];
+  let variance = parsed_data[1];
+  let kappa = parsed_data[2];
+  let rho = parsed_data[3];
 
   console.log(kappa_rho);
 
