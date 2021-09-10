@@ -1,68 +1,84 @@
 import React, { useState } from "react";
 import { Line, Pie } from "react-chartjs-2";
 
-const data = [$componentsData];
+const acceptedColor = "#62bc6c";
+const rejedtecColor = "#f2563c";
+const ignoredColor = "#4e85f5";
 
-let kappa_rho = {
-  labels: data.map((e) => e.x),
-  datasets: [
-    {
-      type: "scatter",
-      borderColor: "black",
-      pointBackgroundColor: data.map((e) => e.color),
-      pointBorderColor: data.map((e) => e.color),
-      pointRadius: 5,
-      borderWidth: 1,
-      fill: false,
-      data: data.map((e) => ({ x: e.rho, y: e.kappa })),
-    },
-  ],
-};
+let data = [];
+let kappa_rho = [];
+let variance = [];
+let kappa = [];
+let rho = [];
 
-let rho = {
-  labels: data.map((e) => e.x),
-  datasets: [
-    {
-      type: "scatter",
-      borderColor: "black",
-      pointBackgroundColor: data.map((e) => e.color),
-      pointBorderColor: data.map((e) => e.color),
-      pointRadius: 5,
-      borderWidth: 1,
-      fill: false,
-      data: data.map((e) => ({ x: e.rho_rank, y: e.rho })),
-    },
-  ],
-};
+function parseData(data) {
+  console.log(data);
+  let kappa_rho = {
+    labels: data.map((e) => e.Component),
+    datasets: [
+      {
+        type: "scatter",
+        borderColor: "black",
+        // pointBackgroundColor: data.map((e) => e.color),
+        // pointBorderColor: data.map((e) => e.color),
+        pointBackgroundColor: acceptedColor,
+        pointBorderColor: acceptedColor,
+        pointRadius: 5,
+        borderWidth: 1,
+        fill: false,
+        data: data.map((e) => ({ x: e.rho, y: e.kappa })),
+      },
+    ],
+  };
 
-let kappa = {
-  labels: data.map((e) => e.x),
-  datasets: [
-    {
-      type: "scatter",
-      borderColor: "black",
-      pointBackgroundColor: data.map((e) => e.color),
-      pointBorderColor: data.map((e) => e.color),
-      pointRadius: 5,
-      borderWidth: 1,
-      fill: false,
-      data: data.map((e) => ({ x: e.kappa_rank, y: e.kappa })),
-    },
-  ],
-};
+  console.log(kappa_rho);
+  let rho = {
+    labels: data.map((e) => e.Component),
+    datasets: [
+      {
+        type: "scatter",
+        borderColor: "black",
+        pointBackgroundColor: data.map((e) => e.color),
+        pointBorderColor: data.map((e) => e.color),
+        pointRadius: 5,
+        borderWidth: 1,
+        fill: false,
+        data: data.map((e) => ({ x: e.rho_rank, y: e.rho })),
+      },
+    ],
+  };
 
-let variance = {
-  labels: data.map((e) => e.x),
-  datasets: [
-    {
-      label: data.map((e) => e.classification),
-      borderColor: "black",
-      backgroundColor: data.map((e) => e.color),
-      borderWidth: 0.5,
-      data: data.map((e) => e.var),
-    },
-  ],
-};
+  let kappa = {
+    labels: data.map((e) => e.Component),
+    datasets: [
+      {
+        type: "scatter",
+        borderColor: "black",
+        pointBackgroundColor: data.map((e) => e.color),
+        pointBorderColor: data.map((e) => e.color),
+        pointRadius: 5,
+        borderWidth: 1,
+        fill: false,
+        data: data.map((e) => ({ x: e.kappa_rank, y: e.kappa })),
+      },
+    ],
+  };
+
+  let variance = {
+    labels: data.map((e) => e.Component),
+    datasets: [
+      {
+        label: data.map((e) => e.classification),
+        borderColor: "black",
+        backgroundColor: data.map((e) => e.color),
+        borderWidth: 0.5,
+        data: data.map((e) => e.var),
+      },
+    ],
+  };
+
+  return kappa_rho, variance, kappa, rho;
+}
 
 const options_kappa_rho = {
   plugins: {
@@ -188,7 +204,7 @@ const optionsPie = {
   },
 };
 
-const Plots = () => {
+const Plots = (data) => {
   // const [clickedDataset, setClickedDataset] = useState("");
   const [clickedElement, setClickedElement] = useState("");
   // const [clickedElements, setClickedElements] = useState("");
@@ -200,6 +216,18 @@ const Plots = () => {
   //   const datasetIndex = dataset[0].datasetIndex;
   //   // setClickedDataset(data.datasets[datasetIndex].label);
   // };
+
+  // let kappa_rho,
+  //   variance,
+  //   kappa,
+  //   rho = parseData(this.props.component_data);
+  const compData = data["componentData"];
+  let kappa_rho,
+    variance,
+    kappa,
+    rho = parseData(compData);
+
+  console.log(kappa_rho);
 
   const getElementAtEvent = (element) => {
     if (!element.length) return;

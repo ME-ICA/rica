@@ -5,6 +5,7 @@ import Tabs from "./Tabs";
 import Panel from "./Panel";
 import CarpetOption from "./CarpetOption";
 import Plots from "./Plots";
+import SubmitFile from "./SubmitFile";
 
 import "./styles.css";
 
@@ -20,11 +21,16 @@ class App extends Component {
     super(props);
     this.state = {
       carpetpath: "./figures/carpet_optcom.svg",
+      componentData: [],
     };
   }
 
   onChange = (e) => {
     this.setState({ carpetpath: e.target.value });
+  };
+
+  callbackFunction = (childData) => {
+    this.setState({ componentData: childData });
   };
 
   render() {
@@ -36,10 +42,11 @@ class App extends Component {
           <a href="https://github.com/ME-ICA/tedana" className="title">
             tedana
           </a>
+          <SubmitFile parentCallback={this.callbackFunction} />
         </div>
         <Tabs>
           <Panel title="ICA">
-            <Plots />
+            <Plots componentData={this.state.componentData} />
           </Panel>
           <Panel title="Carpets">
             <center>
