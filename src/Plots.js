@@ -23,7 +23,6 @@ function parseData(data) {
     ],
   };
 
-  console.log(kappa_rho);
   let rho = {
     labels: data.map((e) => e.Component),
     datasets: [

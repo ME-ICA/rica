@@ -22,6 +22,9 @@ class App extends Component {
     this.state = {
       carpetpath: "./figures/carpet_optcom.svg",
       componentData: [],
+      compFigures: [],
+      carpetFigures: [],
+      info: "",
     };
   }
 
@@ -30,7 +33,11 @@ class App extends Component {
   };
 
   callbackFunction = (childData) => {
-    this.setState({ componentData: childData });
+    console.log(childData[2])
+    this.setState({ componentData: childData[2] });
+    this.setState({ componentFigures: childData[0] });
+    this.setState({ carpetFigures: childData[1] });
+    this.setState({ info: childData[3] });
   };
 
   render() {
@@ -65,7 +72,7 @@ class App extends Component {
             </center>
           </Panel>
           <Panel title="Info">
-            <p className="info">$about</p>
+            <p className="info">{this.state.info}</p>
           </Panel>
         </Tabs>
       </div>
