@@ -62,7 +62,7 @@ function parseData(data) {
         borderColor: "black",
         backgroundColor: data.map((e) => e.color),
         borderWidth: 0.5,
-        data: data.map((e) => e["variance explained rank"]),
+        data: data.map((e) => e["variance explained"]),
       },
     ],
   };

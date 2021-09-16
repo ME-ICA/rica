@@ -58,7 +58,7 @@ class UploadFolder extends Component {
         }
 
         // Save component table into array
-        if (filename === "desc-tedana_metrics.tsv") {
+        if (filename === "_metrics.tsv") {
           let reader = new FileReader();
           reader.readAsText(files[i]);
           reader.onload = (e) => {
