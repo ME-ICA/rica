@@ -62,7 +62,7 @@ function parseData(data) {
         borderColor: "black",
         backgroundColor: data.map((e) => e.color),
         borderWidth: 0.5,
-        data: data.map((e) => e["variance explained"]),
+        data: data.map((e) => e["variance explained rank"]),
       },
     ],
   };
@@ -194,6 +194,18 @@ const optionsPie = {
   },
 };
 
+function assignColor(data) {
+  for (var i = 0; i < data.length; i++) {
+    if (data[i].classification === "accepted") {
+      data[i].color = acceptedColor;
+    } else if (data[i].classification === "rejected") {
+      data[i].color = rejedtecColor;
+    } else if (data[i].classification === "ignored") {
+      data[i].color = ignoredColor;
+    }
+  }
+}
+
 class Plots extends React.Component {
   constructor(props) {
     super(props);
@@ -211,8 +223,9 @@ class Plots extends React.Component {
     //   // setClickedDataset(data.datasets[datasetIndex].label);
     // };
     // Component data
-    const compData = this.props.componentData;
-    let parsed_data = parseData(compData[0]);
+    const compData = this.props.componentData[0];
+    assignColor(compData);
+    let parsed_data = parseData(compData);
     let kappa_rho = parsed_data[0];
     let variance = parsed_data[1];
     let kappa = parsed_data[2];
