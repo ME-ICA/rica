@@ -195,6 +195,7 @@ const optionsPie = {
 };
 
 function assignColor(data) {
+  console.log(data);
   for (var i = 0; i < data.length; i++) {
     if (data[i].classification === "accepted") {
       data[i].color = acceptedColor;

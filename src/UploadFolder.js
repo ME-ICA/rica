@@ -58,7 +58,7 @@ class UploadFolder extends Component {
         }
 
         // Save component table into array
-        if (filename === "_metrics.tsv") {
+        if (filename.includes("_metrics.tsv") && !filename.includes("PCA")) {
           let reader = new FileReader();
           reader.readAsText(files[i]);
           reader.onload = (e) => {
