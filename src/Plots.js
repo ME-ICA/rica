@@ -196,9 +196,7 @@ const optionsPie = {
 };
 
 const Plots = (data) => {
-  // const [clickedDataset, setClickedDataset] = useState("");
   const [clickedElement, setClickedElement] = useState("");
-  // const [clickedElements, setClickedElements] = useState("");
 
   // const getDatasetAtEvent = (dataset) => {
   //   if (!dataset.length) return;
@@ -208,12 +206,8 @@ const Plots = (data) => {
   //   // setClickedDataset(data.datasets[datasetIndex].label);
   // };
 
-  // let kappa_rho,
-  //   variance,
-  //   kappa,
-  //   rho = parseData(this.props.component_data);
   const compData = data["componentData"];
-  let parsed_data = parseData(compData);
+  let parsed_data = parseData(compData[0]);
   let kappa_rho = parsed_data[0];
   let variance = parsed_data[1];
   let kappa = parsed_data[2];
