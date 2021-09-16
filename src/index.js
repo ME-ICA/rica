@@ -33,7 +33,6 @@ class App extends Component {
   };
 
   callbackFunction = (childData) => {
-    console.log(childData[2])
     this.setState({ componentData: childData[2] });
     this.setState({ componentFigures: childData[0] });
     this.setState({ carpetFigures: childData[1] });
@@ -42,6 +41,8 @@ class App extends Component {
 
   render() {
     const { carpetpath } = this.state;
+
+    console.log(this.state.info);
 
     return (
       <div className="main-container">
