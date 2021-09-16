@@ -6,7 +6,6 @@ const rejedtecColor = "#f2563c";
 const ignoredColor = "#4e85f5";
 
 function parseData(data) {
-  console.log(data);
   let kappa_rho = {
     labels: data.map((e) => e.Component),
     datasets: [
@@ -212,8 +211,6 @@ const Plots = (data) => {
   let variance = parsed_data[1];
   let kappa = parsed_data[2];
   let rho = parsed_data[3];
-
-  console.log(kappa_rho);
 
   const getElementAtEvent = (element) => {
     if (!element.length) return;

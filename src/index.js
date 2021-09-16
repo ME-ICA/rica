@@ -3,18 +3,11 @@ import React, { Component } from "react";
 
 import Tabs from "./Tabs";
 import Panel from "./Panel";
-import CarpetOption from "./CarpetOption";
+import Carpets from "./Carpets";
 import Plots from "./Plots";
 import UploadFolder from "./UploadFolder";
 
 import "./styles.css";
-
-const carpetsjson = [
-  { name: "Optimally combined", path: "./figures/carpet_optcom.svg" },
-  { name: "Denoised", path: "./figures/carpet_denoised.svg" },
-  { name: "Accepted", path: "./figures/carpet_accepted.svg" },
-  { name: "Rejected", path: "./figures/carpet_rejected.svg" },
-];
 
 class Popup extends React.Component {
   render() {
@@ -33,7 +26,6 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      carpetpath: "./figures/carpet_optcom.svg",
       componentData: [],
       compFigures: [],
       carpetFigures: [],
@@ -48,10 +40,6 @@ class App extends Component {
     });
   }
 
-  onChange = (e) => {
-    this.setState({ carpetpath: e.target.value });
-  };
-
   callbackFunction = (childData) => {
     this.setState({ componentData: childData[2] });
     this.setState({ componentFigures: childData[0] });
@@ -60,8 +48,6 @@ class App extends Component {
   };
 
   render() {
-    const { carpetpath } = this.state;
-
     // console.log(
     //   setTimeout(() => {
     //     console.log(this.state.info[0]);
@@ -87,20 +73,7 @@ class App extends Component {
             <Plots componentData={this.state.componentData} />
           </Panel>
           <Panel title="Carpets">
-            <center>
-              <select className="dd-menu" onChange={this.onChange}>
-                {carpetsjson.map((carpet, key) => (
-                  <CarpetOption
-                    key={key}
-                    name={carpet.name}
-                    path={carpet.path}
-                  />
-                ))}
-              </select>
-              <div className="carpet-plots-image">
-                <img id="imgCarpetPlot" alt="" src={carpetpath} />
-              </div>
-            </center>
+            <Carpets images={this.state.carpetFigures} />
           </Panel>
           <Panel title="Info">
             <p className="info">{this.state.info}</p>
