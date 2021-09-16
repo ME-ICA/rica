@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { readString } from "react-papaparse";
 
-class SubmitFile extends Component {
+class UploadFolder extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -30,8 +30,8 @@ class SubmitFile extends Component {
             compFigures.push({
               name: filename,
               img: e.target.result,
-            })
-          }
+            });
+          };
         }
 
         // Save carpet plots into array
@@ -43,8 +43,8 @@ class SubmitFile extends Component {
             carpetFigures.push({
               name: filename,
               img: e.target.result,
-            })
-          }
+            });
+          };
         }
 
         // Save report info into array
@@ -52,8 +52,8 @@ class SubmitFile extends Component {
           let reader = new FileReader();
           reader.readAsText(files[i]);
           reader.onload = (e) => {
-           let info_holder = e.target.result;
-           info.push(info_holder);
+            let info_holder = e.target.result;
+            info.push(info_holder);
           };
         }
 
@@ -63,10 +63,11 @@ class SubmitFile extends Component {
           reader.readAsText(files[i]);
           reader.onload = (e) => {
             let dataTXT = e.target.result;
-            let compData = readString(dataTXT, { header: true, skipEmptyLines: true })[
-              "data"
-            ];
-            comps.push(compData)
+            let compData = readString(dataTXT, {
+              header: true,
+              skipEmptyLines: true,
+            })["data"];
+            comps.push(compData);
           };
         }
       }
@@ -83,10 +84,16 @@ class SubmitFile extends Component {
   render() {
     return (
       <div onSubmit={this.onFormSubmit}>
-        <input type="file" name="file" directory="" webkitdirectory="" onChange={(e) => this.onChange(e)} />
+        <input
+          type="file"
+          name="file"
+          directory=""
+          webkitdirectory=""
+          onChange={(e) => this.onChange(e)}
+        />
       </div>
     );
   }
 }
 
-export default SubmitFile;
+export default UploadFolder;

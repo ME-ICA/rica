@@ -5,7 +5,7 @@ import Tabs from "./Tabs";
 import Panel from "./Panel";
 import CarpetOption from "./CarpetOption";
 import Plots from "./Plots";
-import SubmitFile from "./SubmitFile";
+import UploadFolder from "./UploadFolder";
 
 import "./styles.css";
 
@@ -16,6 +16,19 @@ const carpetsjson = [
   { name: "Rejected", path: "./figures/carpet_rejected.svg" },
 ];
 
+class Popup extends React.Component {
+  render() {
+    return (
+      <div className="popup">
+        <div className="popup_inner">
+          <h1>{this.props.text}</h1>
+          <UploadFolder parentCallback={this.props.callBack} />
+          <button onClick={this.props.closePopup}>close me</button>
+        </div>
+      </div>
+    );
+  }
+}
 class App extends Component {
   constructor(props) {
     super(props);
@@ -25,7 +38,14 @@ class App extends Component {
       compFigures: [],
       carpetFigures: [],
       info: "",
+      showPopup: true,
     };
+  }
+
+  togglePopup() {
+    this.setState({
+      showPopup: !this.state.showPopup,
+    });
   }
 
   onChange = (e) => {
@@ -42,15 +62,25 @@ class App extends Component {
   render() {
     const { carpetpath } = this.state;
 
-    console.log(this.state.info);
+    // console.log(
+    //   setTimeout(() => {
+    //     console.log(this.state.info[0]);
+    //   }, 3000)
+    // );
 
     return (
       <div className="main-container">
+        {this.state.showPopup ? (
+          <Popup
+            text="Close Me"
+            callBack={this.callbackFunction}
+            closePopup={this.togglePopup.bind(this)}
+          />
+        ) : null}
         <div style={{ marginLeft: "33px" }}>
           <a href="https://github.com/ME-ICA/tedana" className="title">
             tedana
           </a>
-          <SubmitFile parentCallback={this.callbackFunction} />
         </div>
         <Tabs>
           <Panel title="ICA">
