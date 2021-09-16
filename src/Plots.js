@@ -194,99 +194,118 @@ const optionsPie = {
   },
 };
 
-const Plots = (data) => {
-  const [clickedElement, setClickedElement] = useState("");
+class Plots extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      clickedElement: "",
+    };
+  }
 
-  // const getDatasetAtEvent = (dataset) => {
-  //   if (!dataset.length) return;
+  render() {
+    // const getDatasetAtEvent = (dataset) => {
+    //   if (!dataset.length) return;
 
-  //   console.log(dataset);
-  //   const datasetIndex = dataset[0].datasetIndex;
-  //   // setClickedDataset(data.datasets[datasetIndex].label);
-  // };
+    //   console.log(dataset);
+    //   const datasetIndex = dataset[0].datasetIndex;
+    //   // setClickedDataset(data.datasets[datasetIndex].label);
+    // };
+    // Component data
+    const compData = this.props.componentData;
+    let parsed_data = parseData(compData[0]);
+    let kappa_rho = parsed_data[0];
+    let variance = parsed_data[1];
+    let kappa = parsed_data[2];
+    let rho = parsed_data[3];
 
-  const compData = data["componentData"];
-  let parsed_data = parseData(compData[0]);
-  let kappa_rho = parsed_data[0];
-  let variance = parsed_data[1];
-  let kappa = parsed_data[2];
-  let rho = parsed_data[3];
+    // Component figures
 
-  const getElementAtEvent = (element) => {
-    if (!element.length) return;
+    const getElementAtEvent = (element) => {
+      if (!element.length) return;
 
-    const { datasetIndex, index } = element[0];
-    let componentClassification = variance.datasets[datasetIndex].label[index];
+      const { datasetIndex, index } = element[0];
+      // let componentClassification = variance.datasets[datasetIndex].label[index];
 
-    var numb = variance.labels[index].match(/\d/g);
-    numb = numb.join("");
-    if (numb < 10) {
-      numb = `0$${numb}`;
-    }
-    setClickedElement(`./figures/comp_0$${numb}.png`);
-  };
+      // Get component name of selected component
+      var compName = variance.labels[index].match(/\d/g);
+      compName = compName.join("");
+      compName = `comp_0${compName}.png`;
 
-  // const getElementsAtEvent = (elements) => {
-  //   if (!elements.length) return;
+      // iterate over each element in the array to retrieve image of selected component based on name
+      for (var i = 0; i < this.props.componentFigures.length; i++) {
+        // look for the entry with a matching `compName` value
+        if (this.props.componentFigures[i].name == compName) {
+          this.setState({ clickedElement: this.props.componentFigures[i].img });
+        }
+      }
+    };
 
-  //   // setClickedElements(elements.length);
-  // };
+    // const getElementsAtEvent = (elements) => {
+    //   if (!elements.length) return;
 
-  return (
-    <center>
-      <div className="plot-container-out">
-        <div className="plot-container-in">
-          <div className="plot-box">
-            <Line
-              data={kappa_rho}
-              height={200}
-              width={300}
-              options={options_kappa_rho}
-              // getDatasetAtEvent={getDatasetAtEvent}
-              getElementAtEvent={getElementAtEvent}
-              // getElementsAtEvent={getElementsAtEvent}
-            />
+    //   // setClickedElements(elements.length);
+    // };
+
+    return (
+      <center>
+        <div className="plot-container-out">
+          <div className="plot-container-in">
+            <div className="plot-box">
+              <Line
+                data={kappa_rho}
+                height={200}
+                width={300}
+                options={options_kappa_rho}
+                // getDatasetAtEvent={getDatasetAtEvent}
+                getElementAtEvent={getElementAtEvent}
+                // getElementsAtEvent={getElementsAtEvent}
+              />
+            </div>
+            <div className="plot-box">
+              <Pie
+                data={variance}
+                height={20}
+                width={20}
+                options={optionsPie}
+                // getDatasetAtEvent={getDatasetAtEvent}
+                getElementAtEvent={getElementAtEvent}
+                // getElementsAtEvent={getElementsAtEvent}
+              />
+            </div>
+            <div className="plot-box">
+              <Line
+                data={rho}
+                height={200}
+                width={300}
+                options={options_rho}
+                // getDatasetAtEvent={getDatasetAtEvent}
+                getElementAtEvent={getElementAtEvent}
+                // getElementsAtEvent={getElementsAtEvent}
+              />
+            </div>
+            <div className="plot-box">
+              <Line
+                data={kappa}
+                height={200}
+                width={300}
+                options={options_kappa}
+                // getDatasetAtEvent={getDatasetAtEvent}
+                getElementAtEvent={getElementAtEvent}
+                // getElementsAtEvent={getElementsAtEvent}
+              />
+            </div>
           </div>
-          <div className="plot-box">
-            <Pie
-              data={variance}
-              height={20}
-              width={20}
-              options={optionsPie}
-              // getDatasetAtEvent={getDatasetAtEvent}
-              getElementAtEvent={getElementAtEvent}
-              // getElementsAtEvent={getElementsAtEvent}
-            />
-          </div>
-          <div className="plot-box">
-            <Line
-              data={rho}
-              height={200}
-              width={300}
-              options={options_rho}
-              // getDatasetAtEvent={getDatasetAtEvent}
-              getElementAtEvent={getElementAtEvent}
-              // getElementsAtEvent={getElementsAtEvent}
-            />
-          </div>
-          <div className="plot-box">
-            <Line
-              data={kappa}
-              height={200}
-              width={300}
-              options={options_kappa}
-              // getDatasetAtEvent={getDatasetAtEvent}
-              getElementAtEvent={getElementAtEvent}
-              // getElementsAtEvent={getElementsAtEvent}
+          <div className="component-plots-image">
+            <img
+              className="imgComponentPlot"
+              alt=""
+              src={this.state.clickedElement}
             />
           </div>
         </div>
-        <div className="component-plots-image">
-          <img className="imgComponentPlot" alt="" src={clickedElement} />
-        </div>
-      </div>
-    </center>
-  );
-};
+      </center>
+    );
+  }
+}
 
 export default Plots;

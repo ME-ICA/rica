@@ -48,12 +48,6 @@ class App extends Component {
   };
 
   render() {
-    // console.log(
-    //   setTimeout(() => {
-    //     console.log(this.state.info[0]);
-    //   }, 3000)
-    // );
-
     return (
       <div className="main-container">
         {this.state.showPopup ? (
@@ -70,7 +64,10 @@ class App extends Component {
         </div>
         <Tabs>
           <Panel title="ICA">
-            <Plots componentData={this.state.componentData} />
+            <Plots
+              componentData={this.state.componentData}
+              componentFigures={this.state.componentFigures}
+            />
           </Panel>
           <Panel title="Carpets">
             <Carpets images={this.state.carpetFigures} />
