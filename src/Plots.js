@@ -238,6 +238,7 @@ class Plots extends React.Component {
     //   const datasetIndex = dataset[0].datasetIndex;
     //   // setClickedDataset(data.datasets[datasetIndex].label);
     // };
+
     // Component data
     const compData = this.props.componentData[0];
     assignColor(compData);

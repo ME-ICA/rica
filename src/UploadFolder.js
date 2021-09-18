@@ -112,13 +112,17 @@ class UploadFolder extends Component {
 
     // Pass data to parent
     this.props.parentCallback(data);
+
+    setTimeout(() => {
+      this.props.closePopup();
+    }, 500);
   }
 
   render() {
     return (
-      <div onSubmit={this.onFormSubmit}>
-        <label for="file-upload" class="custom-file-upload">
-          <FontAwesomeIcon icon={faFolder} /> Select folder
+      <div className="custom-file-upload" onSubmit={this.onFormSubmit}>
+        <label for="file-upload" className="custom-file-upload-label">
+          <FontAwesomeIcon icon={faFolder} className="tab-icon" /> Select folder
         </label>
         <input
           id="file-upload"

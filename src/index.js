@@ -14,8 +14,8 @@ class Popup extends React.Component {
     return (
       <div className="popup">
         <div className="popup_inner">
-          <h1>{this.props.text}</h1>
-          <p>
+          <h1 className="popup_title">{this.props.text}</h1>
+          <p className="popup_text">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc
             pharetra risus eget aliquam aliquet. Donec semper nisl nec arcu
             dictum interdum. Nulla facilisi. Pellentesque vitae lacus semper,
@@ -25,12 +25,17 @@ class Popup extends React.Component {
             Quisque ut ipsum id lacus pretium viverra faucibus id lacus. Sed
             eget justo in tortor sodales suscipit.
           </p>
-          <UploadFolder parentCallback={this.props.callBack} />
-          <button
-            onClick={this.props.closePopup}
-            type="button"
-            class="close"
-          ></button>
+          <UploadFolder
+            parentCallback={this.props.callBack}
+            closePopup={this.props.closePopup}
+          />
+          <div className="popup_close_button_container">
+            <button
+              onClick={this.props.closePopup}
+              type="button"
+              className="close"
+            ></button>
+          </div>
         </div>
       </div>
     );
@@ -66,7 +71,7 @@ class App extends Component {
       <div className="main-container">
         {this.state.showPopup ? (
           <Popup
-            text="ICA Reports"
+            text="ICA reports"
             callBack={this.callbackFunction}
             closePopup={this.togglePopup.bind(this)}
           />
@@ -77,17 +82,17 @@ class App extends Component {
           </a>
         </div>
         <Tabs>
-          <Panel title="ICA">
+          <Panel title="Info" icon="info-circle">
+            <p className="info">{this.state.info}</p>
+          </Panel>
+          <Panel title="ICA" icon="circle-notch">
             <Plots
               componentData={this.state.componentData}
               componentFigures={this.state.componentFigures}
             />
           </Panel>
-          <Panel title="Carpets">
+          <Panel title="Carpets" icon="layer-group">
             <Carpets images={this.state.carpetFigures} />
-          </Panel>
-          <Panel title="Info">
-            <p className="info">{this.state.info}</p>
           </Panel>
         </Tabs>
       </div>
