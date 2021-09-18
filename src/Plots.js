@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { Line, Pie } from "react-chartjs-2";
+import * as Zoom from "chartjs-plugin-zoom";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 
 const acceptedColor = "#62bc6c";
 const rejedtecColor = "#f2563c";
@@ -33,7 +35,7 @@ function parseData(data) {
         pointRadius: 5,
         borderWidth: 1,
         fill: false,
-        data: data.map((e) => ({ x: e.rho_rank, y: e.rho })),
+        data: data.map((e) => ({ x: e["rho rank"], y: e.rho })),
       },
     ],
   };
@@ -49,7 +51,7 @@ function parseData(data) {
         pointRadius: 5,
         borderWidth: 1,
         fill: false,
-        data: data.map((e) => ({ x: e.kappa_rank, y: e.kappa })),
+        data: data.map((e) => ({ x: e["kappa rank"], y: e.kappa })),
       },
     ],
   };
@@ -83,15 +85,28 @@ const options_kappa_rho = {
         weight: "bold",
       },
     },
+    pan: {
+      enabled: true,
+      mode: "xy",
+      speed: 1,
+      threshold: 1,
+    },
     zoom: {
-      zoom: {
-        wheel: {
-          enabled: true,
+      enabled: true,
+      drag: false,
+      mode: "xy",
+      limits: {
+        max: 1,
+        min: 0.5,
+      },
+    },
+    tooltips: {
+      callbacks: {
+        title: function (tooltipItem, data) {
+          console.log(tooltipItem);
+          console.log(data);
+          // return data[tooltipItem[0]["dataIndex"]];
         },
-        pinch: {
-          enabled: true,
-        },
-        mode: "xy",
       },
     },
   },
@@ -157,11 +172,13 @@ const optionsPie = {
   plugins: {
     tooltips: {
       callbacks: {
-        title: function (tooltipItem, data) {
-          return data["labels"][tooltipItem[0]["index"]];
+        title: function (tooltipItem) {
+          console.log(tooltipItem);
+          return tooltipItem.value + "%";
+          // return data.labels[tooltipItem[0]["dataIndex"]];
         },
         label: function (tooltipItem, data) {
-          return data["datasets"][0]["data"][tooltipItem["index"]];
+          return data["datasets"][0]["data"][tooltipItem["dataIndex"]] + "%";
         },
         // afterLabel: function (tooltipItem, data) {
         //   var dataset = data["datasets"][0];
@@ -195,7 +212,6 @@ const optionsPie = {
 };
 
 function assignColor(data) {
-  console.log(data);
   for (var i = 0; i < data.length; i++) {
     if (data[i].classification === "accepted") {
       data[i].color = acceptedColor;
@@ -219,7 +235,6 @@ class Plots extends React.Component {
     // const getDatasetAtEvent = (dataset) => {
     //   if (!dataset.length) return;
 
-    //   console.log(dataset);
     //   const datasetIndex = dataset[0].datasetIndex;
     //   // setClickedDataset(data.datasets[datasetIndex].label);
     // };
@@ -267,8 +282,8 @@ class Plots extends React.Component {
             <div className="plot-box">
               <Line
                 data={kappa_rho}
-                height={200}
-                width={300}
+                height={400}
+                width={400}
                 options={options_kappa_rho}
                 // getDatasetAtEvent={getDatasetAtEvent}
                 getElementAtEvent={getElementAtEvent}
@@ -289,8 +304,8 @@ class Plots extends React.Component {
             <div className="plot-box">
               <Line
                 data={rho}
-                height={200}
-                width={300}
+                height={400}
+                width={400}
                 options={options_rho}
                 // getDatasetAtEvent={getDatasetAtEvent}
                 getElementAtEvent={getElementAtEvent}
@@ -300,8 +315,8 @@ class Plots extends React.Component {
             <div className="plot-box">
               <Line
                 data={kappa}
-                height={200}
-                width={300}
+                height={400}
+                width={400}
                 options={options_kappa}
                 // getDatasetAtEvent={getDatasetAtEvent}
                 getElementAtEvent={getElementAtEvent}

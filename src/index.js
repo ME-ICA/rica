@@ -15,8 +15,22 @@ class Popup extends React.Component {
       <div className="popup">
         <div className="popup_inner">
           <h1>{this.props.text}</h1>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc
+            pharetra risus eget aliquam aliquet. Donec semper nisl nec arcu
+            dictum interdum. Nulla facilisi. Pellentesque vitae lacus semper,
+            porta nibh eu, suscipit mi. Nunc sollicitudin vel diam a pulvinar.
+            Vestibulum tincidunt aliquet risus ac aliquet. Curabitur mattis
+            volutpat imperdiet. Mauris vitae pretium mauris, in commodo magna.
+            Quisque ut ipsum id lacus pretium viverra faucibus id lacus. Sed
+            eget justo in tortor sodales suscipit.
+          </p>
           <UploadFolder parentCallback={this.props.callBack} />
-          <button onClick={this.props.closePopup}>close me</button>
+          <button
+            onClick={this.props.closePopup}
+            type="button"
+            class="close"
+          ></button>
         </div>
       </div>
     );
@@ -52,7 +66,7 @@ class App extends Component {
       <div className="main-container">
         {this.state.showPopup ? (
           <Popup
-            text="Close Me"
+            text="ICA Reports"
             callBack={this.callbackFunction}
             closePopup={this.togglePopup.bind(this)}
           />
