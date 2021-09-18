@@ -4,12 +4,14 @@ import {
   faInfoCircle,
   faLayerGroup,
   faCircleNotch,
+  faPlus,
+  faQuestion,
 } from "@fortawesome/free-solid-svg-icons";
 
 import { library } from "@fortawesome/fontawesome-svg-core"; //allows later to just use icon name to render-them
 import { fas } from "@fortawesome/free-solid-svg-icons";
 
-library.add(faInfoCircle, faLayerGroup, faCircleNotch);
+library.add(faInfoCircle, faLayerGroup, faCircleNotch, faPlus, faQuestion);
 class Tabs extends Component {
   state = {
     selected: 0,
@@ -21,27 +23,40 @@ class Tabs extends Component {
 
   render() {
     return (
-      <>
-        <ul class="tab_container">
+      <header className="header_container">
+        <ul className="tab_container">
           {this.props.children.map((elem, index) => {
             let style = index === this.state.selected ? "selected" : "";
             return (
-              <li
-                key={index}
-                className={style}
-                onClick={() => this.handleChange(index)}
-              >
-                <FontAwesomeIcon
-                  icon={["fas", elem.props.icon]}
-                  className="tab-icon"
-                />
-                {elem.props.title}
-              </li>
+              <div className="tab_box">
+                <li
+                  key={index}
+                  className={style}
+                  onClick={() => this.handleChange(index)}
+                >
+                  <FontAwesomeIcon
+                    icon={["fas", elem.props.icon]}
+                    className="tab-icon"
+                  />
+                  {elem.props.title}
+                </li>
+              </div>
             );
           })}
+          <div className="new-container" onClick={this.props.toggleIntroPopup}>
+            <FontAwesomeIcon icon={["fas", "plus"]} className="tab-icon" />
+            <span>New</span>
+          </div>
+          <div
+            className="about-container"
+            onClick={this.props.toggleAboutPopup}
+          >
+            <FontAwesomeIcon icon={["fas", "question"]} className="tab-icon" />
+            <span>About</span>
+          </div>
         </ul>
         <div className="tab">{this.props.children[this.state.selected]}</div>
-      </>
+      </header>
     );
   }
 }

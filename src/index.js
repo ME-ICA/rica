@@ -5,42 +5,11 @@ import Tabs from "./Tabs";
 import Panel from "./Panel";
 import Carpets from "./Carpets";
 import Plots from "./Plots";
-import UploadFolder from "./UploadFolder";
+import IntroPopup from "./IntroPopUp";
+import AboutPopup from "./AboutPopUp";
 
 import "./styles.css";
 
-class Popup extends React.Component {
-  render() {
-    return (
-      <div className="popup">
-        <div className="popup_inner">
-          <h1 className="popup_title">{this.props.text}</h1>
-          <p className="popup_text">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc
-            pharetra risus eget aliquam aliquet. Donec semper nisl nec arcu
-            dictum interdum. Nulla facilisi. Pellentesque vitae lacus semper,
-            porta nibh eu, suscipit mi. Nunc sollicitudin vel diam a pulvinar.
-            Vestibulum tincidunt aliquet risus ac aliquet. Curabitur mattis
-            volutpat imperdiet. Mauris vitae pretium mauris, in commodo magna.
-            Quisque ut ipsum id lacus pretium viverra faucibus id lacus. Sed
-            eget justo in tortor sodales suscipit.
-          </p>
-          <UploadFolder
-            parentCallback={this.props.callBack}
-            closePopup={this.props.closePopup}
-          />
-          <div className="popup_close_button_container">
-            <button
-              onClick={this.props.closePopup}
-              type="button"
-              className="close"
-            ></button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-}
 class App extends Component {
   constructor(props) {
     super(props);
@@ -49,13 +18,20 @@ class App extends Component {
       compFigures: [],
       carpetFigures: [],
       info: "",
-      showPopup: true,
+      showIntroPopup: true,
+      showAboutPopup: false,
     };
   }
 
-  togglePopup() {
+  toggleIntroPopup() {
     this.setState({
-      showPopup: !this.state.showPopup,
+      showIntroPopup: !this.state.showIntroPopup,
+    });
+  }
+
+  toggleAboutPopup() {
+    this.setState({
+      showAboutPopup: !this.state.showAboutPopup,
     });
   }
 
@@ -69,19 +45,23 @@ class App extends Component {
   render() {
     return (
       <div className="main-container">
-        {this.state.showPopup ? (
-          <Popup
-            text="ICA reports"
+        {this.state.showIntroPopup ? (
+          <IntroPopup
+            title="ICA reports"
             callBack={this.callbackFunction}
-            closePopup={this.togglePopup.bind(this)}
+            closePopup={this.toggleIntroPopup.bind(this)}
           />
         ) : null}
-        <div style={{ marginLeft: "33px" }}>
-          <a href="https://github.com/ME-ICA/tedana" className="title">
-            tedana
-          </a>
-        </div>
-        <Tabs>
+        {this.state.showAboutPopup ? (
+          <AboutPopup
+            callBack={this.callbackFunction}
+            closePopup={this.toggleAboutPopup.bind(this)}
+          />
+        ) : null}
+        <Tabs
+          toggleIntroPopup={this.toggleIntroPopup.bind(this)}
+          toggleAboutPopup={this.toggleAboutPopup.bind(this)}
+        >
           <Panel title="Info" icon="info-circle">
             <p className="info">{this.state.info}</p>
           </Panel>

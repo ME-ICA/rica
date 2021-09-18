@@ -36,6 +36,8 @@
 
 body {
   background-color: var(--bg0);
+  margin: 0 !important;
+  padding: 0 !important;
   /* System Fonts as used by GitHub */
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
     Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
@@ -53,6 +55,13 @@ body {
   background-color: var(--bg0);
 }
 
+.header_container {
+  margin: 0 !important;
+  padding: 0 !important;
+  top: 0 !important;
+  font-size: 14.5px;
+}
+
 .title {
   font-weight: 700;
   color: var(--c1);
@@ -66,11 +75,20 @@ body {
   text-align: justify;
 }
 
+.tab_container {
+  margin-top: 0;
+}
+
+.tab_box {
+}
+
 .tab-icon {
   padding-right: 8px;
 }
 
 ul {
+  display: flex;
+  justify-content: center;
   border-bottom: 1px solid var(--uiBorderColor);
 }
 
@@ -91,22 +109,62 @@ li {
   margin-left: 0;
   padding: 10px;
   transition: all 0.5s;
-  font-weight: 700;
+  font-weight: 500;
   cursor: pointer;
   color: var(--c3);
 }
 
 ul.inline,
 li.selected {
-  background: var(--c6);
-  border-radius: 10%;
+  background: var(--accent1);
+  border-radius: 7.86241% / 24%;
+  color: white;
+  margin-top: 5px;
+  padding: 5px 10px;
+}
+
+ul.inline,
+li:hover {
+  color: var(--c1);
+}
+
+ul.inline,
+li.selected:hover {
+  color: white;
+}
+
+.new-container {
+  width: auto;
+  right: 10%;
+  position: absolute;
+  padding: 10px;
+  margin-right: 15px;
+  cursor: pointer;
+  color: var(--c3);
+}
+
+.new-container:hover {
+  color: var(--c1);
+}
+
+.about-container {
+  position: absolute;
+  width: auto;
+  right: 5%;
+  padding: 5px 10px;
+  margin-top: 5px;
+  cursor: pointer;
+  color: var(--c3);
+}
+
+.about-container:hover {
   color: var(--c1);
 }
 
 .info {
-  margin-left: 10%;
-  margin-right: 10%;
-  margin-top: 2%;
+  margin-left: 20%;
+  margin-right: 20%;
+  margin-top: 5%;
 }
 
 .carpet-plots-image {
@@ -119,6 +177,7 @@ li.selected {
   padding: 10px;
   border-radius: 5px;
   margin-left: 2%;
+  margin-top: 2%;
 }
 
 .dd-option {
@@ -229,7 +288,7 @@ input[type="file"] {
   display: none;
 }
 
-.custom-file-upload {
+.popup-button {
   box-sizing: border-box;
   width: 200px;
   max-width: 100%;
@@ -258,11 +317,11 @@ input[type="file"] {
   margin-top: 10px;
 }
 
-.custom-file-upload:hover {
+.popup-button:hover {
   cursor: pointer;
 }
 
-.custom-file-upload-label:hover {
+.popup-button-label:hover {
   cursor: pointer;
 }
 
@@ -294,4 +353,14 @@ input[type="file"] {
 }
 .close:after {
   transform: rotate(-45deg);
+}
+
+.about-link {
+  text-decoration: none;
+  color: white;
+}
+
+.about-link:hover {
+  text-decoration: none;
+  color: white;
 }
