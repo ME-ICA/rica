@@ -43,6 +43,7 @@ class App extends Component {
   };
 
   render() {
+    console.log(this.state.info[0]);
     return (
       <div className="main-container">
         {this.state.showIntroPopup ? (
@@ -65,7 +66,7 @@ class App extends Component {
           <Panel title="Info" icon="info-circle">
             <p className="info">{this.state.info}</p>
           </Panel>
-          <Panel title="ICA" icon="circle-notch">
+          <Panel title="ICA" icon="chart-pie">
             <Plots
               componentData={this.state.componentData}
               componentFigures={this.state.componentFigures}

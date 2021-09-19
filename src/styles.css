@@ -41,6 +41,7 @@ body {
   /* System Fonts as used by GitHub */
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
     Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-size: 15px;
 }
 
 .main-container {
@@ -133,14 +134,19 @@ li.selected:hover {
   color: white;
 }
 
-.new-container {
-  width: auto;
+.header-right {
   right: 10%;
   position: absolute;
+}
+
+.new-container {
+  width: auto;
+  position: absolute;
   padding: 10px;
-  margin-right: 15px;
   cursor: pointer;
   color: var(--c3);
+  display: flex;
+  right: 0;
 }
 
 .new-container:hover {
@@ -150,11 +156,11 @@ li.selected:hover {
 .about-container {
   position: absolute;
   width: auto;
-  right: 5%;
   padding: 5px 10px;
   margin-top: 5px;
   cursor: pointer;
   color: var(--c3);
+  display: flex;
 }
 
 .about-container:hover {
@@ -165,6 +171,7 @@ li.selected:hover {
   margin-left: 20%;
   margin-right: 20%;
   margin-top: 5%;
+  white-space: pre-wrap;
 }
 
 .carpet-plots-image {
@@ -245,6 +252,7 @@ li.selected:hover {
   bottom: 0;
   margin: auto;
   background-color: rgba(0, 0, 0, 0.5);
+  z-index: 10;
 }
 
 .popup_inner {
@@ -259,6 +267,7 @@ li.selected:hover {
   padding: 2% 5%;
   height: fit-content;
   width: 500px;
+  z-index: 11;
 }
 
 .popup_title {

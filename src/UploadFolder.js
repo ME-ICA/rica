@@ -55,7 +55,6 @@ class UploadFolder extends Component {
       if (filename !== undefined) {
         // Save component figures into array
         if (filename.includes("comp_")) {
-          let imgHolder = null;
           let imgReader = new FileReader();
           imgReader.readAsDataURL(files[i]);
           imgReader.onload = (e) => {
@@ -68,7 +67,6 @@ class UploadFolder extends Component {
 
         // Save carpet plots into array
         if (filename.includes(".svg")) {
-          let imgHolder = null;
           let imgReader = new FileReader();
           imgReader.readAsDataURL(files[i]);
           imgReader.onload = (e) => {

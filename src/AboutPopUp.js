@@ -7,7 +7,12 @@ class AboutPopup extends Component {
     return (
       <div className="popup">
         <div className="popup_inner">
-          <h1 className="popup_title">About us</h1>
+          <h1 className="popup_title">
+            About us{" "}
+            <span role="img" aria-label="brain">
+              🧠
+            </span>
+          </h1>
           <p className="popup_text">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc
             pharetra risus eget aliquam aliquet. Donec semper nisl nec arcu

@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faInfoCircle,
   faLayerGroup,
-  faCircleNotch,
+  faChartPie,
   faPlus,
   faQuestion,
 } from "@fortawesome/free-solid-svg-icons";
@@ -11,7 +11,7 @@ import {
 import { library } from "@fortawesome/fontawesome-svg-core"; //allows later to just use icon name to render-them
 import { fas } from "@fortawesome/free-solid-svg-icons";
 
-library.add(faInfoCircle, faLayerGroup, faCircleNotch, faPlus, faQuestion);
+library.add(faInfoCircle, faLayerGroup, faChartPie, faPlus, faQuestion);
 class Tabs extends Component {
   state = {
     selected: 0,
@@ -43,16 +43,24 @@ class Tabs extends Component {
               </div>
             );
           })}
-          <div className="new-container" onClick={this.props.toggleIntroPopup}>
-            <FontAwesomeIcon icon={["fas", "plus"]} className="tab-icon" />
-            <span>New</span>
-          </div>
-          <div
-            className="about-container"
-            onClick={this.props.toggleAboutPopup}
-          >
-            <FontAwesomeIcon icon={["fas", "question"]} className="tab-icon" />
-            <span>About</span>
+          <div className="header-right">
+            <div
+              className="new-container"
+              onClick={this.props.toggleIntroPopup}
+            >
+              <FontAwesomeIcon icon={["fas", "plus"]} className="tab-icon" />
+              <span>New</span>
+            </div>
+            <div
+              className="about-container"
+              onClick={this.props.toggleAboutPopup}
+            >
+              <FontAwesomeIcon
+                icon={["fas", "question"]}
+                className="tab-icon"
+              />
+              <span>About</span>
+            </div>
           </div>
         </ul>
         <div className="tab">{this.props.children[this.state.selected]}</div>
