@@ -28,7 +28,7 @@ npx gulp
 mv build/index.html build/ica-reports.html
 ```
 
-> Pro tip: when you open the ica-reports.html for the first time, BOOKMARK IT!
+> Pro tip: when you open the ica-reports.html for the first time, BOOKMARK IT 😉
 
 ## Getting involved
 
