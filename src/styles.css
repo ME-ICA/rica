@@ -264,7 +264,7 @@ li.selected:hover {
   margin: auto;
   background: white;
   border-radius: 16px;
-  padding: 2%;
+  padding: 30px 60px;
   height: fit-content;
   width: 400px;
   z-index: 11;

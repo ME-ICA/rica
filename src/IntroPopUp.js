@@ -18,8 +18,9 @@ class IntroPopup extends Component {
           </p>
           <p>
             Oh, and your files will always remain on your computer! Files
-            attached to ICA reports are NOT uploaded to a remote server. We
-            share your concerns about privacy and data protection.<span> </span>
+            attached to ICA reports are <b>NOT</b> uploaded to a remote server.
+            We share your concerns about privacy and data protection.
+            <span> </span>
             <span role="img" aria-label="lock">
               🔒
             </span>
