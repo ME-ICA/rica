@@ -13,15 +13,19 @@ class AboutPopup extends Component {
               🧠
             </span>
           </h1>
+          <p className="popup_text">Thank you so much for using ICA reports!</p>
           <p className="popup_text">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc
-            pharetra risus eget aliquam aliquet. Donec semper nisl nec arcu
-            dictum interdum. Nulla facilisi. Pellentesque vitae lacus semper,
-            porta nibh eu, suscipit mi. Nunc sollicitudin vel diam a pulvinar.
-            Vestibulum tincidunt aliquet risus ac aliquet. Curabitur mattis
-            volutpat imperdiet. Mauris vitae pretium mauris, in commodo magna.
-            Quisque ut ipsum id lacus pretium viverra faucibus id lacus. Sed
-            eget justo in tortor sodales suscipit.
+            Our aim is to make analayzing and revising ICA components of fMRI
+            data a little bit less painful. Our goal is to make the process as
+            easy and joyful as possible.
+          </p>
+          <p className="popup_text">
+            If you want to learn more about us, have questions or suggestions,
+            or want to help us make this tool even better, click on the button
+            below. <span> </span>
+            <span role="img" aria-label="point-down">
+              👇
+            </span>
           </p>
           <div className="popup-button">
             <a

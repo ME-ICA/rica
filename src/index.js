@@ -43,7 +43,6 @@ class App extends Component {
   };
 
   render() {
-    console.log(this.state.info[0]);
     return (
       <div className="main-container">
         {this.state.showIntroPopup ? (

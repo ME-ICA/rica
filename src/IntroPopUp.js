@@ -8,14 +8,21 @@ class IntroPopup extends Component {
         <div className="popup_inner">
           <h1 className="popup_title">{this.props.title}</h1>
           <p className="popup_text">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc
-            pharetra risus eget aliquam aliquet. Donec semper nisl nec arcu
-            dictum interdum. Nulla facilisi. Pellentesque vitae lacus semper,
-            porta nibh eu, suscipit mi. Nunc sollicitudin vel diam a pulvinar.
-            Vestibulum tincidunt aliquet risus ac aliquet. Curabitur mattis
-            volutpat imperdiet. Mauris vitae pretium mauris, in commodo magna.
-            Quisque ut ipsum id lacus pretium viverra faucibus id lacus. Sed
-            eget justo in tortor sodales suscipit.
+            ICA reports requires your metrics, report, svg and component png
+            files to make the reports. Don't worry, just select the folder you
+            want to analyze and chill, ICA reports will do the rest for you.
+            <span> </span>
+            <span role="img" aria-label="sunglasses">
+              😎
+            </span>
+          </p>
+          <p>
+            Oh, and your files will always remain on your computer! Files
+            attached to ICA reports are NOT uploaded to a remote server. We
+            share your concerns about privacy and data protection.<span> </span>
+            <span role="img" aria-label="lock">
+              🔒
+            </span>
           </p>
           <UploadFolder
             parentCallback={this.props.callBack}
