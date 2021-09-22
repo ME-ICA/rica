@@ -6,23 +6,32 @@ class IntroPopup extends Component {
     return (
       <div className="popup">
         <div className="popup_inner">
-          <h1 className="popup_title">{this.props.title}</h1>
+          <h1 className="popup_title">
+            Hi, this is Rica{" "}
+            <span role="img" aria-label="wave">
+              👋
+            </span>
+          </h1>
           <p className="popup_text">
-            ICA reports requires your metrics, report, svg and component png
-            files to make the reports. Don't worry, just select the folder you
-            want to analyze and chill, ICA reports will do the rest for you.
-            <span> </span>
-            <span role="img" aria-label="sunglasses">
-              😎
+            Rica (Reports for ICA) is a reporting and visualization tool for ICA
+            decompositions performed with <i>tedana</i> and <i>aroma</i>.
+          </p>
+          <p className="popup_text">
+            In order to generate beautiful reports, Rica needs access to your{" "}
+            <i>metrics</i>, <i>report</i>, <i>svg</i> and <i>component png</i>{" "}
+            files. Don't worry, files attached to Rica are <b>NOT</b> uploaded
+            to a remote server. Once the necessary data is read, Rica cannot
+            access the files again. We share your concerns about privacy and
+            data protection.{" "}
+            <span role="img" aria-label="lock">
+              🔒
             </span>
           </p>
           <p>
-            Oh, and your files will always remain on your computer! Files
-            attached to ICA reports are <b>NOT</b> uploaded to a remote server.
-            We share your concerns about privacy and data protection.
-            <span> </span>
-            <span role="img" aria-label="lock">
-              🔒
+            Now, select the folder you want to analyze, make some popcorn, and
+            chill. Let Rica take care of the rest.{" "}
+            <span role="img" aria-label="sunglasses">
+              😎
             </span>
           </p>
           <UploadFolder

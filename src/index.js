@@ -49,7 +49,6 @@ class App extends Component {
       <div className="main-container">
         {this.state.showIntroPopup ? (
           <IntroPopup
-            title="ICA reports"
             callBack={this.callbackFunction}
             closePopup={this.toggleIntroPopup.bind(this)}
           />

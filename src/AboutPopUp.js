@@ -13,11 +13,11 @@ class AboutPopup extends Component {
               🧠
             </span>
           </h1>
-          <p className="popup_text">Thank you so much for using ICA reports!</p>
+          <p className="popup_text">Thank you so much for using Rica!</p>
           <p className="popup_text">
             Our aim is to make analayzing and revising ICA components of fMRI
-            data a little bit less painful. Our goal is to make the process as
-            easy and joyful as possible.
+            data a little bit less painful. Hopefully, we can make this process
+            as easy and joyful as possible.
           </p>
           <p className="popup_text">
             If you want to learn more about us, have questions or suggestions,
