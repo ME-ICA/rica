@@ -78,6 +78,8 @@ body {
 
 .tab_container {
   margin-top: 0;
+  z-index: 5;
+  width: 100%;
 }
 
 .tab_box {
@@ -170,7 +172,7 @@ li.selected:hover {
 .info {
   margin-left: 20%;
   margin-right: 20%;
-  margin-top: 5%;
+  margin-top: 40px;
   white-space: pre-wrap;
 }
 
@@ -216,7 +218,7 @@ li.selected:hover {
 
 .plot-box {
   background-color: white;
-  padding: 30px;
+  padding: 5px 30px;
   border-radius: 10px;
   color: #fff;
   display: flex;

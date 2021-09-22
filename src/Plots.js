@@ -65,6 +65,13 @@ function parseData(data) {
     ],
   };
 
+  data.sort(function (a, b) {
+    return (
+      a.classification.localeCompare(b.classification) ||
+      b["variance explained"] - a["variance explained"]
+    );
+  });
+
   let variance = {
     labels: data.map((e) => e.Component),
     datasets: [
