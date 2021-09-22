@@ -4,9 +4,12 @@ import zoomPlugin from "chartjs-plugin-zoom";
 
 Chart.register(zoomPlugin); // REGISTER PLUGIN
 
-const acceptedColor = "#62bc6c";
-const rejedtecColor = "#f2563c";
-const ignoredColor = "#4e85f5";
+const acceptedColor = "#A8E3A5";
+const acceptedColorHover = "#82D77E";
+const rejedtecColor = "#E99497";
+const rejedtecColorHover = "#E06A6E";
+const ignoredColor = "#B5DEFF";
+const ignoredColorHover = "#82C7FF";
 
 function parseData(data) {
   let kappa_rho = {
@@ -16,6 +19,7 @@ function parseData(data) {
         type: "scatter",
         borderColor: "black",
         pointBackgroundColor: data.map((e) => e.color),
+        pointHoverBackgroundColor: data.map((e) => e.colorHover),
         pointBorderColor: data.map((e) => e.color),
         pointRadius: 5,
         borderWidth: 1,
@@ -32,6 +36,7 @@ function parseData(data) {
         type: "scatter",
         borderColor: "black",
         pointBackgroundColor: data.map((e) => e.color),
+        pointHoverBackgroundColor: data.map((e) => e.colorHover),
         pointBorderColor: data.map((e) => e.color),
         pointRadius: 5,
         borderWidth: 1,
@@ -52,6 +57,7 @@ function parseData(data) {
         type: "scatter",
         borderColor: "black",
         pointBackgroundColor: data.map((e) => e.color),
+        pointHoverBackgroundColor: data.map((e) => e.colorHover),
         pointBorderColor: data.map((e) => e.color),
         pointRadius: 5,
         borderWidth: 1,
@@ -79,6 +85,7 @@ function parseData(data) {
         label: data.map((e) => e.classification),
         borderColor: "black",
         backgroundColor: data.map((e) => e.color),
+        hoverBackgroundColor: data.map((e) => e.colorHover),
         borderWidth: 0.5,
         data: data.map((e) => e["variance explained"]),
       },
@@ -260,10 +267,13 @@ function assignColor(data) {
   for (var i = 0; i < data.length; i++) {
     if (data[i].classification === "accepted") {
       data[i].color = acceptedColor;
+      data[i].colorHover = acceptedColorHover;
     } else if (data[i].classification === "rejected") {
       data[i].color = rejedtecColor;
+      data[i].colorHover = rejedtecColorHover;
     } else if (data[i].classification === "ignored") {
       data[i].color = ignoredColor;
+      data[i].colorHover = ignoredColorHover;
     }
   }
 }
