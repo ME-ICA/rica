@@ -1,7 +1,8 @@
 import React from "react";
-import { Line, Pie } from "react-chartjs-2";
-import * as Zoom from "chartjs-plugin-zoom";
-import ChartDataLabels from "chartjs-plugin-datalabels";
+import { Line, Pie, Chart } from "react-chartjs-2";
+import zoomPlugin from "chartjs-plugin-zoom";
+
+Chart.register(zoomPlugin); // REGISTER PLUGIN
 
 const acceptedColor = "#62bc6c";
 const rejedtecColor = "#f2563c";
@@ -96,9 +97,31 @@ const options_kappa_rho = {
     tooltip: {
       callbacks: {
         title: function (tooltipItem) {
-          console.log(tooltipItem);
           return tooltipItem[0].raw.label;
         },
+        label: function (tooltipItem) {
+          return (
+            Math.round((tooltipItem.parsed.y + Number.EPSILON) * 100) / 100
+          );
+        },
+      },
+    },
+    zoom: {
+      zoom: {
+        wheel: {
+          enabled: true,
+        },
+        pinch: {
+          enabled: true,
+        },
+        drag: {
+          enabled: true,
+        },
+        mode: "xy",
+      },
+      limits: {
+        x: { min: "original", max: "original" },
+        y: { min: "original", max: "original" },
       },
     },
   },
@@ -120,9 +143,31 @@ const options_rho = {
     tooltip: {
       callbacks: {
         title: function (tooltipItem) {
-          console.log(tooltipItem);
           return tooltipItem[0].raw.label;
         },
+        label: function (tooltipItem) {
+          return (
+            Math.round((tooltipItem.parsed.y + Number.EPSILON) * 100) / 100
+          );
+        },
+      },
+    },
+    zoom: {
+      zoom: {
+        wheel: {
+          enabled: true,
+        },
+        pinch: {
+          enabled: true,
+        },
+        drag: {
+          enabled: true,
+        },
+        mode: "xy",
+      },
+      limits: {
+        x: { min: "original", max: "original" },
+        y: { min: "original", max: "original" },
       },
     },
   },
@@ -144,9 +189,31 @@ const options_kappa = {
     tooltip: {
       callbacks: {
         title: function (tooltipItem) {
-          console.log(tooltipItem);
           return tooltipItem[0].raw.label;
         },
+        label: function (tooltipItem) {
+          return (
+            Math.round((tooltipItem.parsed.y + Number.EPSILON) * 100) / 100
+          );
+        },
+      },
+    },
+    zoom: {
+      zoom: {
+        wheel: {
+          enabled: true,
+        },
+        pinch: {
+          enabled: true,
+        },
+        drag: {
+          enabled: true,
+        },
+        mode: "xy",
+      },
+      limits: {
+        x: { min: "original", max: "original" },
+        y: { min: "original", max: "original" },
       },
     },
   },
