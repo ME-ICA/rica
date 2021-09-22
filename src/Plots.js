@@ -19,7 +19,7 @@ function parseData(data) {
         pointRadius: 5,
         borderWidth: 1,
         fill: false,
-        data: data.map((e) => ({ x: e.rho, y: e.kappa })),
+        data: data.map((e) => ({ x: e.rho, y: e.kappa, label: e.Component })),
       },
     ],
   };
@@ -35,7 +35,11 @@ function parseData(data) {
         pointRadius: 5,
         borderWidth: 1,
         fill: false,
-        data: data.map((e) => ({ x: e["rho rank"], y: e.rho })),
+        data: data.map((e) => ({
+          x: e["rho rank"],
+          y: e.rho,
+          label: e.Component,
+        })),
       },
     ],
   };
@@ -51,7 +55,11 @@ function parseData(data) {
         pointRadius: 5,
         borderWidth: 1,
         fill: false,
-        data: data.map((e) => ({ x: e["kappa rank"], y: e.kappa })),
+        data: data.map((e) => ({
+          x: e["kappa rank"],
+          y: e.kappa,
+          label: e.Component,
+        })),
       },
     ],
   };
@@ -85,27 +93,11 @@ const options_kappa_rho = {
         weight: "bold",
       },
     },
-    pan: {
-      enabled: true,
-      mode: "xy",
-      speed: 1,
-      threshold: 1,
-    },
-    zoom: {
-      enabled: true,
-      drag: false,
-      mode: "xy",
-      limits: {
-        max: 1,
-        min: 0.5,
-      },
-    },
-    tooltips: {
+    tooltip: {
       callbacks: {
-        title: function (tooltipItem, data) {
+        title: function (tooltipItem) {
           console.log(tooltipItem);
-          console.log(data);
-          // return data[tooltipItem[0]["dataIndex"]];
+          return tooltipItem[0].raw.label;
         },
       },
     },
@@ -125,15 +117,12 @@ const options_rho = {
         weight: "bold",
       },
     },
-    zoom: {
-      zoom: {
-        wheel: {
-          enabled: true,
+    tooltip: {
+      callbacks: {
+        title: function (tooltipItem) {
+          console.log(tooltipItem);
+          return tooltipItem[0].raw.label;
         },
-        pinch: {
-          enabled: true,
-        },
-        mode: "xy",
       },
     },
   },
@@ -152,15 +141,12 @@ const options_kappa = {
         weight: "bold",
       },
     },
-    zoom: {
-      zoom: {
-        wheel: {
-          enabled: true,
+    tooltip: {
+      callbacks: {
+        title: function (tooltipItem) {
+          console.log(tooltipItem);
+          return tooltipItem[0].raw.label;
         },
-        pinch: {
-          enabled: true,
-        },
-        mode: "xy",
       },
     },
   },
@@ -170,32 +156,17 @@ const optionsPie = {
   responsive: true,
   maintainAspectRatio: true,
   plugins: {
-    tooltips: {
+    tooltip: {
       callbacks: {
         title: function (tooltipItem) {
-          console.log(tooltipItem);
-          return tooltipItem.value + "%";
-          // return data.labels[tooltipItem[0]["dataIndex"]];
+          return tooltipItem[0].label;
         },
-        label: function (tooltipItem, data) {
-          return data["datasets"][0]["data"][tooltipItem["dataIndex"]] + "%";
+        label: function (tooltipItem) {
+          return (
+            Math.round((tooltipItem.parsed + Number.EPSILON) * 100) / 100 + "%"
+          );
         },
-        // afterLabel: function (tooltipItem, data) {
-        //   var dataset = data["datasets"][0];
-        //   var percent = Math.round(
-        //     (dataset["data"][tooltipItem["index"]] /
-        //       dataset["_meta"][0]["total"]) *
-        //       100
-        //   );
-        //   return "(" + percent + "%)";
-        // },
       },
-      backgroundColor: "#FFF",
-      titleFontSize: 16,
-      titleFontColor: "#0066ff",
-      bodyFontColor: "#000",
-      bodyFontSize: 14,
-      displayColors: false,
     },
     legend: {
       display: false,
