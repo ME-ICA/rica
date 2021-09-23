@@ -26,9 +26,10 @@ You could also compile the project so that you can use the tool just by opening 
 npm run build
 npx gulp
 mv build/index.html build/rica.html
+open build/rica.html
 ```
 
-> Pro tip: when you open the rica.html for the first time, BOOKMARK IT 😉
+> Pro tip: when you open rica.html for the first time, BOOKMARK IT 😉
 
 ## Getting involved
 
