@@ -96,6 +96,9 @@ function parseData(data) {
 }
 
 const options_kappa_rho = {
+  animation: {
+    duration: 0,
+  },
   plugins: {
     legend: {
       display: false,
@@ -142,6 +145,9 @@ const options_kappa_rho = {
 };
 
 const options_rho = {
+  animation: {
+    duration: 0,
+  },
   plugins: {
     legend: {
       display: false,
@@ -188,6 +194,9 @@ const options_rho = {
 };
 
 const options_kappa = {
+  animation: {
+    duration: 0,
+  },
   plugins: {
     legend: {
       display: false,
@@ -234,6 +243,9 @@ const options_kappa = {
 };
 
 const optionsPie = {
+  animation: {
+    duration: 0,
+  },
   responsive: true,
   maintainAspectRatio: true,
   plugins: {
