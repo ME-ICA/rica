@@ -5,11 +5,11 @@ import zoomPlugin from "chartjs-plugin-zoom";
 Chart.register(zoomPlugin); // REGISTER PLUGIN
 
 const acceptedColor = "#A8E3A5";
-const acceptedColorHover = "#82D77E";
+const acceptedColorHover = "#68AC64";
 const rejedtecColor = "#E99497";
-const rejedtecColorHover = "#E06A6E";
+const rejedtecColorHover = "#B35458";
 const ignoredColor = "#B5DEFF";
-const ignoredColorHover = "#82C7FF";
+const ignoredColorHover = "#689FCC";
 
 function parseData(data) {
   let kappa_rho = {
@@ -25,6 +25,7 @@ function parseData(data) {
         borderWidth: 1,
         fill: false,
         data: data.map((e) => ({ x: e.rho, y: e.kappa, label: e.Component })),
+        classification: data.map((e) => e.classification),
       },
     ],
   };
@@ -46,6 +47,7 @@ function parseData(data) {
           y: e.rho,
           label: e.Component,
         })),
+        classification: data.map((e) => e.classification),
       },
     ],
   };
@@ -67,6 +69,7 @@ function parseData(data) {
           y: e.kappa,
           label: e.Component,
         })),
+        classification: data.map((e) => e.classification),
       },
     ],
   };
@@ -88,6 +91,7 @@ function parseData(data) {
         hoverBackgroundColor: data.map((e) => e.colorHover),
         borderWidth: 0.5,
         data: data.map((e) => e["variance explained"]),
+        classification: data.map((e) => e.classification),
       },
     ],
   };
@@ -290,41 +294,84 @@ function assignColor(data) {
   }
 }
 
+function resetColors(data, isPie) {
+  for (var i = 0; i < data.labels.length; i++) {
+    if (data.datasets[0].classification[i] === "accepted") {
+      if (isPie) {
+        data.datasets[0].backgroundColor[i] = acceptedColor;
+      } else {
+        data.datasets[0].pointBackgroundColor[i] = acceptedColor;
+      }
+    } else if (data.datasets[0].classification[i] === "rejected") {
+      if (isPie) {
+        data.datasets[0].backgroundColor[i] = rejedtecColor;
+      } else {
+        data.datasets[0].pointBackgroundColor[i] = rejedtecColor;
+      }
+    } else if (data.datasets[0].classification[i] === "ignored") {
+      if (isPie) {
+        data.datasets[0].backgroundColor[i] = ignoredColor;
+      } else {
+        data.datasets[0].pointBackgroundColor[i] = ignoredColor;
+      }
+    }
+  }
+}
 class Plots extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       clickedElement: "",
+      kappaRho: [],
+      variance: [],
+      kappa: [],
+      rho: [],
     };
   }
 
-  render() {
-    // const getDatasetAtEvent = (dataset) => {
-    //   if (!dataset.length) return;
-
-    //   const datasetIndex = dataset[0].datasetIndex;
-    //   // setClickedDataset(data.datasets[datasetIndex].label);
-    // };
-
-    // Component data
-    const compData = this.props.componentData[0];
+  componentDidMount() {
+    var compData = this.props.componentData[0];
     assignColor(compData);
-    let parsed_data = parseData(compData);
-    let kappa_rho = parsed_data[0];
-    let variance = parsed_data[1];
-    let kappa = parsed_data[2];
-    let rho = parsed_data[3];
+    var parsed_data = parseData(compData);
+    this.setState({ kappaRho: parsed_data[0] });
+    this.setState({ variance: parsed_data[1] });
+    this.setState({ kappa: parsed_data[2] });
+    this.setState({ rho: parsed_data[3] });
+  }
 
-    // Component figures
-
+  render() {
     const getElementAtEvent = (element) => {
       if (!element.length) return;
 
       const { datasetIndex, index } = element[0];
-      // let componentClassification = variance.datasets[datasetIndex].label[index];
+
+      // Set hover color as background to show selection
+      var variance = { ...this.state.variance };
+      resetColors(variance, true);
+      variance.datasets[0].backgroundColor[index] =
+        variance.datasets[0].hoverBackgroundColor[index];
+      this.setState({ variance: variance });
+
+      var kappaRho = { ...this.state.kappaRho };
+      resetColors(kappaRho, false);
+      kappaRho.datasets[0].pointBackgroundColor[index] =
+        kappaRho.datasets[0].pointHoverBackgroundColor[index];
+      this.setState({ kappaRho: kappaRho });
+
+      var kappa = { ...this.state.kappa };
+      resetColors(kappa, false);
+      kappa.datasets[0].pointBackgroundColor[index] =
+        kappa.datasets[0].pointHoverBackgroundColor[index];
+      this.setState({ kappa: kappa });
+
+      var rho = { ...this.state.rho };
+      resetColors(rho, false);
+      rho.datasets[0].pointBackgroundColor[index] =
+        rho.datasets[0].pointHoverBackgroundColor[index];
+      this.setState({ rho: rho });
 
       // Get component name of selected component
-      var compName = variance.labels[index].match(/\d/g);
+      var compName = this.state.variance.labels[index].match(/\d/g);
       compName = compName.join("");
       compName = `comp_0${compName}.png`;
 
@@ -337,19 +384,13 @@ class Plots extends React.Component {
       }
     };
 
-    // const getElementsAtEvent = (elements) => {
-    //   if (!elements.length) return;
-
-    //   // setClickedElements(elements.length);
-    // };
-
     return (
       <center>
         <div className="plot-container-out">
           <div className="plot-container-in">
             <div className="plot-box">
               <Line
-                data={kappa_rho}
+                data={this.state.kappaRho}
                 height={400}
                 width={400}
                 options={options_kappa_rho}
@@ -360,7 +401,7 @@ class Plots extends React.Component {
             </div>
             <div className="plot-box">
               <Pie
-                data={variance}
+                data={this.state.variance}
                 height={20}
                 width={20}
                 options={optionsPie}
@@ -371,7 +412,7 @@ class Plots extends React.Component {
             </div>
             <div className="plot-box">
               <Line
-                data={rho}
+                data={this.state.rho}
                 height={400}
                 width={400}
                 options={options_rho}
@@ -382,7 +423,7 @@ class Plots extends React.Component {
             </div>
             <div className="plot-box">
               <Line
-                data={kappa}
+                data={this.state.kappa}
                 height={400}
                 width={400}
                 options={options_kappa}
