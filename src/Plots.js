@@ -372,7 +372,7 @@ class Plots extends React.Component {
     var kappa = { ...this.state.kappa };
     var rho = { ...this.state.rho };
     componentIndex = kappaRho.labels.indexOf(this.state.selectedLabel);
-
+    console.log(kappaRho);
     kappaRho.datasets[0].classification[componentIndex] = val;
     kappa.datasets[0].classification[componentIndex] = val;
     rho.datasets[0].classification[componentIndex] = val;
@@ -382,37 +382,48 @@ class Plots extends React.Component {
         acceptedColorHover;
       kappaRho.datasets[0].pointHoverBackgroundColor[componentIndex] =
         acceptedColorHover;
+      kappaRho.datasets[0].pointBorderColor[componentIndex] =
+        acceptedColorHover;
       kappa.datasets[0].pointBackgroundColor[componentIndex] =
         acceptedColorHover;
       kappa.datasets[0].pointHoverBackgroundColor[componentIndex] =
         acceptedColorHover;
+      kappa.datasets[0].pointBorderColor[componentIndex] = acceptedColorHover;
       rho.datasets[0].pointBackgroundColor[componentIndex] = acceptedColorHover;
       rho.datasets[0].pointHoverBackgroundColor[componentIndex] =
         acceptedColorHover;
+      rho.datasets[0].pointBorderColor[componentIndex] = acceptedColorHover;
     } else if (val === "rejected") {
       kappaRho.datasets[0].pointBackgroundColor[componentIndex] =
         rejedtecColorHover;
       kappaRho.datasets[0].pointHoverBackgroundColor[componentIndex] =
         rejedtecColorHover;
+      kappaRho.datasets[0].pointBorderColor[componentIndex] =
+        rejedtecColorHover;
       kappa.datasets[0].pointBackgroundColor[componentIndex] =
         rejedtecColorHover;
       kappa.datasets[0].pointHoverBackgroundColor[componentIndex] =
         rejedtecColorHover;
+      kappa.datasets[0].pointBorderColor[componentIndex] = rejedtecColorHover;
       rho.datasets[0].pointBackgroundColor[componentIndex] = rejedtecColorHover;
       rho.datasets[0].pointHoverBackgroundColor[componentIndex] =
         rejedtecColorHover;
+      rho.datasets[0].pointBorderColor[componentIndex] = rejedtecColorHover;
     } else if (val === "ignored") {
       kappaRho.datasets[0].pointBackgroundColor[componentIndex] =
         ignoredColorHover;
       kappaRho.datasets[0].pointHoverBackgroundColor[componentIndex] =
         ignoredColorHover;
+      kappaRho.datasets[0].pointBorderColor[componentIndex] = ignoredColorHover;
       kappa.datasets[0].pointBackgroundColor[componentIndex] =
         ignoredColorHover;
       kappa.datasets[0].pointHoverBackgroundColor[componentIndex] =
         ignoredColorHover;
+      kappa.datasets[0].pointBorderColor[componentIndex] = ignoredColorHover;
       rho.datasets[0].pointBackgroundColor[componentIndex] = ignoredColorHover;
       rho.datasets[0].pointHoverBackgroundColor[componentIndex] =
         ignoredColorHover;
+      rho.datasets[0].pointBorderColor[componentIndex] = ignoredColorHover;
     }
 
     this.setState({ kappaRho: kappaRho });
@@ -446,17 +457,23 @@ class Plots extends React.Component {
       resetColors(kappaRho, false);
       kappaRho.datasets[0].pointBackgroundColor[scatterIndex] =
         kappaRho.datasets[0].pointHoverBackgroundColor[scatterIndex];
+      kappaRho.datasets[0].pointBorderColor[scatterIndex] =
+        kappaRho.datasets[0].pointHoverBackgroundColor[scatterIndex];
       this.setState({ kappaRho: kappaRho });
 
       var kappa = { ...this.state.kappa };
       resetColors(kappa, false);
       kappa.datasets[0].pointBackgroundColor[scatterIndex] =
         kappa.datasets[0].pointHoverBackgroundColor[scatterIndex];
+      kappa.datasets[0].pointBorderColor[scatterIndex] =
+        kappa.datasets[0].pointHoverBackgroundColor[scatterIndex];
       this.setState({ kappa: kappa });
 
       var rho = { ...this.state.rho };
       resetColors(rho, false);
       rho.datasets[0].pointBackgroundColor[scatterIndex] =
+        rho.datasets[0].pointHoverBackgroundColor[scatterIndex];
+      rho.datasets[0].pointBorderColor[scatterIndex] =
         rho.datasets[0].pointHoverBackgroundColor[scatterIndex];
       this.setState({ rho: rho });
 
@@ -484,6 +501,8 @@ class Plots extends React.Component {
       resetColors(kappaRho, false);
       kappaRho.datasets[0].pointBackgroundColor[index] =
         kappaRho.datasets[0].pointHoverBackgroundColor[index];
+      kappaRho.datasets[0].pointBorderColor[index] =
+        kappaRho.datasets[0].pointHoverBackgroundColor[index];
       this.setState({ kappaRho: kappaRho });
       var selectedLabel = kappaRho.labels[index];
       this.setState({ selectedLabel: selectedLabel });
@@ -498,11 +517,15 @@ class Plots extends React.Component {
       resetColors(kappa, false);
       kappa.datasets[0].pointBackgroundColor[index] =
         kappa.datasets[0].pointHoverBackgroundColor[index];
+      kappa.datasets[0].pointBorderColor[index] =
+        kappa.datasets[0].pointHoverBackgroundColor[index];
       this.setState({ kappa: kappa });
 
       var rho = { ...this.state.rho };
       resetColors(rho, false);
       rho.datasets[0].pointBackgroundColor[index] =
+        rho.datasets[0].pointHoverBackgroundColor[index];
+      rho.datasets[0].pointBorderColor[index] =
         rho.datasets[0].pointHoverBackgroundColor[index];
       this.setState({ rho: rho });
 
