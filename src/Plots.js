@@ -302,18 +302,21 @@ function resetColors(data, isPie) {
         data.datasets[0].backgroundColor[i] = acceptedColor;
       } else {
         data.datasets[0].pointBackgroundColor[i] = acceptedColor;
+        data.datasets[0].pointBorderColor[i] = acceptedColor;
       }
     } else if (data.datasets[0].classification[i] === "rejected") {
       if (isPie) {
         data.datasets[0].backgroundColor[i] = rejedtecColor;
       } else {
         data.datasets[0].pointBackgroundColor[i] = rejedtecColor;
+        data.datasets[0].pointBorderColor[i] = rejedtecColor;
       }
     } else if (data.datasets[0].classification[i] === "ignored") {
       if (isPie) {
         data.datasets[0].backgroundColor[i] = ignoredColor;
       } else {
         data.datasets[0].pointBackgroundColor[i] = ignoredColor;
+        data.datasets[0].pointBorderColor[i] = ignoredColor;
       }
     }
   }
