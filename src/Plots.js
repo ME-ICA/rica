@@ -1,6 +1,7 @@
 import React from "react";
 import { Line, Pie, Chart } from "react-chartjs-2";
 import zoomPlugin from "chartjs-plugin-zoom";
+import ToggleSwitch from "./ToggleSwitch";
 
 Chart.register(zoomPlugin); // REGISTER PLUGIN
 
@@ -327,6 +328,8 @@ class Plots extends React.Component {
       kappa: [],
       rho: [],
       selectedLabel: 0,
+      selectedColor: { acceptedColor },
+      selectedClassification: "accepted",
     };
   }
 
@@ -354,6 +357,12 @@ class Plots extends React.Component {
       this.setState({ variance: variance });
       var selectedLabel = variance.labels[index];
       this.setState({ selectedLabel: selectedLabel });
+      this.setState({
+        selectedColor: variance.datasets[0].hoverBackgroundColor[index],
+      });
+      this.setState({
+        selectedClassification: variance.datasets[0].classification[index],
+      });
 
       var kappaRho = { ...this.state.kappaRho };
       var scatterIndex = kappaRho.labels.indexOf(selectedLabel);
@@ -401,6 +410,12 @@ class Plots extends React.Component {
       this.setState({ kappaRho: kappaRho });
       var selectedLabel = kappaRho.labels[index];
       this.setState({ selectedLabel: selectedLabel });
+      this.setState({
+        selectedColor: kappaRho.datasets[0].pointHoverBackgroundColor[index],
+      });
+      this.setState({
+        selectedClassification: kappaRho.datasets[0].classification[index],
+      });
 
       var kappa = { ...this.state.kappa };
       resetColors(kappa, false);
@@ -435,16 +450,15 @@ class Plots extends React.Component {
       }
     };
 
-    // const getElementsAtEvent = (elements) => {
-    //   console.log(elements);
-    // };
-
-    // const getDatasetAtEvent = (elements) => {
-    //   console.log(elements);
-    // };
-
     return (
       <center>
+        <div className="toggle-container">
+          <ToggleSwitch
+            values={["accepted", "rejected", "ignored"]}
+            selected={this.state.selectedClassification}
+            colors={[acceptedColorHover, rejedtecColorHover, ignoredColorHover]}
+          />
+        </div>
         <div className="plot-container-out">
           <div className="plot-container-in">
             <div className="plot-box">
@@ -453,9 +467,7 @@ class Plots extends React.Component {
                 height={400}
                 width={400}
                 options={options_kappa_rho}
-                // getDatasetAtEvent={getDatasetAtEvent}
                 getElementAtEvent={getScatterElementAtEvent}
-                // getElementsAtEvent={getElementsAtEvent}
               />
             </div>
             <div className="plot-box">
@@ -464,9 +476,7 @@ class Plots extends React.Component {
                 height={20}
                 width={20}
                 options={optionsPie}
-                // getDatasetAtEvent={getDatasetAtEvent}
                 getElementAtEvent={getPieElementAtEvent}
-                // getElementsAtEvent={getElementsAtEvent}
               />
             </div>
             <div className="plot-box">
@@ -475,9 +485,7 @@ class Plots extends React.Component {
                 height={400}
                 width={400}
                 options={options_rho}
-                // getDatasetAtEvent={getDatasetAtEvent}
                 getElementAtEvent={getScatterElementAtEvent}
-                // getElementsAtEvent={getElementsAtEvent}
               />
             </div>
             <div className="plot-box">
@@ -486,9 +494,7 @@ class Plots extends React.Component {
                 height={400}
                 width={400}
                 options={options_kappa}
-                // getDatasetAtEvent={getDatasetAtEvent}
                 getElementAtEvent={getScatterElementAtEvent}
-                // getElementsAtEvent={getElementsAtEvent}
               />
             </div>
           </div>

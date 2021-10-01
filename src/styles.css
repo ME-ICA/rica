@@ -376,3 +376,9 @@ input[type="file"] {
   text-decoration: none;
   color: white;
 }
+
+/* Toggle switch */
+
+.toggle-container {
+  margin: 20px 0;
+}
