@@ -343,6 +343,83 @@ class Plots extends React.Component {
     this.setState({ rho: parsed_data[3] });
   }
 
+  handleNewSelection(val) {
+    var variance = { ...this.state.variance };
+    var componentIndex = variance.labels.indexOf(this.state.selectedLabel);
+    variance.datasets[0].classification[componentIndex] = val;
+
+    if (val === "accepted") {
+      variance.datasets[0].backgroundColor[componentIndex] = acceptedColorHover;
+      variance.datasets[0].hoverBackgroundColor[componentIndex] =
+        acceptedColorHover;
+      this.setState({ selectedColor: acceptedColor });
+    } else if (val === "rejected") {
+      variance.datasets[0].backgroundColor[componentIndex] = rejedtecColorHover;
+      variance.datasets[0].hoverBackgroundColor[componentIndex] =
+        rejedtecColorHover;
+      this.setState({ selectedColor: rejedtecColor });
+    } else if (val === "ignored") {
+      variance.datasets[0].backgroundColor[componentIndex] = ignoredColorHover;
+      variance.datasets[0].hoverBackgroundColor[componentIndex] =
+        ignoredColorHover;
+      this.setState({ selectedColor: ignoredColor });
+    }
+
+    this.setState({ variance: variance });
+    this.setState({ selectedClassification: val });
+
+    var kappaRho = { ...this.state.kappaRho };
+    var kappa = { ...this.state.kappa };
+    var rho = { ...this.state.rho };
+    componentIndex = kappaRho.labels.indexOf(this.state.selectedLabel);
+
+    kappaRho.datasets[0].classification[componentIndex] = val;
+    kappa.datasets[0].classification[componentIndex] = val;
+    rho.datasets[0].classification[componentIndex] = val;
+
+    if (val === "accepted") {
+      kappaRho.datasets[0].pointBackgroundColor[componentIndex] =
+        acceptedColorHover;
+      kappaRho.datasets[0].pointHoverBackgroundColor[componentIndex] =
+        acceptedColorHover;
+      kappa.datasets[0].pointBackgroundColor[componentIndex] =
+        acceptedColorHover;
+      kappa.datasets[0].pointHoverBackgroundColor[componentIndex] =
+        acceptedColorHover;
+      rho.datasets[0].pointBackgroundColor[componentIndex] = acceptedColorHover;
+      rho.datasets[0].pointHoverBackgroundColor[componentIndex] =
+        acceptedColorHover;
+    } else if (val === "rejected") {
+      kappaRho.datasets[0].pointBackgroundColor[componentIndex] =
+        rejedtecColorHover;
+      kappaRho.datasets[0].pointHoverBackgroundColor[componentIndex] =
+        rejedtecColorHover;
+      kappa.datasets[0].pointBackgroundColor[componentIndex] =
+        rejedtecColorHover;
+      kappa.datasets[0].pointHoverBackgroundColor[componentIndex] =
+        rejedtecColorHover;
+      rho.datasets[0].pointBackgroundColor[componentIndex] = rejedtecColorHover;
+      rho.datasets[0].pointHoverBackgroundColor[componentIndex] =
+        rejedtecColorHover;
+    } else if (val === "ignored") {
+      kappaRho.datasets[0].pointBackgroundColor[componentIndex] =
+        ignoredColorHover;
+      kappaRho.datasets[0].pointHoverBackgroundColor[componentIndex] =
+        ignoredColorHover;
+      kappa.datasets[0].pointBackgroundColor[componentIndex] =
+        ignoredColorHover;
+      kappa.datasets[0].pointHoverBackgroundColor[componentIndex] =
+        ignoredColorHover;
+      rho.datasets[0].pointBackgroundColor[componentIndex] = ignoredColorHover;
+      rho.datasets[0].pointHoverBackgroundColor[componentIndex] =
+        ignoredColorHover;
+    }
+
+    this.setState({ kappaRho: kappaRho });
+    this.setState({ kappa: kappa });
+    this.setState({ rho: rho });
+  }
+
   render() {
     const getPieElementAtEvent = (element) => {
       if (!element.length) return;
@@ -457,6 +534,7 @@ class Plots extends React.Component {
             values={["accepted", "rejected", "ignored"]}
             selected={this.state.selectedClassification}
             colors={[acceptedColorHover, rejedtecColorHover, ignoredColorHover]}
+            handleNewSelection={this.handleNewSelection.bind(this)}
           />
         </div>
         <div className="plot-container-out">

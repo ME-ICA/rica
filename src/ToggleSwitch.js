@@ -29,11 +29,12 @@ class ToggleSwitch extends Component {
       selected: this.props.selected,
     };
   }
-  // state = {  };
 
-  handleChange = (val) => {
-    this.setState({ selected: val });
-  };
+  componentDidUpdate() {
+    if (this.state.selected !== this.props.selected) {
+      this.setState({ selected: this.props.selected });
+    }
+  }
 
   selectionStyle = () => {
     return {
@@ -44,12 +45,6 @@ class ToggleSwitch extends Component {
     };
   };
 
-  componentDidUpdate() {
-    if (this.state.selected !== this.props.selected) {
-      this.setState({ selected: this.props.selected });
-    }
-  }
-
   render() {
     return (
       <Switch>
@@ -57,7 +52,10 @@ class ToggleSwitch extends Component {
           return (
             <span>
               <ConcealedRadio value={val} selected={this.state.selected} />
-              <ClickableLabel title={val} onChange={this.handleChange} />
+              <ClickableLabel
+                title={val}
+                onChange={this.props.handleNewSelection}
+              />
             </span>
           );
         })}
