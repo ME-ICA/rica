@@ -326,6 +326,7 @@ class Plots extends React.Component {
       variance: [],
       kappa: [],
       rho: [],
+      selectedLabel: 0,
     };
   }
 
@@ -340,7 +341,7 @@ class Plots extends React.Component {
   }
 
   render() {
-    const getElementAtEvent = (element) => {
+    const getPieElementAtEvent = (element) => {
       if (!element.length) return;
 
       const { datasetIndex, index } = element[0];
@@ -351,23 +352,26 @@ class Plots extends React.Component {
       variance.datasets[0].backgroundColor[index] =
         variance.datasets[0].hoverBackgroundColor[index];
       this.setState({ variance: variance });
+      var selectedLabel = variance.labels[index];
+      this.setState({ selectedLabel: selectedLabel });
 
       var kappaRho = { ...this.state.kappaRho };
+      var scatterIndex = kappaRho.labels.indexOf(selectedLabel);
       resetColors(kappaRho, false);
-      kappaRho.datasets[0].pointBackgroundColor[index] =
-        kappaRho.datasets[0].pointHoverBackgroundColor[index];
+      kappaRho.datasets[0].pointBackgroundColor[scatterIndex] =
+        kappaRho.datasets[0].pointHoverBackgroundColor[scatterIndex];
       this.setState({ kappaRho: kappaRho });
 
       var kappa = { ...this.state.kappa };
       resetColors(kappa, false);
-      kappa.datasets[0].pointBackgroundColor[index] =
-        kappa.datasets[0].pointHoverBackgroundColor[index];
+      kappa.datasets[0].pointBackgroundColor[scatterIndex] =
+        kappa.datasets[0].pointHoverBackgroundColor[scatterIndex];
       this.setState({ kappa: kappa });
 
       var rho = { ...this.state.rho };
       resetColors(rho, false);
-      rho.datasets[0].pointBackgroundColor[index] =
-        rho.datasets[0].pointHoverBackgroundColor[index];
+      rho.datasets[0].pointBackgroundColor[scatterIndex] =
+        rho.datasets[0].pointHoverBackgroundColor[scatterIndex];
       this.setState({ rho: rho });
 
       // Get component name of selected component
@@ -384,6 +388,61 @@ class Plots extends React.Component {
       }
     };
 
+    const getScatterElementAtEvent = (element) => {
+      if (!element.length) return;
+
+      const { datasetIndex, index } = element[0];
+
+      // Set hover color as background to show selection
+      var kappaRho = { ...this.state.kappaRho };
+      resetColors(kappaRho, false);
+      kappaRho.datasets[0].pointBackgroundColor[index] =
+        kappaRho.datasets[0].pointHoverBackgroundColor[index];
+      this.setState({ kappaRho: kappaRho });
+      var selectedLabel = kappaRho.labels[index];
+      this.setState({ selectedLabel: selectedLabel });
+
+      var kappa = { ...this.state.kappa };
+      resetColors(kappa, false);
+      kappa.datasets[0].pointBackgroundColor[index] =
+        kappa.datasets[0].pointHoverBackgroundColor[index];
+      this.setState({ kappa: kappa });
+
+      var rho = { ...this.state.rho };
+      resetColors(rho, false);
+      rho.datasets[0].pointBackgroundColor[index] =
+        rho.datasets[0].pointHoverBackgroundColor[index];
+      this.setState({ rho: rho });
+
+      var variance = { ...this.state.variance };
+      var pieIndex = kappaRho.labels.indexOf(selectedLabel);
+      resetColors(variance, true);
+      variance.datasets[0].backgroundColor[pieIndex] =
+        variance.datasets[0].hoverBackgroundColor[pieIndex];
+      this.setState({ variance: variance });
+
+      // Get component name of selected component
+      var compName = this.state.variance.labels[index].match(/\d/g);
+      compName = compName.join("");
+      compName = `comp_0${compName}.png`;
+
+      // iterate over each element in the array to retrieve image of selected component based on name
+      for (var i = 0; i < this.props.componentFigures.length; i++) {
+        // look for the entry with a matching `compName` value
+        if (this.props.componentFigures[i].name == compName) {
+          this.setState({ clickedElement: this.props.componentFigures[i].img });
+        }
+      }
+    };
+
+    // const getElementsAtEvent = (elements) => {
+    //   console.log(elements);
+    // };
+
+    // const getDatasetAtEvent = (elements) => {
+    //   console.log(elements);
+    // };
+
     return (
       <center>
         <div className="plot-container-out">
@@ -395,7 +454,7 @@ class Plots extends React.Component {
                 width={400}
                 options={options_kappa_rho}
                 // getDatasetAtEvent={getDatasetAtEvent}
-                getElementAtEvent={getElementAtEvent}
+                getElementAtEvent={getScatterElementAtEvent}
                 // getElementsAtEvent={getElementsAtEvent}
               />
             </div>
@@ -406,7 +465,7 @@ class Plots extends React.Component {
                 width={20}
                 options={optionsPie}
                 // getDatasetAtEvent={getDatasetAtEvent}
-                getElementAtEvent={getElementAtEvent}
+                getElementAtEvent={getPieElementAtEvent}
                 // getElementsAtEvent={getElementsAtEvent}
               />
             </div>
@@ -417,7 +476,7 @@ class Plots extends React.Component {
                 width={400}
                 options={options_rho}
                 // getDatasetAtEvent={getDatasetAtEvent}
-                getElementAtEvent={getElementAtEvent}
+                getElementAtEvent={getScatterElementAtEvent}
                 // getElementsAtEvent={getElementsAtEvent}
               />
             </div>
@@ -428,7 +487,7 @@ class Plots extends React.Component {
                 width={400}
                 options={options_kappa}
                 // getDatasetAtEvent={getDatasetAtEvent}
-                getElementAtEvent={getElementAtEvent}
+                getElementAtEvent={getScatterElementAtEvent}
                 // getElementsAtEvent={getElementsAtEvent}
               />
             </div>
