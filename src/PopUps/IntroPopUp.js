@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import UploadFolder from "./UploadFolder";
+import UploadFolder from "../UploadFolder";
 
 class IntroPopup extends Component {
   render() {
