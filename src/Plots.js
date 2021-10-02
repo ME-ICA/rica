@@ -2,6 +2,7 @@ import React from "react";
 import { Line, Pie, Chart } from "react-chartjs-2";
 import zoomPlugin from "chartjs-plugin-zoom";
 import ToggleSwitch from "./ToggleSwitch";
+import ResetAndSave from "./ResetAndSave";
 import {
   options_kappa_rho,
   options_kappa,
@@ -40,8 +41,8 @@ class Plots extends React.Component {
     };
   }
 
-  // Only read data on the first render of the Plots page
-  componentDidMount() {
+  // Parse the original data provided by the user into the necessary 4 objects
+  readOriginalData() {
     var compData = this.props.componentData[0];
     assignColor(compData);
     var parsed_data = parseData(compData);
@@ -51,51 +52,51 @@ class Plots extends React.Component {
     this.setState({ rho: parsed_data[3] });
   }
 
+  // Only read data on the first render of the Plots page
+  componentDidMount() {
+    this.readOriginalData();
+  }
+
   // Update all attributes of a manually classified component on all 4 plots
   handleNewSelection(val) {
     var variance = { ...this.state.variance };
-    var componentIndex = variance.labels.indexOf(this.state.selectedLabel);
-    variance.datasets[0].classification[componentIndex] = val;
+    var kappaRho = { ...this.state.kappaRho };
+    var kappa = { ...this.state.kappa };
+    var rho = { ...this.state.rho };
+
+    var pieIndex = variance.labels.indexOf(this.state.selectedLabel);
+    variance.datasets[0].classification[pieIndex] = val;
+
+    var scatterIndex = kappaRho.labels.indexOf(this.state.selectedLabel);
+    kappaRho.datasets[0].classification[scatterIndex] = val;
+    kappa.datasets[0].classification[scatterIndex] = val;
+    rho.datasets[0].classification[scatterIndex] = val;
 
     if (val === "accepted") {
-      updatePieColors(variance, componentIndex, acceptedColorHover, true);
+      updatePieColors(variance, pieIndex, acceptedColorHover, true);
+      updateScatterColors(kappaRho, scatterIndex, acceptedColorHover, true);
+      updateScatterColors(kappa, scatterIndex, acceptedColorHover, true);
+      updateScatterColors(rho, scatterIndex, acceptedColorHover, true);
       this.setState({ selectedColor: acceptedColor });
     } else if (val === "rejected") {
-      updatePieColors(variance, componentIndex, rejedtecColorHover, true);
+      updatePieColors(variance, pieIndex, rejedtecColorHover, true);
+      updateScatterColors(kappaRho, scatterIndex, rejedtecColorHover, true);
+      updateScatterColors(kappa, scatterIndex, rejedtecColorHover, true);
+      updateScatterColors(rho, scatterIndex, rejedtecColorHover, true);
       this.setState({ selectedColor: rejedtecColor });
     } else if (val === "ignored") {
-      updatePieColors(variance, componentIndex, ignoredColorHover, true);
+      updatePieColors(variance, pieIndex, ignoredColorHover, true);
+      updateScatterColors(kappaRho, scatterIndex, ignoredColorHover, true);
+      updateScatterColors(kappa, scatterIndex, ignoredColorHover, true);
+      updateScatterColors(rho, scatterIndex, ignoredColorHover, true);
       this.setState({ selectedColor: ignoredColor });
     }
 
     this.setState({ variance: variance });
-    this.setState({ selectedClassification: val });
-
-    var kappaRho = { ...this.state.kappaRho };
-    var kappa = { ...this.state.kappa };
-    var rho = { ...this.state.rho };
-    componentIndex = kappaRho.labels.indexOf(this.state.selectedLabel);
-    kappaRho.datasets[0].classification[componentIndex] = val;
-    kappa.datasets[0].classification[componentIndex] = val;
-    rho.datasets[0].classification[componentIndex] = val;
-
-    if (val === "accepted") {
-      updateScatterColors(kappaRho, componentIndex, acceptedColorHover, true);
-      updateScatterColors(kappa, componentIndex, acceptedColorHover, true);
-      updateScatterColors(rho, componentIndex, acceptedColorHover, true);
-    } else if (val === "rejected") {
-      updateScatterColors(kappaRho, componentIndex, rejedtecColorHover, true);
-      updateScatterColors(kappa, componentIndex, rejedtecColorHover, true);
-      updateScatterColors(rho, componentIndex, rejedtecColorHover, true);
-    } else if (val === "ignored") {
-      updateScatterColors(kappaRho, componentIndex, ignoredColorHover, true);
-      updateScatterColors(kappa, componentIndex, ignoredColorHover, true);
-      updateScatterColors(rho, componentIndex, ignoredColorHover, true);
-    }
-
     this.setState({ kappaRho: kappaRho });
     this.setState({ kappa: kappa });
     this.setState({ rho: rho });
+    this.setState({ selectedClassification: val });
   }
 
   render() {
@@ -201,6 +202,7 @@ class Plots extends React.Component {
             handleNewSelection={this.handleNewSelection.bind(this)}
           />
         </div>
+        <ResetAndSave handleReset={this.readOriginalData.bind(this)} />
         <div className="plot-container-out">
           <div className="plot-container-in">
             <div className="plot-box">

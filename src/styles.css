@@ -81,9 +81,7 @@ body {
   z-index: 5;
   width: 100%;
   padding: 0;
-}
-
-.tab_box {
+  border-bottom: 1px solid var(--uiBorderColor);
 }
 
 .tab-icon {
@@ -93,7 +91,6 @@ body {
 ul {
   display: flex;
   justify-content: center;
-  border-bottom: 1px solid var(--uiBorderColor);
 }
 
 ul.inline {
@@ -381,4 +378,20 @@ input[type="file"] {
 
 .toggle-container {
   margin: 20px 0;
+  display: inline-block;
+}
+
+/* Reset and Save buttons */
+.plot_tab_container {
+  display: inline-block;
+  margin-left: 75px;
+  position: absolute;
+  margin-top: 15px;
+}
+
+.plot_tab_box {
+  display: inline-block;
+  /* margin-left: 75px;
+  position: absolute;
+  margin-top: 15px; */
 }
