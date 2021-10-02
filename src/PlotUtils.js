@@ -95,6 +95,7 @@ export function parseData(data) {
   return [kappa_rho, variance, kappa, rho];
 }
 
+// This function assigns a color to all components in the data based on the classification
 export function assignColor(data) {
   for (var i = 0; i < data.length; i++) {
     if (data[i].classification === "accepted") {
@@ -110,6 +111,7 @@ export function assignColor(data) {
   }
 }
 
+// This function resets the color of a selected component (hover) into that of a non-selected component
 export function resetColors(data, isPie) {
   for (var i = 0; i < data.labels.length; i++) {
     if (data.datasets[0].classification[i] === "accepted") {
@@ -137,6 +139,7 @@ export function resetColors(data, isPie) {
   }
 }
 
+// This function updates the colors on the Pie chart when a component is selected and/or manually classified
 export function updatePieColors(data, index, color, isNew) {
   data.datasets[0].backgroundColor[index] = color;
   if (isNew) {
@@ -144,6 +147,7 @@ export function updatePieColors(data, index, color, isNew) {
   }
 }
 
+// This function updates the colors on the given Scatter chart when a component is selected and/or manually classified
 export function updateScatterColors(data, index, color, isNew) {
   data.datasets[0].pointBackgroundColor[index] = color;
   data.datasets[0].pointBorderColor[index] = color;
@@ -152,6 +156,7 @@ export function updateScatterColors(data, index, color, isNew) {
   }
 }
 
+// This function resets the colors of the given chart back to a non-selected state, and applies the new selection color
 export function resetAndUpdateColors(data, index, isVariance) {
   if (isVariance) {
     resetColors(data, isVariance);

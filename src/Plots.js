@@ -40,6 +40,7 @@ class Plots extends React.Component {
     };
   }
 
+  // Only read data on the first render of the Plots page
   componentDidMount() {
     var compData = this.props.componentData[0];
     assignColor(compData);
@@ -50,6 +51,7 @@ class Plots extends React.Component {
     this.setState({ rho: parsed_data[3] });
   }
 
+  // Update all attributes of a manually classified component on all 4 plots
   handleNewSelection(val) {
     var variance = { ...this.state.variance };
     var componentIndex = variance.labels.indexOf(this.state.selectedLabel);
@@ -73,7 +75,6 @@ class Plots extends React.Component {
     var kappa = { ...this.state.kappa };
     var rho = { ...this.state.rho };
     componentIndex = kappaRho.labels.indexOf(this.state.selectedLabel);
-    console.log(kappaRho);
     kappaRho.datasets[0].classification[componentIndex] = val;
     kappa.datasets[0].classification[componentIndex] = val;
     rho.datasets[0].classification[componentIndex] = val;
@@ -87,9 +88,9 @@ class Plots extends React.Component {
       updateScatterColors(kappa, componentIndex, rejedtecColorHover, true);
       updateScatterColors(rho, componentIndex, rejedtecColorHover, true);
     } else if (val === "ignored") {
-      updateScatterColors(kappaRho, componentIndex, rejedtecColorHover, true);
-      updateScatterColors(kappa, componentIndex, rejedtecColorHover, true);
-      updateScatterColors(rho, componentIndex, rejedtecColorHover, true);
+      updateScatterColors(kappaRho, componentIndex, ignoredColorHover, true);
+      updateScatterColors(kappa, componentIndex, ignoredColorHover, true);
+      updateScatterColors(rho, componentIndex, ignoredColorHover, true);
     }
 
     this.setState({ kappaRho: kappaRho });
@@ -98,6 +99,7 @@ class Plots extends React.Component {
   }
 
   render() {
+    // Handle onClick events on the Pie chart
     const getPieElementAtEvent = (element) => {
       if (!element.length) return;
 
@@ -143,6 +145,7 @@ class Plots extends React.Component {
       }
     };
 
+    // Handle onClick events on the Scatter charts
     const getScatterElementAtEvent = (element) => {
       if (!element.length) return;
 
@@ -170,7 +173,7 @@ class Plots extends React.Component {
       this.setState({ rho: rho });
 
       var variance = { ...this.state.variance };
-      var pieIndex = kappaRho.labels.indexOf(selectedLabel);
+      var pieIndex = variance.labels.indexOf(selectedLabel);
       resetAndUpdateColors(variance, pieIndex, true);
       this.setState({ variance: variance });
 
