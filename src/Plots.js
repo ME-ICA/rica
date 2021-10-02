@@ -2,6 +2,19 @@ import React from "react";
 import { Line, Pie, Chart } from "react-chartjs-2";
 import zoomPlugin from "chartjs-plugin-zoom";
 import ToggleSwitch from "./ToggleSwitch";
+import {
+  options_kappa_rho,
+  options_kappa,
+  options_rho,
+  optionsPie,
+} from "./PlotOptions";
+import {
+  parseData,
+  assignColor,
+  updatePieColors,
+  updateScatterColors,
+  resetAndUpdateColors,
+} from "./PlotUtils";
 
 Chart.register(zoomPlugin); // REGISTER PLUGIN
 
@@ -12,315 +25,6 @@ const rejedtecColorHover = "#B35458";
 const ignoredColor = "#B5DEFF";
 const ignoredColorHover = "#689FCC";
 
-function parseData(data) {
-  let kappa_rho = {
-    labels: data.map((e) => e.Component),
-    datasets: [
-      {
-        type: "scatter",
-        borderColor: "black",
-        pointBackgroundColor: data.map((e) => e.color),
-        pointHoverBackgroundColor: data.map((e) => e.colorHover),
-        pointBorderColor: data.map((e) => e.color),
-        pointRadius: 5,
-        borderWidth: 1,
-        fill: false,
-        data: data.map((e) => ({ x: e.rho, y: e.kappa, label: e.Component })),
-        classification: data.map((e) => e.classification),
-      },
-    ],
-  };
-
-  let rho = {
-    labels: data.map((e) => e.Component),
-    datasets: [
-      {
-        type: "scatter",
-        borderColor: "black",
-        pointBackgroundColor: data.map((e) => e.color),
-        pointHoverBackgroundColor: data.map((e) => e.colorHover),
-        pointBorderColor: data.map((e) => e.color),
-        pointRadius: 5,
-        borderWidth: 1,
-        fill: false,
-        data: data.map((e) => ({
-          x: e["rho rank"],
-          y: e.rho,
-          label: e.Component,
-        })),
-        classification: data.map((e) => e.classification),
-      },
-    ],
-  };
-
-  let kappa = {
-    labels: data.map((e) => e.Component),
-    datasets: [
-      {
-        type: "scatter",
-        borderColor: "black",
-        pointBackgroundColor: data.map((e) => e.color),
-        pointHoverBackgroundColor: data.map((e) => e.colorHover),
-        pointBorderColor: data.map((e) => e.color),
-        pointRadius: 5,
-        borderWidth: 1,
-        fill: false,
-        data: data.map((e) => ({
-          x: e["kappa rank"],
-          y: e.kappa,
-          label: e.Component,
-        })),
-        classification: data.map((e) => e.classification),
-      },
-    ],
-  };
-
-  data.sort(function (a, b) {
-    return (
-      a.classification.localeCompare(b.classification) ||
-      b["variance explained"] - a["variance explained"]
-    );
-  });
-
-  let variance = {
-    labels: data.map((e) => e.Component),
-    datasets: [
-      {
-        label: data.map((e) => e.classification),
-        borderColor: "black",
-        backgroundColor: data.map((e) => e.color),
-        hoverBackgroundColor: data.map((e) => e.colorHover),
-        borderWidth: 0.5,
-        data: data.map((e) => e["variance explained"]),
-        classification: data.map((e) => e.classification),
-      },
-    ],
-  };
-
-  return [kappa_rho, variance, kappa, rho];
-}
-
-const options_kappa_rho = {
-  animation: {
-    duration: 0,
-  },
-  plugins: {
-    legend: {
-      display: false,
-    },
-    title: {
-      display: true,
-      text: "Kappa / Rho Plot",
-      font: {
-        size: 20,
-        weight: "bold",
-      },
-    },
-    tooltip: {
-      callbacks: {
-        title: function (tooltipItem) {
-          return tooltipItem[0].raw.label;
-        },
-        label: function (tooltipItem) {
-          return (
-            Math.round((tooltipItem.parsed.y + Number.EPSILON) * 100) / 100
-          );
-        },
-      },
-    },
-    zoom: {
-      zoom: {
-        wheel: {
-          enabled: true,
-        },
-        pinch: {
-          enabled: true,
-        },
-        drag: {
-          enabled: true,
-        },
-        mode: "xy",
-      },
-      limits: {
-        x: { min: "original", max: "original" },
-        y: { min: "original", max: "original" },
-      },
-    },
-  },
-};
-
-const options_rho = {
-  animation: {
-    duration: 0,
-  },
-  plugins: {
-    legend: {
-      display: false,
-    },
-    title: {
-      display: true,
-      text: "Rho Rank",
-      font: {
-        size: 20,
-        weight: "bold",
-      },
-    },
-    tooltip: {
-      callbacks: {
-        title: function (tooltipItem) {
-          return tooltipItem[0].raw.label;
-        },
-        label: function (tooltipItem) {
-          return (
-            Math.round((tooltipItem.parsed.y + Number.EPSILON) * 100) / 100
-          );
-        },
-      },
-    },
-    zoom: {
-      zoom: {
-        wheel: {
-          enabled: true,
-        },
-        pinch: {
-          enabled: true,
-        },
-        drag: {
-          enabled: true,
-        },
-        mode: "xy",
-      },
-      limits: {
-        x: { min: "original", max: "original" },
-        y: { min: "original", max: "original" },
-      },
-    },
-  },
-};
-
-const options_kappa = {
-  animation: {
-    duration: 0,
-  },
-  plugins: {
-    legend: {
-      display: false,
-    },
-    title: {
-      display: true,
-      text: "Kappa Rank",
-      font: {
-        size: 20,
-        weight: "bold",
-      },
-    },
-    tooltip: {
-      callbacks: {
-        title: function (tooltipItem) {
-          return tooltipItem[0].raw.label;
-        },
-        label: function (tooltipItem) {
-          return (
-            Math.round((tooltipItem.parsed.y + Number.EPSILON) * 100) / 100
-          );
-        },
-      },
-    },
-    zoom: {
-      zoom: {
-        wheel: {
-          enabled: true,
-        },
-        pinch: {
-          enabled: true,
-        },
-        drag: {
-          enabled: true,
-        },
-        mode: "xy",
-      },
-      limits: {
-        x: { min: "original", max: "original" },
-        y: { min: "original", max: "original" },
-      },
-    },
-  },
-};
-
-const optionsPie = {
-  animation: {
-    duration: 0,
-  },
-  responsive: true,
-  maintainAspectRatio: true,
-  plugins: {
-    tooltip: {
-      callbacks: {
-        title: function (tooltipItem) {
-          return tooltipItem[0].label;
-        },
-        label: function (tooltipItem) {
-          return (
-            Math.round((tooltipItem.parsed + Number.EPSILON) * 100) / 100 + "%"
-          );
-        },
-      },
-    },
-    legend: {
-      display: false,
-    },
-    title: {
-      display: true,
-      text: "Variance Explained View",
-      font: {
-        size: 20,
-        weight: "bold",
-      },
-    },
-  },
-};
-
-function assignColor(data) {
-  for (var i = 0; i < data.length; i++) {
-    if (data[i].classification === "accepted") {
-      data[i].color = acceptedColor;
-      data[i].colorHover = acceptedColorHover;
-    } else if (data[i].classification === "rejected") {
-      data[i].color = rejedtecColor;
-      data[i].colorHover = rejedtecColorHover;
-    } else if (data[i].classification === "ignored") {
-      data[i].color = ignoredColor;
-      data[i].colorHover = ignoredColorHover;
-    }
-  }
-}
-
-function resetColors(data, isPie) {
-  for (var i = 0; i < data.labels.length; i++) {
-    if (data.datasets[0].classification[i] === "accepted") {
-      if (isPie) {
-        data.datasets[0].backgroundColor[i] = acceptedColor;
-      } else {
-        data.datasets[0].pointBackgroundColor[i] = acceptedColor;
-        data.datasets[0].pointBorderColor[i] = acceptedColor;
-      }
-    } else if (data.datasets[0].classification[i] === "rejected") {
-      if (isPie) {
-        data.datasets[0].backgroundColor[i] = rejedtecColor;
-      } else {
-        data.datasets[0].pointBackgroundColor[i] = rejedtecColor;
-        data.datasets[0].pointBorderColor[i] = rejedtecColor;
-      }
-    } else if (data.datasets[0].classification[i] === "ignored") {
-      if (isPie) {
-        data.datasets[0].backgroundColor[i] = ignoredColor;
-      } else {
-        data.datasets[0].pointBackgroundColor[i] = ignoredColor;
-        data.datasets[0].pointBorderColor[i] = ignoredColor;
-      }
-    }
-  }
-}
 class Plots extends React.Component {
   constructor(props) {
     super(props);
@@ -336,6 +40,7 @@ class Plots extends React.Component {
     };
   }
 
+  // Only read data on the first render of the Plots page
   componentDidMount() {
     var compData = this.props.componentData[0];
     assignColor(compData);
@@ -346,25 +51,20 @@ class Plots extends React.Component {
     this.setState({ rho: parsed_data[3] });
   }
 
+  // Update all attributes of a manually classified component on all 4 plots
   handleNewSelection(val) {
     var variance = { ...this.state.variance };
     var componentIndex = variance.labels.indexOf(this.state.selectedLabel);
     variance.datasets[0].classification[componentIndex] = val;
 
     if (val === "accepted") {
-      variance.datasets[0].backgroundColor[componentIndex] = acceptedColorHover;
-      variance.datasets[0].hoverBackgroundColor[componentIndex] =
-        acceptedColorHover;
+      updatePieColors(variance, componentIndex, acceptedColorHover, true);
       this.setState({ selectedColor: acceptedColor });
     } else if (val === "rejected") {
-      variance.datasets[0].backgroundColor[componentIndex] = rejedtecColorHover;
-      variance.datasets[0].hoverBackgroundColor[componentIndex] =
-        rejedtecColorHover;
+      updatePieColors(variance, componentIndex, rejedtecColorHover, true);
       this.setState({ selectedColor: rejedtecColor });
     } else if (val === "ignored") {
-      variance.datasets[0].backgroundColor[componentIndex] = ignoredColorHover;
-      variance.datasets[0].hoverBackgroundColor[componentIndex] =
-        ignoredColorHover;
+      updatePieColors(variance, componentIndex, ignoredColorHover, true);
       this.setState({ selectedColor: ignoredColor });
     }
 
@@ -375,58 +75,22 @@ class Plots extends React.Component {
     var kappa = { ...this.state.kappa };
     var rho = { ...this.state.rho };
     componentIndex = kappaRho.labels.indexOf(this.state.selectedLabel);
-    console.log(kappaRho);
     kappaRho.datasets[0].classification[componentIndex] = val;
     kappa.datasets[0].classification[componentIndex] = val;
     rho.datasets[0].classification[componentIndex] = val;
 
     if (val === "accepted") {
-      kappaRho.datasets[0].pointBackgroundColor[componentIndex] =
-        acceptedColorHover;
-      kappaRho.datasets[0].pointHoverBackgroundColor[componentIndex] =
-        acceptedColorHover;
-      kappaRho.datasets[0].pointBorderColor[componentIndex] =
-        acceptedColorHover;
-      kappa.datasets[0].pointBackgroundColor[componentIndex] =
-        acceptedColorHover;
-      kappa.datasets[0].pointHoverBackgroundColor[componentIndex] =
-        acceptedColorHover;
-      kappa.datasets[0].pointBorderColor[componentIndex] = acceptedColorHover;
-      rho.datasets[0].pointBackgroundColor[componentIndex] = acceptedColorHover;
-      rho.datasets[0].pointHoverBackgroundColor[componentIndex] =
-        acceptedColorHover;
-      rho.datasets[0].pointBorderColor[componentIndex] = acceptedColorHover;
+      updateScatterColors(kappaRho, componentIndex, acceptedColorHover, true);
+      updateScatterColors(kappa, componentIndex, acceptedColorHover, true);
+      updateScatterColors(rho, componentIndex, acceptedColorHover, true);
     } else if (val === "rejected") {
-      kappaRho.datasets[0].pointBackgroundColor[componentIndex] =
-        rejedtecColorHover;
-      kappaRho.datasets[0].pointHoverBackgroundColor[componentIndex] =
-        rejedtecColorHover;
-      kappaRho.datasets[0].pointBorderColor[componentIndex] =
-        rejedtecColorHover;
-      kappa.datasets[0].pointBackgroundColor[componentIndex] =
-        rejedtecColorHover;
-      kappa.datasets[0].pointHoverBackgroundColor[componentIndex] =
-        rejedtecColorHover;
-      kappa.datasets[0].pointBorderColor[componentIndex] = rejedtecColorHover;
-      rho.datasets[0].pointBackgroundColor[componentIndex] = rejedtecColorHover;
-      rho.datasets[0].pointHoverBackgroundColor[componentIndex] =
-        rejedtecColorHover;
-      rho.datasets[0].pointBorderColor[componentIndex] = rejedtecColorHover;
+      updateScatterColors(kappaRho, componentIndex, rejedtecColorHover, true);
+      updateScatterColors(kappa, componentIndex, rejedtecColorHover, true);
+      updateScatterColors(rho, componentIndex, rejedtecColorHover, true);
     } else if (val === "ignored") {
-      kappaRho.datasets[0].pointBackgroundColor[componentIndex] =
-        ignoredColorHover;
-      kappaRho.datasets[0].pointHoverBackgroundColor[componentIndex] =
-        ignoredColorHover;
-      kappaRho.datasets[0].pointBorderColor[componentIndex] = ignoredColorHover;
-      kappa.datasets[0].pointBackgroundColor[componentIndex] =
-        ignoredColorHover;
-      kappa.datasets[0].pointHoverBackgroundColor[componentIndex] =
-        ignoredColorHover;
-      kappa.datasets[0].pointBorderColor[componentIndex] = ignoredColorHover;
-      rho.datasets[0].pointBackgroundColor[componentIndex] = ignoredColorHover;
-      rho.datasets[0].pointHoverBackgroundColor[componentIndex] =
-        ignoredColorHover;
-      rho.datasets[0].pointBorderColor[componentIndex] = ignoredColorHover;
+      updateScatterColors(kappaRho, componentIndex, ignoredColorHover, true);
+      updateScatterColors(kappa, componentIndex, ignoredColorHover, true);
+      updateScatterColors(rho, componentIndex, ignoredColorHover, true);
     }
 
     this.setState({ kappaRho: kappaRho });
@@ -435,6 +99,7 @@ class Plots extends React.Component {
   }
 
   render() {
+    // Handle onClick events on the Pie chart
     const getPieElementAtEvent = (element) => {
       if (!element.length) return;
 
@@ -442,9 +107,7 @@ class Plots extends React.Component {
 
       // Set hover color as background to show selection
       var variance = { ...this.state.variance };
-      resetColors(variance, true);
-      variance.datasets[0].backgroundColor[index] =
-        variance.datasets[0].hoverBackgroundColor[index];
+      resetAndUpdateColors(variance, index, true);
       this.setState({ variance: variance });
       var selectedLabel = variance.labels[index];
       this.setState({ selectedLabel: selectedLabel });
@@ -457,27 +120,15 @@ class Plots extends React.Component {
 
       var kappaRho = { ...this.state.kappaRho };
       var scatterIndex = kappaRho.labels.indexOf(selectedLabel);
-      resetColors(kappaRho, false);
-      kappaRho.datasets[0].pointBackgroundColor[scatterIndex] =
-        kappaRho.datasets[0].pointHoverBackgroundColor[scatterIndex];
-      kappaRho.datasets[0].pointBorderColor[scatterIndex] =
-        kappaRho.datasets[0].pointHoverBackgroundColor[scatterIndex];
+      resetAndUpdateColors(kappaRho, scatterIndex, false);
       this.setState({ kappaRho: kappaRho });
 
       var kappa = { ...this.state.kappa };
-      resetColors(kappa, false);
-      kappa.datasets[0].pointBackgroundColor[scatterIndex] =
-        kappa.datasets[0].pointHoverBackgroundColor[scatterIndex];
-      kappa.datasets[0].pointBorderColor[scatterIndex] =
-        kappa.datasets[0].pointHoverBackgroundColor[scatterIndex];
+      resetAndUpdateColors(kappa, scatterIndex, false);
       this.setState({ kappa: kappa });
 
       var rho = { ...this.state.rho };
-      resetColors(rho, false);
-      rho.datasets[0].pointBackgroundColor[scatterIndex] =
-        rho.datasets[0].pointHoverBackgroundColor[scatterIndex];
-      rho.datasets[0].pointBorderColor[scatterIndex] =
-        rho.datasets[0].pointHoverBackgroundColor[scatterIndex];
+      resetAndUpdateColors(rho, scatterIndex, false);
       this.setState({ rho: rho });
 
       // Get component name of selected component
@@ -494,6 +145,7 @@ class Plots extends React.Component {
       }
     };
 
+    // Handle onClick events on the Scatter charts
     const getScatterElementAtEvent = (element) => {
       if (!element.length) return;
 
@@ -501,11 +153,7 @@ class Plots extends React.Component {
 
       // Set hover color as background to show selection
       var kappaRho = { ...this.state.kappaRho };
-      resetColors(kappaRho, false);
-      kappaRho.datasets[0].pointBackgroundColor[index] =
-        kappaRho.datasets[0].pointHoverBackgroundColor[index];
-      kappaRho.datasets[0].pointBorderColor[index] =
-        kappaRho.datasets[0].pointHoverBackgroundColor[index];
+      resetAndUpdateColors(kappaRho, index, false);
       this.setState({ kappaRho: kappaRho });
       var selectedLabel = kappaRho.labels[index];
       this.setState({ selectedLabel: selectedLabel });
@@ -517,26 +165,16 @@ class Plots extends React.Component {
       });
 
       var kappa = { ...this.state.kappa };
-      resetColors(kappa, false);
-      kappa.datasets[0].pointBackgroundColor[index] =
-        kappa.datasets[0].pointHoverBackgroundColor[index];
-      kappa.datasets[0].pointBorderColor[index] =
-        kappa.datasets[0].pointHoverBackgroundColor[index];
+      resetAndUpdateColors(kappa, index, false);
       this.setState({ kappa: kappa });
 
       var rho = { ...this.state.rho };
-      resetColors(rho, false);
-      rho.datasets[0].pointBackgroundColor[index] =
-        rho.datasets[0].pointHoverBackgroundColor[index];
-      rho.datasets[0].pointBorderColor[index] =
-        rho.datasets[0].pointHoverBackgroundColor[index];
+      resetAndUpdateColors(rho, index, false);
       this.setState({ rho: rho });
 
       var variance = { ...this.state.variance };
-      var pieIndex = kappaRho.labels.indexOf(selectedLabel);
-      resetColors(variance, true);
-      variance.datasets[0].backgroundColor[pieIndex] =
-        variance.datasets[0].hoverBackgroundColor[pieIndex];
+      var pieIndex = variance.labels.indexOf(selectedLabel);
+      resetAndUpdateColors(variance, pieIndex, true);
       this.setState({ variance: variance });
 
       // Get component name of selected component

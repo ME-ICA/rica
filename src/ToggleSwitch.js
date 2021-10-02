@@ -19,7 +19,12 @@ const ClickableLabel = ({ title, onChange, id }) => (
 );
 
 const ConcealedRadio = ({ value, selected }) => (
-  <SwitchRadio type="radio" name="switch" checked={selected === value} />
+  <SwitchRadio
+    type="radio"
+    name="switch"
+    checked={selected === value}
+    readOnly
+  />
 );
 
 class ToggleSwitch extends Component {
