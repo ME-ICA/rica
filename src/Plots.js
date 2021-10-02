@@ -415,7 +415,7 @@ class Plots extends React.Component {
       this.setState({ rho: rho });
 
       var variance = { ...this.state.variance };
-      var pieIndex = kappaRho.labels.indexOf(selectedLabel);
+      var pieIndex = variance.labels.indexOf(selectedLabel);
       resetColors(variance, true);
       variance.datasets[0].backgroundColor[pieIndex] =
         variance.datasets[0].hoverBackgroundColor[pieIndex];
