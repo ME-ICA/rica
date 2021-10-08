@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import CarpetOption from "./CarpetOption";
 
 class Carpets extends React.Component {
