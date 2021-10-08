@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faFileDownload } from "@fortawesome/free-solid-svg-icons";
-
 import { library } from "@fortawesome/fontawesome-svg-core"; //allows later to just use icon name to render-them
 
 library.add(faTrash, faFileDownload);
@@ -22,7 +21,7 @@ class ResetAndSave extends Component {
           </li>
         </div>
         <div className="plot_tab_box">
-          <li key="Save">
+          <li key="Save" onClick={this.props.handleSave}>
             <FontAwesomeIcon
               icon={["fas", "file-download"]}
               className="tab-icon"

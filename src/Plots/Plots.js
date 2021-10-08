@@ -99,6 +99,43 @@ class Plots extends React.Component {
     this.setState({ selectedClassification: val });
   }
 
+  saveManualClassification() {
+    var origData = this.props.originalData[0];
+    var variance = { ...this.state.variance };
+
+    // Remove color columns and add new classification column
+    for (var i = 0; i < origData.length; i++) {
+      delete origData[i].color;
+      delete origData[i].colorHover;
+      // Find index of component in variance object to get new classification
+      var pieIndex = variance.labels.indexOf(origData[i].Component);
+      origData[i].manual_classification =
+        this.state.variance.datasets[0].classification[pieIndex];
+    }
+
+    // grab the column headings (separated by tabs)
+    const headings = Object.keys(origData[0]).join("\t");
+
+    // iterate over the data
+    const rows = origData
+      .reduce((acc, c) => {
+        // for each row object get its values and add tabs between them
+        // then add them as a new array to the outgoing array
+        return acc.concat([Object.values(c).join("\t")]);
+
+        // finally joining each row with a line break
+      }, [])
+      .join("\n");
+
+    // Merge into a tsv file and make it downloadable
+    var tsv = [headings, rows].join("\n");
+    var hiddenElement = document.createElement("a");
+    hiddenElement.href = "data:text/tsv;charset=utf-8," + encodeURI(tsv);
+    // hiddenElement.target = "_blank";
+    hiddenElement.download = "manual_classification.tsv";
+    hiddenElement.click();
+  }
+
   render() {
     // Handle onClick events on the Pie chart
     const getPieElementAtEvent = (element) => {
@@ -202,7 +239,10 @@ class Plots extends React.Component {
             handleNewSelection={this.handleNewSelection.bind(this)}
           />
         </div>
-        <ResetAndSave handleReset={this.readOriginalData.bind(this)} />
+        <ResetAndSave
+          handleReset={this.readOriginalData.bind(this)}
+          handleSave={this.saveManualClassification.bind(this)}
+        />
         <div className="plot-container-out">
           <div className="plot-container-in">
             <div className="plot-box">

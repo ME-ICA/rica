@@ -20,6 +20,7 @@ class App extends Component {
       info: "",
       showIntroPopup: true,
       showAboutPopup: false,
+      originalData: [],
     };
   }
 
@@ -42,6 +43,7 @@ class App extends Component {
     this.setState({ componentFigures: childData[0] });
     this.setState({ carpetFigures: childData[1] });
     this.setState({ info: childData[3] });
+    this.setState({ originalData: childData[4] });
   };
 
   render() {
@@ -70,6 +72,7 @@ class App extends Component {
             <Plots
               componentData={this.state.componentData}
               componentFigures={this.state.componentFigures}
+              originalData={this.state.originalData}
             />
           </Panel>
           <Panel title="Carpets" icon="layer-group">
