@@ -47,6 +47,7 @@ class UploadFolder extends Component {
     let carpetFigures = [];
     let comps = [];
     let info = [];
+    let originalData = [];
 
     let files = e.target.files;
 
@@ -97,6 +98,7 @@ class UploadFolder extends Component {
               header: true,
               skipEmptyLines: true,
             })["data"];
+            originalData.push(Object.assign([], compData));
             rankComponents(compData);
             comps.push(compData);
           };
@@ -107,6 +109,7 @@ class UploadFolder extends Component {
     data.push(carpetFigures);
     data.push(comps);
     data.push(info);
+    data.push(originalData);
 
     // Pass data to parent
     this.props.parentCallback(data);
