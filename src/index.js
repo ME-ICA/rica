@@ -25,7 +25,7 @@ class App extends Component {
   }
 
   toggleIntroPopup() {
-    if (this.state.componentData.length != 0) {
+    if (this.state.componentData.length !== 0) {
       this.setState({
         showIntroPopup: !this.state.showIntroPopup,
       });

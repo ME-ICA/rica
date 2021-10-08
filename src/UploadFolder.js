@@ -27,7 +27,7 @@ function rankComponents(data) {
   let rankKappa = rankArray(kappa);
   let rankRho = rankArray(rho);
 
-  for (var i = 0; i < data.length; i++) {
+  for (i = 0; i < data.length; i++) {
     data[i]["variance explained rank"] = rankVariance[i];
     data[i]["kappa rank"] = rankKappa[i];
     data[i]["rho rank"] = rankRho[i];
@@ -123,7 +123,7 @@ class UploadFolder extends Component {
   render() {
     return (
       <div className="popup-button" onSubmit={this.onFormSubmit}>
-        <label for="file-upload" className="popup-button-label">
+        <label htmlFor="file-upload" className="popup-button-label">
           <FontAwesomeIcon icon={faFolder} className="tab-icon" /> Select folder
         </label>
         <input

@@ -177,7 +177,7 @@ class Plots extends React.Component {
       // iterate over each element in the array to retrieve image of selected component based on name
       for (var i = 0; i < this.props.componentFigures.length; i++) {
         // look for the entry with a matching `compName` value
-        if (this.props.componentFigures[i].name == compName) {
+        if (this.props.componentFigures[i].name === compName) {
           this.setState({ clickedElement: this.props.componentFigures[i].img });
         }
       }
@@ -223,7 +223,7 @@ class Plots extends React.Component {
       // iterate over each element in the array to retrieve image of selected component based on name
       for (var i = 0; i < this.props.componentFigures.length; i++) {
         // look for the entry with a matching `compName` value
-        if (this.props.componentFigures[i].name == compName) {
+        if (this.props.componentFigures[i].name === compName) {
           this.setState({ clickedElement: this.props.componentFigures[i].img });
         }
       }
