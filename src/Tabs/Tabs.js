@@ -42,7 +42,7 @@ class Tabs extends Component {
               </div>
             );
           })}
-          <div className="header-right">
+          <ul className="header-right">
             <div
               className="new-container"
               onClick={this.props.toggleIntroPopup}
@@ -60,7 +60,7 @@ class Tabs extends Component {
               />
               <span>About</span>
             </div>
-          </div>
+          </ul>
         </ul>
         <div className="tab">{this.props.children[this.state.selected]}</div>
       </header>

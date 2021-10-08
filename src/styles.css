@@ -86,6 +86,7 @@ body {
 
 .tab-icon {
   padding-right: 8px;
+  padding-top: 1px;
 }
 
 ul {
@@ -140,13 +141,14 @@ li.selected:hover {
 }
 
 .new-container {
-  width: auto;
+  /* width: auto; */
   position: absolute;
   padding: 10px;
   cursor: pointer;
   color: var(--c3);
   display: flex;
   right: 0;
+  margin-right: 40px;
 }
 
 .new-container:hover {
