@@ -9,7 +9,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import { library } from "@fortawesome/fontawesome-svg-core"; //allows later to just use icon name to render-them
-import { fas } from "@fortawesome/free-solid-svg-icons";
 
 library.add(faInfoCircle, faLayerGroup, faChartPie, faPlus, faQuestion);
 class Tabs extends Component {

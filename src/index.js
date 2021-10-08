@@ -1,12 +1,12 @@
 import ReactDOM from "react-dom";
 import React, { Component } from "react";
 
-import Tabs from "./Tabs";
-import Panel from "./Panel";
-import Carpets from "./Carpets";
-import Plots from "./Plots";
-import IntroPopup from "./IntroPopUp";
-import AboutPopup from "./AboutPopUp";
+import Tabs from "./Tabs/Tabs";
+import Panel from "./Tabs/Panel";
+import Carpets from "./Carpets/Carpets";
+import Plots from "./Plots/Plots";
+import IntroPopup from "./PopUps/IntroPopUp";
+import AboutPopup from "./PopUps/AboutPopUp";
 
 import "./styles.css";
 
@@ -20,11 +20,12 @@ class App extends Component {
       info: "",
       showIntroPopup: true,
       showAboutPopup: false,
+      originalData: [],
     };
   }
 
   toggleIntroPopup() {
-    if (this.state.componentData.length != 0) {
+    if (this.state.componentData.length !== 0) {
       this.setState({
         showIntroPopup: !this.state.showIntroPopup,
       });
@@ -42,6 +43,7 @@ class App extends Component {
     this.setState({ componentFigures: childData[0] });
     this.setState({ carpetFigures: childData[1] });
     this.setState({ info: childData[3] });
+    this.setState({ originalData: childData[4] });
   };
 
   render() {
@@ -70,6 +72,7 @@ class App extends Component {
             <Plots
               componentData={this.state.componentData}
               componentFigures={this.state.componentFigures}
+              originalData={this.state.originalData}
             />
           </Panel>
           <Panel title="Carpets" icon="layer-group">

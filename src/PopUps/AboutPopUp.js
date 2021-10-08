@@ -29,9 +29,10 @@ class AboutPopup extends Component {
           </p>
           <div className="popup-button">
             <a
-              href="https://github.com/ME-ICA/ica-reports"
+              href="https://github.com/ME-ICA/rica"
               target="_blank"
               className="about-link"
+              rel="noreferrer noopener"
             >
               <label className="popup-button-label">
                 <FontAwesomeIcon icon={faGithub} className="tab-icon" />{" "}
