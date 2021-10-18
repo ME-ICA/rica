@@ -6,7 +6,13 @@ As part of the ME-ICA pipeline, `Rica` (Reports for ICA) provides a reporting to
 
 `Rica` originally came out as an alternative to the reports provided by [tedana](https://github.com/ME-ICA/tedana), with the aim of making manual classification of ICA components possible. At the same time, the tool aspires to be of value for ICA decompositions made with tools other than `tedana`. `Rica` assumes you're working with files that mimic the outputs of `tedana`.
 
-## Installation
+## Using Rica online
+
+Just head over to https://rica-fmri.netlify.app and have fun!
+
+## Using Rica locally
+
+### Installation
 
 `Rica` can be installed by cloning this repository and executing the following command in the cloned repository:
 
@@ -14,11 +20,11 @@ As part of the ME-ICA pipeline, `Rica` (Reports for ICA) provides a reporting to
 
 In order to run the tool locally, two options exist:
 
-### 1. Using a localhost
+#### 1. Using a localhost
 
 By executing the `npm start` command in the cloned repository, `Rica` will open in a new browser tab at [http://localhost:3000](http://localhost:3000) and you will be able to use the tool.
 
-### 2. Compiling the tool
+#### 2. Compiling the tool
 
 You could also compile the project so that you can use the tool just by opening an HTML file. For that, it is necessary to execute the following commands in the cloned repository.
 
