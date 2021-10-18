@@ -216,7 +216,7 @@ class Plots extends React.Component {
       this.setState({ variance: variance });
 
       // Get component name of selected component
-      var compName = this.state.variance.labels[index].match(/\d/g);
+      var compName = this.state.kappaRho.labels[index].match(/\d/g);
       compName = compName.join("");
       compName = `comp_0${compName}.png`;
 
