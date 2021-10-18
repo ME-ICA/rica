@@ -20,7 +20,7 @@ export function parseData(data) {
         pointRadius: 5,
         borderWidth: 1,
         fill: false,
-        data: data.map((e) => ({ x: e.rho, y: e.kappa, label: e.Component })),
+        data: data.map((e) => ({ x: e.kappa, y: e.rho, label: e.Component })),
         classification: data.map((e) => e.classification),
       },
     ],

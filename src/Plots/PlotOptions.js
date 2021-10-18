@@ -1,4 +1,32 @@
 export const options_kappa_rho = {
+  scales: {
+    yAxes: {
+      title: {
+        display: true,
+        text: "Rho",
+        font: {
+          size: 13,
+        },
+      },
+      ticks: {
+        stepSize: 0.1,
+      },
+    },
+    xAxes: {
+      type: "linear",
+      title: {
+        display: true,
+        text: "Kappa",
+        font: {
+          size: 13,
+        },
+      },
+      ticks: {
+        stepSize: 0.1,
+        maxRotation: 0,
+      },
+    },
+  },
   animation: {
     duration: 0,
   },
@@ -8,7 +36,7 @@ export const options_kappa_rho = {
     },
     title: {
       display: true,
-      text: "Kappa / Rho Plot",
+      text: "Rho / Kappa",
       font: {
         size: 20,
         weight: "bold",
@@ -48,6 +76,31 @@ export const options_kappa_rho = {
 };
 
 export const options_rho = {
+  scales: {
+    yAxes: {
+      title: {
+        display: true,
+        text: "Rho",
+        font: {
+          size: 13,
+        },
+      },
+    },
+    xAxes: {
+      type: "linear",
+      title: {
+        display: true,
+        text: "Rank",
+        font: {
+          size: 13,
+        },
+      },
+      ticks: {
+        stepSize: 5,
+        maxRotation: 0,
+      },
+    },
+  },
   animation: {
     duration: 0,
   },
@@ -57,7 +110,7 @@ export const options_rho = {
     },
     title: {
       display: true,
-      text: "Rho Rank",
+      text: "Rho / Rank",
       font: {
         size: 20,
         weight: "bold",
@@ -97,6 +150,31 @@ export const options_rho = {
 };
 
 export const options_kappa = {
+  scales: {
+    yAxes: {
+      title: {
+        display: true,
+        text: "Kappa",
+        font: {
+          size: 13,
+        },
+      },
+    },
+    xAxes: {
+      type: "linear",
+      title: {
+        display: true,
+        text: "Rank",
+        font: {
+          size: 13,
+        },
+      },
+      ticks: {
+        stepSize: 5,
+        maxRotation: 0,
+      },
+    },
+  },
   animation: {
     duration: 0,
   },
@@ -106,7 +184,7 @@ export const options_kappa = {
     },
     title: {
       display: true,
-      text: "Kappa Rank",
+      text: "Kappa / Rank",
       font: {
         size: 20,
         weight: "bold",
