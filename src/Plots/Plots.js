@@ -245,11 +245,11 @@ class Plots extends React.Component {
         />
         <div className="plot-container-out">
           <div className="plot-container-in">
-            <div className="plot-box">
+            <div className="plot-box kappa_rho">
               <Line
                 data={this.state.kappaRho}
-                height={400}
-                width={400}
+                height={21}
+                width={20}
                 options={options_kappa_rho}
                 getElementAtEvent={getScatterElementAtEvent}
               />
@@ -266,8 +266,8 @@ class Plots extends React.Component {
             <div className="plot-box">
               <Line
                 data={this.state.rho}
-                height={400}
-                width={400}
+                height={21}
+                width={20}
                 options={options_rho}
                 getElementAtEvent={getScatterElementAtEvent}
               />
@@ -275,8 +275,8 @@ class Plots extends React.Component {
             <div className="plot-box">
               <Line
                 data={this.state.kappa}
-                height={400}
-                width={400}
+                height={21}
+                width={20}
                 options={options_kappa}
                 getElementAtEvent={getScatterElementAtEvent}
               />

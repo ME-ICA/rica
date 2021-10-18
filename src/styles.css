@@ -243,6 +243,10 @@ li.selected:hover {
   width: 100%;
 }
 
+.kappa_rho {
+  padding-top: 10px;
+}
+
 /* Pop up card */
 .popup {
   position: fixed;
