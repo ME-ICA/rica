@@ -380,6 +380,14 @@ input[type="file"] {
   color: white;
 }
 
+.version-container {
+  color: var(--c4);
+  right: 0;
+  position: absolute;
+  display: block;
+  margin-right: 15px;
+}
+
 /* Toggle switch */
 
 .toggle-container {

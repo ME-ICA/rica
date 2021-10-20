@@ -47,6 +47,9 @@ class AboutPopup extends Component {
               className="close"
             ></button>
           </div>
+          <div className="version-container">
+            <span>v{process.env.REACT_APP_VERSION}</span>
+          </div>
         </div>
       </div>
     );
