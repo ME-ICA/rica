@@ -60,10 +60,10 @@ class Plots extends React.Component {
   // Update the component if new componentData is provided
   componentDidUpdate(prevProps) {
     if (this.props.componentData !== prevProps.componentData) {
-      // Read original data after 200 ms
+      // Read original data after 500 ms
       setTimeout(() => {
         this.readOriginalData();
-      }, 200);
+      }, 500);
     }
   }
 
