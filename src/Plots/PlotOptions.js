@@ -71,6 +71,11 @@ export const options_kappa_rho = {
         x: { min: "original", max: "original" },
         y: { min: "original", max: "original" },
       },
+      pan: {
+        enabled: true,
+        mode: "xy",
+        modifierKey: "shift",
+      },
     },
   },
 };
@@ -145,6 +150,11 @@ export const options_rho = {
         x: { min: "original", max: "original" },
         y: { min: "original", max: "original" },
       },
+      pan: {
+        enabled: true,
+        mode: "xy",
+        modifierKey: "shift",
+      },
     },
   },
 };
@@ -218,6 +228,11 @@ export const options_kappa = {
       limits: {
         x: { min: "original", max: "original" },
         y: { min: "original", max: "original" },
+      },
+      pan: {
+        enabled: true,
+        mode: "xy",
+        modifierKey: "shift",
       },
     },
   },
