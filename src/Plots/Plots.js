@@ -57,6 +57,16 @@ class Plots extends React.Component {
     this.readOriginalData();
   }
 
+  // Update the component if new componentData is provided
+  componentDidUpdate(prevProps) {
+    if (this.props.componentData !== prevProps.componentData) {
+      // Read original data after 500 ms
+      setTimeout(() => {
+        this.readOriginalData();
+      }, 500);
+    }
+  }
+
   // Update all attributes of a manually classified component on all 4 plots
   handleNewSelection(val) {
     var variance = { ...this.state.variance };
