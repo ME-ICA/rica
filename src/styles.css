@@ -201,6 +201,13 @@ li.selected:hover {
   display: table;
 }
 
+.help-text {
+  color: var(--c3);
+  font-size: 14px;
+  margin-top: 10px;
+  margin-left: 10px;
+}
+
 .plot-container-in {
   /* margin: 20px auto; */
   width: 50%;

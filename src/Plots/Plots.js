@@ -254,6 +254,12 @@ class Plots extends React.Component {
           handleSave={this.saveManualClassification.bind(this)}
         />
         <div className="plot-container-out">
+          <div className="help-text">
+            <p>
+              Select an area or use the wheel to zoom in. Shift + click and drag
+              to pan.
+            </p>
+          </div>
           <div className="plot-container-in">
             <div className="plot-box kappa_rho">
               <Line
