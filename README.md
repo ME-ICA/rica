@@ -37,6 +37,10 @@ open build/rica.html
 
 > Pro tip: when you open rica.html for the first time, BOOKMARK IT 😉
 
+## Using Rica
+
+Even if Rica is designed to be simple to use, you might want to see how you can use the app by watching this [tutorial video](https://www.loom.com/share/ad37cf6f3c2d41e48721f62168a8284e).
+
 ## Getting involved
 
 Want to learn more about our plans for developing `Rica`? Have a question, comment, or suggestion? Open or comment on one of our issues!
