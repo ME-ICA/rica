@@ -9,7 +9,8 @@ export const options_kappa_rho = {
         },
       },
       ticks: {
-        stepSize: 0.1,
+        stepSize: 0.5,
+        precision: 0.1,
       },
     },
     xAxes: {
@@ -22,7 +23,8 @@ export const options_kappa_rho = {
         },
       },
       ticks: {
-        stepSize: 0.1,
+        stepSize: 0.5,
+        precision: 0.1,
         maxRotation: 0,
       },
     },
