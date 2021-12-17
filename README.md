@@ -1,5 +1,7 @@
 # Rica
 
+[![DOI](https://zenodo.org/badge/391155862.svg)](https://zenodo.org/badge/latestdoi/391155862)
+
 As part of the ME-ICA pipeline, `Rica` (Reports for ICA) provides a reporting tool for ICA decompositions performed with [tedana](https://github.com/ME-ICA/tedana) and [aroma](https://github.com/ME-ICA/aroma).
 
 ## About
