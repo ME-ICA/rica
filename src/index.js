@@ -9,6 +9,7 @@ import IntroPopup from "./PopUps/IntroPopUp";
 import AboutPopup from "./PopUps/AboutPopUp";
 
 import "./styles.css";
+import "./styles/output.css";
 
 class App extends Component {
   constructor(props) {
