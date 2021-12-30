@@ -105,7 +105,7 @@ ul.inline {
   -webkit-padding-start: 0px;
 }
 
-ul.inline,
+/* ul.inline,
 li {
   display: inline-block;
   margin-left: 0;
@@ -123,9 +123,9 @@ li.selected {
   color: white;
   margin-top: 5px;
   padding: 5px 10px;
-}
+} */
 
-ul.inline,
+/* ul.inline,
 li:hover {
   color: var(--c1);
 }
@@ -133,7 +133,7 @@ li:hover {
 ul.inline,
 li.selected:hover {
   color: white;
-}
+} */
 
 .header-right {
   right: 10%;
