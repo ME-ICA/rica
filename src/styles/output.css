@@ -640,6 +640,27 @@ video {
 .mt-1 {
 	margin-top: 0.25rem;
 }
+.mr-6 {
+	margin-right: 1.5rem;
+}
+.mr-12 {
+	margin-right: 3rem;
+}
+.-mt-1 {
+	margin-top: -0.25rem;
+}
+.-mt-2 {
+	margin-top: -0.5rem;
+}
+.mr-24 {
+	margin-right: 6rem;
+}
+.mr-32 {
+	margin-right: 8rem;
+}
+.mr-40 {
+	margin-right: 10rem;
+}
 .flex {
 	display: flex;
 }

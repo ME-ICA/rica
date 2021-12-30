@@ -105,52 +105,6 @@ ul.inline {
   -webkit-padding-start: 0px;
 }
 
-/* ul.inline,
-li {
-  display: inline-block;
-  margin-left: 0;
-  padding: 10px;
-  transition: all 0.5s;
-  font-weight: 500;
-  cursor: pointer;
-  color: var(--c3);
-}
-
-ul.inline,
-li.selected {
-  background: var(--accent1);
-  border-radius: 7.86241% / 24%;
-  color: white;
-  margin-top: 5px;
-  padding: 5px 10px;
-} */
-
-/* ul.inline,
-li:hover {
-  color: var(--c1);
-}
-
-ul.inline,
-li.selected:hover {
-  color: white;
-} */
-
-.header-right {
-  right: 10%;
-  position: absolute;
-}
-
-.new-container {
-  /* width: auto; */
-  position: absolute;
-  padding: 10px;
-  cursor: pointer;
-  color: var(--c3);
-  display: flex;
-  right: 0;
-  margin-right: 40px;
-}
-
 .new-container:hover {
   color: var(--c1);
 }

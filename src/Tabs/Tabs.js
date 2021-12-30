@@ -27,8 +27,8 @@ class Tabs extends Component {
           {this.props.children.map((elem, index) => {
             let style =
               index === this.state.selected
-                ? "bg-sky-500 rounded-lg py-1 my-1.5 px-3 text-white hover:cursor-pointer"
-                : "py-1 mt-1.5 px-3 text-gray-500 hover:text-gray-900 hover:bg-gray-200 rounded-lg hover:cursor-pointer";
+                ? "bg-sky-500 rounded-lg text-base py-1 my-1.5 px-3 text-white hover:cursor-pointer"
+                : "py-1 mt-1.5 px-3 text-base text-gray-500 hover:text-gray-900 hover:bg-gray-200 rounded-lg hover:cursor-pointer";
             return (
               <div className="tab_box">
                 <li
@@ -46,21 +46,26 @@ class Tabs extends Component {
               </div>
             );
           })}
-          <ul className="header-right">
+          <ul className="absolute right-0 mr-40">
             <div
-              className="new-container"
+              className="flex right-0 text-base absolute mr-24 py-1 mt-1.5 px-3 text-gray-500 hover:text-gray-900 hover:bg-gray-200 rounded-lg hover:cursor-pointer"
               onClick={this.props.toggleIntroPopup}
             >
-              <FontAwesomeIcon icon={["fas", "plus"]} className="tab-icon" />
+              <FontAwesomeIcon
+                icon={["fas", "plus"]}
+                size="lg"
+                className="mx-2"
+              />
               <span>New</span>
             </div>
             <div
-              className="about-container"
+              className="flex right-0 text-base absolute py-1 mt-1.5 px-3 text-gray-500 hover:text-gray-900 hover:bg-gray-200 rounded-lg hover:cursor-pointer"
               onClick={this.props.toggleAboutPopup}
             >
               <FontAwesomeIcon
                 icon={["fas", "question"]}
-                className="tab-icon"
+                size="lg"
+                className="mx-2"
               />
               <span>About</span>
             </div>
