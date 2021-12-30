@@ -626,3 +626,7 @@ video {
 .hover\:cursor-pointer:hover {
 	cursor: pointer;
 }
+.hover\:bg-sky-600:hover {
+	--tw-bg-opacity: 1;
+	background-color: rgba(2, 132, 199, var(--tw-bg-opacity));
+}
