@@ -67,7 +67,9 @@ class App extends Component {
           toggleAboutPopup={this.toggleAboutPopup.bind(this)}
         >
           <Panel title="Info" icon="info-circle">
-            <p className="info">{this.state.info}</p>
+            <p className="mt-24 text-base text-justify whitespace-pre-wrap mx-80 ">
+              {this.state.info}
+            </p>
           </Panel>
           <Panel title="ICA" icon="chart-pie">
             <Plots
