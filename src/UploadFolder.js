@@ -122,10 +122,13 @@ class UploadFolder extends Component {
 
   render() {
     return (
-      <div className="popup-button" onSubmit={this.onFormSubmit}>
-        <label htmlFor="file-upload" className="popup-button-label">
-          <FontAwesomeIcon icon={faFolder} className="tab-icon" /> Select folder
-        </label>
+      <label
+        htmlFor="file-upload"
+        className="bg-sky-500 rounded-xl text-white text-base font-semibold relative h-10 w-2/3 text-center content-center justify-center inline-flex mt-10 hover:cursor-pointer items-center"
+        onSubmit={this.onFormSubmit}
+      >
+        <FontAwesomeIcon icon={faFolder} size="lg" className="tab-icon" />{" "}
+        Select folder
         <input
           id="file-upload"
           type="file"
@@ -134,7 +137,7 @@ class UploadFolder extends Component {
           webkitdirectory=""
           onChange={(e) => this.onChange(e)}
         />
-      </div>
+      </label>
     );
   }
 }
