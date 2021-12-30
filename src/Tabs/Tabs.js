@@ -27,7 +27,7 @@ class Tabs extends Component {
           {this.props.children.map((elem, index) => {
             let style =
               index === this.state.selected
-                ? "bg-sky-500 rounded-lg py-1 my-1.5 px-3 text-white hover:cursor-pointer transition duration-500 ease-in-out"
+                ? "bg-sky-500 rounded-lg py-1 my-1.5 px-3 text-white hover:cursor-pointer"
                 : "py-1 mt-1.5 px-3 text-gray-500 hover:text-gray-900 hover:bg-gray-200 rounded-lg hover:cursor-pointer";
             return (
               <div className="tab_box">
