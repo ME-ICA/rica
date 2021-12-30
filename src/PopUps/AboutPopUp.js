@@ -6,7 +6,7 @@ class AboutPopup extends Component {
   render() {
     return (
       <div className="fixed z-10 flex items-center justify-center w-full h-full bg-gray-500 bg-opacity-50 backdrop-blur-sm">
-        <div className="absolute z-20 w-1/3 p-10 m-auto bg-white h-fit rounded-xl drop-shadow-2xl">
+        <div className="absolute z-20 w-1/3 px-16 py-10 m-auto bg-white h-fit rounded-xl drop-shadow-2xl">
           <button
             onClick={this.props.closePopup}
             type="button"
