@@ -254,58 +254,6 @@ li.selected:hover {
   padding-top: 10px;
 }
 
-/* Pop up card */
-.popup {
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  margin: auto;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 10;
-}
-
-.popup_inner {
-  position: absolute;
-  left: 25%;
-  right: 25%;
-  top: 25%;
-  bottom: 25%;
-  margin: auto;
-  background: white;
-  border-radius: 16px;
-  padding: 30px 60px;
-  height: fit-content;
-  width: 400px;
-  z-index: 11;
-}
-
-.popup_title {
-  margin-block-start: 0;
-  font-weight: 800;
-  font-size: 24px;
-}
-
-.popup_text {
-  font-size: 15px;
-}
-
-.popup_close_button_container {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  width: 29px;
-  height: 29px;
-  border-radius: 29px;
-  display: flex;
-  cursor: pointer;
-  color: var(--c3);
-  background: var(--bg4);
-}
-
 input[type="file"] {
   display: none;
 }
@@ -348,14 +296,6 @@ input[type="file"] {
 .about-link:hover {
   text-decoration: none;
   color: white;
-}
-
-.version-container {
-  color: var(--c4);
-  right: 0;
-  position: absolute;
-  display: block;
-  margin-right: 15px;
 }
 
 /* Toggle switch */
