@@ -84,10 +84,10 @@ body {
   border-bottom: 1px solid var(--uiBorderColor);
 }
 
-.tab-icon {
+/* .tab-icon {
   padding-right: 8px;
   padding-top: 1px;
-}
+} */
 
 ul {
   display: flex;

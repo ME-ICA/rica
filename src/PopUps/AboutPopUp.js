@@ -27,19 +27,21 @@ class AboutPopup extends Component {
               👇
             </span>
           </p>
-          <div className="popup-button">
-            <a
-              href="https://github.com/ME-ICA/rica"
-              target="_blank"
-              className="about-link"
-              rel="noreferrer noopener"
-            >
-              <label className="popup-button-label">
-                <FontAwesomeIcon icon={faGithub} className="tab-icon" />{" "}
-                Contribute
-              </label>
-            </a>
-          </div>
+          <a
+            href="https://github.com/ME-ICA/rica"
+            target="_blank"
+            className="about-link"
+            rel="noreferrer noopener"
+          >
+            <label className="relative inline-flex items-center content-center justify-center w-2/3 h-10 pt-0.5 mt-10 text-base font-semibold text-center text-white bg-sky-500 rounded-xl hover:cursor-pointer hover:bg-sky-600">
+              <FontAwesomeIcon
+                icon={faGithub}
+                size="lg"
+                className="mx-2 -mt-0.5"
+              />{" "}
+              Contribute
+            </label>
+          </a>
           <div className="popup_close_button_container">
             <button
               onClick={this.props.closePopup}
