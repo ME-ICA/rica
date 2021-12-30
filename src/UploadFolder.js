@@ -124,7 +124,7 @@ class UploadFolder extends Component {
     return (
       <label
         htmlFor="file-upload"
-        className="bg-sky-500 rounded-xl text-white text-base font-semibold relative h-10 w-2/3 text-center content-center justify-center inline-flex mt-10 hover:cursor-pointer items-center hover:bg-sky-600"
+        className="relative inline-flex items-center content-center justify-center w-2/3 h-10 mt-10 text-base font-semibold text-center text-white bg-sky-500 rounded-xl hover:cursor-pointer hover:bg-sky-600"
         onSubmit={this.onFormSubmit}
       >
         <FontAwesomeIcon icon={faFolder} size="lg" className="tab-icon" />{" "}
