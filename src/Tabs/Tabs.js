@@ -22,8 +22,8 @@ class Tabs extends Component {
 
   render() {
     return (
-      <header className="header_container">
-        <ul className="tab_container">
+      <header className="text-base">
+        <ul className="border-b z-5 border-b-gray-300">
           {this.props.children.map((elem, index) => {
             let style =
               index === this.state.selected
