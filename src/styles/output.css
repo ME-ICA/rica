@@ -626,6 +626,18 @@ video {
 	margin-top: 0.25rem;
 	margin-bottom: 0.25rem;
 }
+.my-8 {
+	margin-top: 2rem;
+	margin-bottom: 2rem;
+}
+.my-6 {
+	margin-top: 1.5rem;
+	margin-bottom: 1.5rem;
+}
+.my-5 {
+	margin-top: 1.25rem;
+	margin-bottom: 1.25rem;
+}
 .mt-4 {
 	margin-top: 1rem;
 }
@@ -683,6 +695,24 @@ video {
 .h-5 {
 	height: 1.25rem;
 }
+.h-24 {
+	height: 6rem;
+}
+.h-1 {
+	height: 0.25rem;
+}
+.h-2 {
+	height: 0.5rem;
+}
+.h-4 {
+	height: 1rem;
+}
+.h-6 {
+	height: 1.5rem;
+}
+.h-7 {
+	height: 1.75rem;
+}
 .w-full {
 	width: 100%;
 }
@@ -713,6 +743,9 @@ video {
 .rounded-lg {
 	border-radius: 0.5rem;
 }
+.rounded-sm {
+	border-radius: 0.125rem;
+}
 .border-b {
 	border-bottom-width: 1px;
 }
@@ -734,6 +767,14 @@ video {
 }
 .bg-transparent {
 	background-color: transparent;
+}
+.bg-gray-400 {
+	--tw-bg-opacity: 1;
+	background-color: rgba(161, 161, 170, var(--tw-bg-opacity));
+}
+.bg-gray-200 {
+	--tw-bg-opacity: 1;
+	background-color: rgba(228, 228, 231, var(--tw-bg-opacity));
 }
 .bg-opacity-50 {
 	--tw-bg-opacity: 0.5;
@@ -798,6 +839,14 @@ video {
 .text-gray-500 {
 	--tw-text-opacity: 1;
 	color: rgba(113, 113, 122, var(--tw-text-opacity));
+}
+.drop-shadow-sm {
+	--tw-drop-shadow: drop-shadow(0 1px 1px rgba(0,0,0,0.05));
+	filter: var(--tw-filter);
+}
+.drop-shadow-lg {
+	--tw-drop-shadow: drop-shadow(0 10px 8px rgba(0, 0, 0, 0.04)) drop-shadow(0 4px 3px rgba(0, 0, 0, 0.1));
+	filter: var(--tw-filter);
 }
 .drop-shadow-2xl {
 	--tw-drop-shadow: drop-shadow(0 25px 25px rgba(0, 0, 0, 0.15));

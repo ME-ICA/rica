@@ -52,7 +52,7 @@ class ToggleSwitch extends Component {
 
   render() {
     return (
-      <Switch>
+      <div className="relative bg-gray-200 rounded-lg h-7 w-fit">
         {this.props.values.map((val) => {
           return (
             <span>
@@ -65,7 +65,7 @@ class ToggleSwitch extends Component {
           );
         })}
         <SwitchSelection style={this.selectionStyle()} />
-      </Switch>
+      </div>
     );
   }
 }

@@ -241,7 +241,7 @@ class Plots extends React.Component {
 
     return (
       <center>
-        <div className="toggle-container">
+        <div className="inline-block my-5">
           <ToggleSwitch
             values={["accepted", "rejected", "ignored"]}
             selected={this.state.selectedClassification}

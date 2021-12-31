@@ -198,25 +198,3 @@ input[type="file"] {
   text-decoration: none;
   color: white;
 }
-
-/* Toggle switch */
-
-.toggle-container {
-  margin: 20px 0;
-  display: inline-block;
-}
-
-/* Reset and Save buttons */
-.plot_tab_container {
-  display: inline-block;
-  margin-left: 75px;
-  position: absolute;
-  margin-top: 15px;
-}
-
-.plot_tab_box {
-  display: inline-block;
-  /* margin-left: 75px;
-  position: absolute;
-  margin-top: 15px; */
-}
