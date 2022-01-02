@@ -260,9 +260,10 @@ class Plots extends React.Component {
               to pan.
             </p>
           </div>
-          <div className="grid float-left w-1/2 h-auto grid-cols-2 bg-white gap-x-5 gap-y-4 plot-container-in">
-            <div className="plot-box">
+          <div className="grid float-left w-1/2 h-auto grid-cols-2 ml-16 bg-white gap-x-1 gap-y-1 plot-container-in">
+            <div className="relative flex items-center justify-center w-full h-full px-1 py-4 text-lg bg-white ">
               <Line
+                className="pt-2"
                 data={this.state.kappaRho}
                 height={21}
                 width={20}
@@ -270,7 +271,7 @@ class Plots extends React.Component {
                 getElementAtEvent={getScatterElementAtEvent}
               />
             </div>
-            <div className="plot-box">
+            <div className="relative flex items-center justify-center w-full h-full px-1 py-4 text-lg bg-white">
               <Pie
                 data={this.state.variance}
                 height={20}
@@ -279,7 +280,7 @@ class Plots extends React.Component {
                 getElementAtEvent={getPieElementAtEvent}
               />
             </div>
-            <div className="plot-box">
+            <div className="relative flex items-center justify-center w-full h-full px-1 py-4 text-lg bg-white">
               <Line
                 data={this.state.rho}
                 height={21}
@@ -288,7 +289,7 @@ class Plots extends React.Component {
                 getElementAtEvent={getScatterElementAtEvent}
               />
             </div>
-            <div className="plot-box">
+            <div className="relative flex items-center justify-center w-full h-full px-1 py-4 text-lg bg-white">
               <Line
                 data={this.state.kappa}
                 height={21}
@@ -298,7 +299,7 @@ class Plots extends React.Component {
               />
             </div>
           </div>
-          <div className="flex float-right w-5/12 mt-12 mr-16">
+          <div className="flex float-right w-5/12 mt-12 mr-16 z-5">
             <img
               className="w-full max-w-full"
               alt=""

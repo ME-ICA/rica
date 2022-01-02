@@ -65,11 +65,11 @@ ul.inline {
 }
 
 .plot-container-in {
-  /* grid-template-columns: 40% 40%; */
+  grid-template-columns: 40% 40%;
   grid-row: auto auto;
 }
 
-.plot-box {
+/* .plot-box {
   background-color: white;
   padding: 5px 30px;
   border-radius: 10px;
@@ -82,7 +82,7 @@ ul.inline {
   width: 100%;
   height: 99%;
   position: relative;
-}
+} */
 
 .component-plots-image {
   display: flex;
