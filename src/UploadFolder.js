@@ -42,6 +42,7 @@ class UploadFolder extends Component {
   }
 
   onChange(e) {
+    console.log("Reading data...");
     let data = [];
     let compFigures = [];
     let carpetFigures = [];
@@ -111,6 +112,8 @@ class UploadFolder extends Component {
     data.push(info);
     data.push(originalData);
 
+    console.log("Data read into dictionary.");
+
     // Pass data to parent
     this.props.parentCallback(data);
 
@@ -136,6 +139,7 @@ class UploadFolder extends Component {
           directory=""
           webkitdirectory=""
           onChange={(e) => this.onChange(e)}
+          onClick={console.log("Click")}
         />
       </label>
     );

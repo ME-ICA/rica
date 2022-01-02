@@ -38,7 +38,7 @@ export const SwitchSelection = styled.span`
   z-index: 1;
   top: 0px;
   left: 0px;
-  width: 65px;
+  width: 80px;
   padding: 0 5px;
   height: 26px;
   background: #e4e4e4;
@@ -50,7 +50,7 @@ export const SwitchLabel = styled.label`
   position: relative;
   z-index: 2;
   float: left;
-  width: 65px;
+  width: 80px;
   padding: 0 5px;
   line-height: 26px;
   color: rgba(0, 0, 0, 0.6);

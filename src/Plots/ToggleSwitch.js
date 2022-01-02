@@ -1,10 +1,5 @@
 import React, { Component } from "react";
-import {
-  Switch,
-  SwitchLabel,
-  SwitchRadio,
-  SwitchSelection,
-} from "./ToggleStyles.js";
+import { Switch, SwitchLabel, SwitchSelection } from "./ToggleStyles.js";
 
 const titleCase = (str) =>
   str
@@ -19,7 +14,8 @@ const ClickableLabel = ({ title, onChange, id }) => (
 );
 
 const ConcealedRadio = ({ value, selected }) => (
-  <SwitchRadio
+  <input
+    className="hidden"
     type="radio"
     name="switch"
     checked={selected === value}
@@ -52,7 +48,7 @@ class ToggleSwitch extends Component {
 
   render() {
     return (
-      <div className="relative bg-gray-200 rounded-lg h-7 w-fit">
+      <div className="relative bg-gray-200 rounded-md h-7 w-fit">
         {this.props.values.map((val) => {
           return (
             <span>

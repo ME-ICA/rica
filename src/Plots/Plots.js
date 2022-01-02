@@ -253,8 +253,8 @@ class Plots extends React.Component {
           handleReset={this.readOriginalData.bind(this)}
           handleSave={this.saveManualClassification.bind(this)}
         />
-        <div className="plot-container-out">
-          <div className="help-text">
+        <div className="table w-full h-auto bg-white">
+          <div className="flex items-center justify-center mt-4 ml-4 text-base text-gray-500 ">
             <p>
               Select an area or use the wheel to zoom in. Shift + click and drag
               to pan.
