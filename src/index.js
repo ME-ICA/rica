@@ -90,6 +90,22 @@ class App extends Component {
                 <p>Carpets</p>
                 {/* title="Carpets" icon="layer-group" */}
               </AnimatedTab>
+              <ul className="header-right">
+                <div
+                  className="new-container"
+                  onClick={this.props.toggleIntroPopup}
+                >
+                  {/* <FontAwesomeIcon icon={["fas", "plus"]} className="tab-icon" /> */}
+                  <span>New</span>
+                </div>
+                <div
+                  className="about-container"
+                  onClick={this.props.toggleAboutPopup}
+                >
+                  {/* <FontAwesomeIcon icon={["fas", "question"]} className="tab-icon" /> */}
+                  <span>About</span>
+                </div>
+              </ul>
             </TabList>
             <TabPanels style={{ padding: 10 }}>
               <TabPanel>
