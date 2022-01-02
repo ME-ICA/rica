@@ -6,11 +6,23 @@ import Plots from "./Plots/Plots";
 import IntroPopup from "./PopUps/IntroPopUp";
 import AboutPopup from "./PopUps/AboutPopUp";
 
-import { TabList, TabPanels, TabPanel } from "@reach/tabs";
-import { AnimatedTab, AnimatedTabs } from "./TabFunctions";
-
 import "./styles/output.css";
 import "./styles.css";
+
+import { TabList, TabPanels, TabPanel } from "@reach/tabs";
+import { AnimatedTab, AnimatedTabs } from "./TabFunctions";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faInfoCircle,
+  faLayerGroup,
+  faChartPie,
+  faPlus,
+  faQuestion,
+} from "@fortawesome/free-solid-svg-icons";
+
+import { library } from "@fortawesome/fontawesome-svg-core"; //allows later to just use icon name to render-them
+
+library.add(faInfoCircle, faLayerGroup, faChartPie, faPlus, faQuestion);
 
 class App extends Component {
   constructor(props) {
@@ -72,53 +84,84 @@ class App extends Component {
           />
         ) : null}
         {this.state.showTabs ? (
-          <AnimatedTabs
-            color="red"
-            toggleIntroPopup={this.toggleIntroPopup.bind(this)}
-            toggleAboutPopup={this.toggleAboutPopup.bind(this)}
-          >
-            <TabList style={{ justifyContent: "space-around" }}>
+          <AnimatedTabs>
+            <TabList
+              className="text-base border-b z-5 border-b-gray-300"
+              style={{ justifyContent: "space-around" }}
+            >
               <AnimatedTab index={0} style={{ flex: 1 }}>
-                <p>Info</p>
-                {/* title="Info" icon="info-circle" */}
+                <FontAwesomeIcon
+                  icon={["fas", "info-circle"]}
+                  size="lg"
+                  className="mx-2"
+                />
+                <span>Info</span>
               </AnimatedTab>
               <AnimatedTab index={1} style={{ flex: 2 }}>
-                <p>ICA</p>
-                {/* title="ICA" icon="chart-pie" */}
+                <FontAwesomeIcon
+                  icon={["fas", "chart-pie"]}
+                  size="lg"
+                  className="mx-2"
+                />
+                <span>ICA</span>
               </AnimatedTab>
               <AnimatedTab index={2} style={{ flex: 1 }}>
-                <p>Carpets</p>
-                {/* title="Carpets" icon="layer-group" */}
+                <FontAwesomeIcon
+                  icon={["fas", "layer-group"]}
+                  size="lg"
+                  className="mx-2"
+                />
+                <span>Carpets</span>
               </AnimatedTab>
-              <ul className="header-right">
+              <ul className="absolute top-0 right-0 mr-40">
                 <div
-                  className="new-container"
+                  className="absolute top-0 right-0 flex mr-24 text-base text-gray-500 rounded-lg hover:text-gray-900 hover:cursor-pointer"
                   onClick={this.props.toggleIntroPopup}
+                  style={{ padding: "8px 16px" }}
                 >
-                  {/* <FontAwesomeIcon icon={["fas", "plus"]} className="tab-icon" /> */}
+                  <FontAwesomeIcon
+                    icon={["fas", "plus"]}
+                    size="lg"
+                    className="mx-2"
+                  />
                   <span>New</span>
                 </div>
                 <div
-                  className="about-container"
+                  className="absolute right-0 flex text-base text-gray-500 rounded-lg hover:text-gray-900 hover:cursor-pointer"
                   onClick={this.props.toggleAboutPopup}
+                  style={{ padding: "8px 16px" }}
                 >
-                  {/* <FontAwesomeIcon icon={["fas", "question"]} className="tab-icon" /> */}
+                  <FontAwesomeIcon
+                    icon={["fas", "question"]}
+                    size="lg"
+                    className="mx-2"
+                  />
                   <span>About</span>
                 </div>
               </ul>
             </TabList>
             <TabPanels style={{ padding: 10 }}>
-              <TabPanel>
-                <p className="info">{this.state.info}</p>
+              <TabPanel
+                className="mt-12 text-base text-justify whitespace-pre-wrap mx-80 "
+                toggleIntroPopup={this.toggleIntroPopup.bind(this)}
+                toggleAboutPopup={this.toggleAboutPopup.bind(this)}
+              >
+                <p className="">{this.state.info}</p>
               </TabPanel>
-              <TabPanel>
+              <TabPanel
+                toggleIntroPopup={this.toggleIntroPopup.bind(this)}
+                toggleAboutPopup={this.toggleAboutPopup.bind(this)}
+              >
                 <Plots
                   componentData={this.state.componentData}
                   componentFigures={this.state.componentFigures}
                   originalData={this.state.originalData}
                 />
               </TabPanel>
-              <TabPanel>
+              <TabPanel
+                toggleIntroPopup={this.toggleIntroPopup.bind(this)}
+                toggleAboutPopup={this.toggleAboutPopup.bind(this)}
+              >
                 <Carpets images={this.state.carpetFigures} />
               </TabPanel>
             </TabPanels>

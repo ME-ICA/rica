@@ -2,10 +2,10 @@ import React from "react";
 import { useRect } from "@reach/rect";
 import { Tabs, useTabsContext, Tab } from "@reach/tabs";
 
-const HORIZONTAL_PADDING = 8;
+const HORIZONTAL_PADDING = 16;
 const AnimatedContext = React.createContext();
 
-function AnimatedTabs({ color, children, ...rest }) {
+function AnimatedTabs({ children, ...rest }) {
   // some state to store the position we want to animate to
   const [activeRect, setActiveRect] = React.useState(null);
   const ref = React.useRef();
@@ -16,20 +16,26 @@ function AnimatedTabs({ color, children, ...rest }) {
     // can call it, then style it up
     <AnimatedContext.Provider value={setActiveRect}>
       {/* make sure to forward props since we're wrapping Tabs */}
-      <Tabs {...rest} ref={ref} style={{ ...rest.style, position: "relative" }}>
+      <Tabs
+        {...rest}
+        ref={ref}
+        style={{
+          ...rest.style,
+          position: "relative",
+        }}
+      >
         <div
+          className="absolute bg-sky-500"
           style={{
-            position: "absolute",
-            height: 2,
-            background: color,
+            height: 4,
             transition: "all 300ms ease",
             left:
               (activeRect && activeRect.left) -
               (rect && rect.left) +
               HORIZONTAL_PADDING,
-            top: (activeRect && activeRect.bottom) - (rect && rect.top),
+            top: (activeRect && activeRect.bottom) - (rect && rect.top) - 3,
             // subtract both sides of horizontal padding to center the div
-            width: activeRect && activeRect.width - HORIZONTAL_PADDING * 2,
+            width: activeRect && activeRect.width - HORIZONTAL_PADDING * 1.5,
           }}
         />
         {children}
@@ -59,12 +65,12 @@ function AnimatedTab({ index, ...props }) {
 
   return (
     <Tab
+      className="text-gray-500 hover:cursor-pointer"
       ref={ref}
       {...props}
       style={{
         ...props.style,
-        border: "1px",
-        padding: `4px ${HORIZONTAL_PADDING}px`,
+        padding: `8px ${HORIZONTAL_PADDING}px`,
         background: "white",
       }}
     />

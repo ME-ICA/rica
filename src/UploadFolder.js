@@ -139,7 +139,6 @@ class UploadFolder extends Component {
           directory=""
           webkitdirectory=""
           onChange={(e) => this.onChange(e)}
-          onClick={console.log("Click")}
         />
       </label>
     );
