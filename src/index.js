@@ -1,12 +1,13 @@
 import ReactDOM from "react-dom";
 import React, { Component } from "react";
 
-import Tabs from "./Tabs/Tabs";
-import Panel from "./Tabs/Panel";
 import Carpets from "./Carpets/Carpets";
 import Plots from "./Plots/Plots";
 import IntroPopup from "./PopUps/IntroPopUp";
 import AboutPopup from "./PopUps/AboutPopUp";
+
+import { TabList, TabPanels, TabPanel } from "@reach/tabs";
+import { AnimatedTab, AnimatedTabs } from "./TabFunctions";
 
 import "./styles/output.css";
 import "./styles.css";
@@ -21,6 +22,7 @@ class App extends Component {
       info: "",
       showIntroPopup: true,
       showAboutPopup: false,
+      showTabs: false,
       originalData: [],
     };
   }
@@ -29,6 +31,7 @@ class App extends Component {
     if (this.state.componentData.length !== 0) {
       this.setState({
         showIntroPopup: !this.state.showIntroPopup,
+        showTabs: true,
       });
     }
   }
@@ -36,6 +39,12 @@ class App extends Component {
   toggleAboutPopup() {
     this.setState({
       showAboutPopup: !this.state.showAboutPopup,
+    });
+  }
+
+  toggleTabsVisibility() {
+    this.setState({
+      showTabs: !this.state.showTabs,
     });
   }
 
@@ -62,26 +71,43 @@ class App extends Component {
             closePopup={this.toggleAboutPopup.bind(this)}
           />
         ) : null}
-        <Tabs
-          toggleIntroPopup={this.toggleIntroPopup.bind(this)}
-          toggleAboutPopup={this.toggleAboutPopup.bind(this)}
-        >
-          <Panel title="Info" icon="info-circle">
-            <p className="my-24 text-base text-justify whitespace-pre-wrap mx-80 ">
-              {this.state.info}
-            </p>
-          </Panel>
-          <Panel title="ICA" icon="chart-pie">
-            <Plots
-              componentData={this.state.componentData}
-              componentFigures={this.state.componentFigures}
-              originalData={this.state.originalData}
-            />
-          </Panel>
-          <Panel title="Carpets" icon="layer-group">
-            <Carpets images={this.state.carpetFigures} />
-          </Panel>
-        </Tabs>
+        {this.state.showTabs ? (
+          <AnimatedTabs
+            color="red"
+            toggleIntroPopup={this.toggleIntroPopup.bind(this)}
+            toggleAboutPopup={this.toggleAboutPopup.bind(this)}
+          >
+            <TabList style={{ justifyContent: "space-around" }}>
+              <AnimatedTab index={0} style={{ flex: 1 }}>
+                <p>Info</p>
+                {/* title="Info" icon="info-circle" */}
+              </AnimatedTab>
+              <AnimatedTab index={1} style={{ flex: 2 }}>
+                <p>ICA</p>
+                {/* title="ICA" icon="chart-pie" */}
+              </AnimatedTab>
+              <AnimatedTab index={2} style={{ flex: 1 }}>
+                <p>Carpets</p>
+                {/* title="Carpets" icon="layer-group" */}
+              </AnimatedTab>
+            </TabList>
+            <TabPanels style={{ padding: 10 }}>
+              <TabPanel>
+                <p className="info">{this.state.info}</p>
+              </TabPanel>
+              <TabPanel>
+                <Plots
+                  componentData={this.state.componentData}
+                  componentFigures={this.state.componentFigures}
+                  originalData={this.state.originalData}
+                />
+              </TabPanel>
+              <TabPanel>
+                <Carpets images={this.state.carpetFigures} />
+              </TabPanel>
+            </TabPanels>
+          </AnimatedTabs>
+        ) : null}
       </div>
     );
   }
