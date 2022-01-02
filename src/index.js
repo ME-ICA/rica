@@ -9,6 +9,15 @@ import AboutPopup from "./PopUps/AboutPopUp";
 import { TabList, TabPanels, TabPanel } from "@reach/tabs";
 import { AnimatedTab, AnimatedTabs } from "./TabFunctions";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faInfoCircle,
+  faLayerGroup,
+  faChartPie,
+  faPlus,
+  faQuestion,
+} from "@fortawesome/free-solid-svg-icons";
+
 import "./styles.css";
 
 class App extends Component {
@@ -89,6 +98,22 @@ class App extends Component {
                 <p>Carpets</p>
                 {/* title="Carpets" icon="layer-group" */}
               </AnimatedTab>
+              <ul className="header-right">
+                <div
+                  className="new-container"
+                  onClick={this.props.toggleIntroPopup}
+                >
+                  {/* <FontAwesomeIcon icon={["fas", "plus"]} className="tab-icon" /> */}
+                  <span>New</span>
+                </div>
+                <div
+                  className="about-container"
+                  onClick={this.props.toggleAboutPopup}
+                >
+                  {/* <FontAwesomeIcon icon={["fas", "question"]} className="tab-icon" /> */}
+                  <span>About</span>
+                </div>
+              </ul>
             </TabList>
             <TabPanels style={{ padding: 10 }}>
               <TabPanel>

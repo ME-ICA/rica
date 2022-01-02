@@ -63,7 +63,7 @@ function AnimatedTab({ index, ...props }) {
       {...props}
       style={{
         ...props.style,
-        border: "none",
+        border: "1px",
         padding: `4px ${HORIZONTAL_PADDING}px`,
         background: "white",
       }}

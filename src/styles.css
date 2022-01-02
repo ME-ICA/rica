@@ -138,6 +138,7 @@ li.selected:hover {
 .header-right {
   right: 10%;
   position: absolute;
+  z-index: 10;
 }
 
 .new-container {
