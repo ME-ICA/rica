@@ -42,6 +42,7 @@ class UploadFolder extends Component {
   }
 
   onChange(e) {
+    console.log("Reading data...");
     let data = [];
     let compFigures = [];
     let carpetFigures = [];
@@ -111,6 +112,8 @@ class UploadFolder extends Component {
     data.push(info);
     data.push(originalData);
 
+    console.log("Data read into dictionary.");
+
     // Pass data to parent
     this.props.parentCallback(data);
 
@@ -122,10 +125,13 @@ class UploadFolder extends Component {
 
   render() {
     return (
-      <div className="popup-button" onSubmit={this.onFormSubmit}>
-        <label htmlFor="file-upload" className="popup-button-label">
-          <FontAwesomeIcon icon={faFolder} className="tab-icon" /> Select folder
-        </label>
+      <label
+        htmlFor="file-upload"
+        className="relative inline-flex items-center content-center justify-center w-fit h-10 px-5 pt-0.5 mt-4 text-base font-semibold text-center text-white bg-sky-500 rounded-xl hover:cursor-pointer hover:bg-sky-600"
+        onSubmit={this.onFormSubmit}
+      >
+        <FontAwesomeIcon icon={faFolder} size="lg" className="-mt-0.5 mx-2" />{" "}
+        Select folder
         <input
           id="file-upload"
           type="file"
@@ -134,7 +140,7 @@ class UploadFolder extends Component {
           webkitdirectory=""
           onChange={(e) => this.onChange(e)}
         />
-      </div>
+      </label>
     );
   }
 }

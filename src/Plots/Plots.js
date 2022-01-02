@@ -19,12 +19,12 @@ import {
 
 Chart.register(zoomPlugin); // REGISTER PLUGIN
 
-const acceptedColor = "#A8E3A5";
-const acceptedColorHover = "#68AC64";
-const rejedtecColor = "#E99497";
-const rejedtecColorHover = "#B35458";
-const ignoredColor = "#B5DEFF";
-const ignoredColorHover = "#689FCC";
+const acceptedColor = "#86EFAC";
+const acceptedColorHover = "#22C55E";
+const rejedtecColor = "#FCA5A5";
+const rejedtecColorHover = "#EF4444";
+const ignoredColor = "#7DD3FC";
+const ignoredColorHover = "#0EA5E9";
 
 class Plots extends React.Component {
   constructor(props) {
@@ -241,11 +241,11 @@ class Plots extends React.Component {
 
     return (
       <center>
-        <div className="toggle-container">
+        <div className="inline-block mt-10">
           <ToggleSwitch
             values={["accepted", "rejected", "ignored"]}
             selected={this.state.selectedClassification}
-            colors={[acceptedColorHover, rejedtecColorHover, ignoredColorHover]}
+            colors={[acceptedColor, rejedtecColor, ignoredColor]}
             handleNewSelection={this.handleNewSelection.bind(this)}
           />
         </div>
@@ -253,16 +253,17 @@ class Plots extends React.Component {
           handleReset={this.readOriginalData.bind(this)}
           handleSave={this.saveManualClassification.bind(this)}
         />
-        <div className="plot-container-out">
-          <div className="help-text">
+        <div className="table w-full h-auto bg-white">
+          <div className="flex items-center justify-center mt-6 ml-4 text-base text-gray-500 ">
             <p>
               Select an area or use the wheel to zoom in. Shift + click and drag
               to pan.
             </p>
           </div>
-          <div className="plot-container-in">
-            <div className="plot-box kappa_rho">
+          <div className="grid float-left w-1/2 h-auto grid-cols-2 ml-16 bg-white gap-x-1 gap-y-1 plot-container-in">
+            <div className="relative flex items-center justify-center w-full h-full px-1 py-4 text-lg bg-white ">
               <Line
+                className="pt-2"
                 data={this.state.kappaRho}
                 height={21}
                 width={20}
@@ -270,7 +271,7 @@ class Plots extends React.Component {
                 getElementAtEvent={getScatterElementAtEvent}
               />
             </div>
-            <div className="plot-box">
+            <div className="relative flex items-center justify-center w-full h-full px-1 py-4 text-lg bg-white">
               <Pie
                 data={this.state.variance}
                 height={20}
@@ -279,7 +280,7 @@ class Plots extends React.Component {
                 getElementAtEvent={getPieElementAtEvent}
               />
             </div>
-            <div className="plot-box">
+            <div className="relative flex items-center justify-center w-full h-full px-1 py-4 text-lg bg-white">
               <Line
                 data={this.state.rho}
                 height={21}
@@ -288,7 +289,7 @@ class Plots extends React.Component {
                 getElementAtEvent={getScatterElementAtEvent}
               />
             </div>
-            <div className="plot-box">
+            <div className="relative flex items-center justify-center w-full h-full px-1 py-4 text-lg bg-white">
               <Line
                 data={this.state.kappa}
                 height={21}
@@ -298,9 +299,9 @@ class Plots extends React.Component {
               />
             </div>
           </div>
-          <div className="component-plots-image">
+          <div className="flex float-right w-5/12 mt-12 mr-16 z-5">
             <img
-              className="imgComponentPlot"
+              className="w-full max-w-full"
               alt=""
               src={this.state.clickedElement}
             />
