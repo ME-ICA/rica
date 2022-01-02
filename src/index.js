@@ -116,7 +116,7 @@ class App extends Component {
               <ul className="absolute top-0 right-0 mr-40">
                 <div
                   className="absolute top-0 right-0 flex mr-24 text-base text-gray-500 rounded-lg hover:text-gray-900 hover:cursor-pointer"
-                  onClick={this.props.toggleIntroPopup}
+                  onClick={this.toggleIntroPopup.bind(this)}
                   style={{ padding: "8px 16px" }}
                 >
                   <FontAwesomeIcon
@@ -128,7 +128,7 @@ class App extends Component {
                 </div>
                 <div
                   className="absolute right-0 flex text-base text-gray-500 rounded-lg hover:text-gray-900 hover:cursor-pointer"
-                  onClick={this.props.toggleAboutPopup}
+                  onClick={this.toggleAboutPopup.bind(this)}
                   style={{ padding: "8px 16px" }}
                 >
                   <FontAwesomeIcon
@@ -141,27 +141,19 @@ class App extends Component {
               </ul>
             </TabList>
             <TabPanels style={{ padding: 10 }}>
-              <TabPanel
-                className="mt-12 text-base text-justify whitespace-pre-wrap mx-80 "
-                toggleIntroPopup={this.toggleIntroPopup.bind(this)}
-                toggleAboutPopup={this.toggleAboutPopup.bind(this)}
-              >
-                <p className="">{this.state.info}</p>
+              <TabPanel>
+                <p className="mt-12 text-base text-justify whitespace-pre-wrap mx-80 ">
+                  {this.state.info}
+                </p>
               </TabPanel>
-              <TabPanel
-                toggleIntroPopup={this.toggleIntroPopup.bind(this)}
-                toggleAboutPopup={this.toggleAboutPopup.bind(this)}
-              >
+              <TabPanel>
                 <Plots
                   componentData={this.state.componentData}
                   componentFigures={this.state.componentFigures}
                   originalData={this.state.originalData}
                 />
               </TabPanel>
-              <TabPanel
-                toggleIntroPopup={this.toggleIntroPopup.bind(this)}
-                toggleAboutPopup={this.toggleAboutPopup.bind(this)}
-              >
+              <TabPanel>
                 <Carpets images={this.state.carpetFigures} />
               </TabPanel>
             </TabPanels>
