@@ -19,12 +19,12 @@ import {
 
 Chart.register(zoomPlugin); // REGISTER PLUGIN
 
-const acceptedColor = "#A8E3A5";
-const acceptedColorHover = "#68AC64";
-const rejedtecColor = "#E99497";
-const rejedtecColorHover = "#B35458";
-const ignoredColor = "#B5DEFF";
-const ignoredColorHover = "#689FCC";
+const acceptedColor = "#86EFAC";
+const acceptedColorHover = "#22C55E";
+const rejedtecColor = "#FCA5A5";
+const rejedtecColorHover = "#EF4444";
+const ignoredColor = "#7DD3FC";
+const ignoredColorHover = "#0EA5E9";
 
 class Plots extends React.Component {
   constructor(props) {
@@ -241,11 +241,11 @@ class Plots extends React.Component {
 
     return (
       <center>
-        <div className="inline-block my-5">
+        <div className="inline-block mt-10">
           <ToggleSwitch
             values={["accepted", "rejected", "ignored"]}
             selected={this.state.selectedClassification}
-            colors={[acceptedColorHover, rejedtecColorHover, ignoredColorHover]}
+            colors={[acceptedColor, rejedtecColor, ignoredColor]}
             handleNewSelection={this.handleNewSelection.bind(this)}
           />
         </div>
@@ -254,7 +254,7 @@ class Plots extends React.Component {
           handleSave={this.saveManualClassification.bind(this)}
         />
         <div className="table w-full h-auto bg-white">
-          <div className="flex items-center justify-center mt-4 ml-4 text-base text-gray-500 ">
+          <div className="flex items-center justify-center mt-6 ml-4 text-base text-gray-500 ">
             <p>
               Select an area or use the wheel to zoom in. Shift + click and drag
               to pan.

@@ -13,12 +13,12 @@ class ResetAndSave extends Component {
 
   render() {
     return (
-      <div className="absolute inline-block mt-2 ml-4">
+      <div className="absolute inline-block ml-4 mt-7">
         <div className="inline-block list-none">
           <li
             key="Reset"
             onClick={this.props.handleReset}
-            className="px-3 py-1 mt-2 text-base text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-200 hover:cursor-pointer"
+            className="px-3 py-1 mt-2 text-base text-gray-500 rounded-lg hover:text-gray-900 hover:cursor-pointer"
           >
             <FontAwesomeIcon
               icon={["fas", "trash"]}
@@ -32,7 +32,7 @@ class ResetAndSave extends Component {
           <li
             key="Save"
             onClick={this.props.handleSave}
-            className="px-3 py-1 mt-2 text-base text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-200 hover:cursor-pointer"
+            className="px-3 py-1 mt-2 text-base text-gray-500 rounded-lg hover:text-gray-900 hover:cursor-pointer"
           >
             <FontAwesomeIcon
               icon={["fas", "file-download"]}

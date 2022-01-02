@@ -48,7 +48,7 @@ class ToggleSwitch extends Component {
 
   render() {
     return (
-      <div className="relative bg-gray-200 rounded-md h-7 w-fit">
+      <div className="relative h-8 -mt-1 font-semibold bg-gray-200 rounded-md w-fit">
         {this.props.values.map((val) => {
           return (
             <span>

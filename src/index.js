@@ -2,6 +2,7 @@ import ReactDOM from "react-dom";
 import React, { Component } from "react";
 
 import Carpets from "./Carpets/Carpets";
+import Info from "./Info/Info";
 import Plots from "./Plots/Plots";
 import IntroPopup from "./PopUps/IntroPopUp";
 import AboutPopup from "./PopUps/AboutPopUp";
@@ -70,7 +71,7 @@ class App extends Component {
 
   render() {
     return (
-      <div className="main-container">
+      <div className="h-full min-h-full overflow-hidden text-center ">
         {this.state.showIntroPopup ? (
           <IntroPopup
             callBack={this.callbackFunction}
@@ -140,11 +141,9 @@ class App extends Component {
                 </div>
               </ul>
             </TabList>
-            <TabPanels style={{ padding: 10 }}>
+            <TabPanels>
               <TabPanel>
-                <p className="mt-12 text-base text-justify whitespace-pre-wrap mx-80 ">
-                  {this.state.info}
-                </p>
+                <Info info={this.state.info} />
               </TabPanel>
               <TabPanel>
                 <Plots

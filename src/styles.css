@@ -1,37 +1,12 @@
 :root {
-  --c1: black;
-  --c2: hsl(207, 14%, 36%);
-  --c3: hsl(207, 14%, 52%);
-  --c4: hsl(207, 14%, 68%);
-  --c5: hsl(205, 20%, 78%);
-  --c6: hsl(207, 20%, 92%);
-  --icons: rgb(20, 23, 26);
-  --selection: rgba(29, 161, 242, 0.08);
-  --selectionHover: rgba(29, 161, 242, 0.2);
-  --buttonWhite: white;
-  --buttonWhiteText: hsl(207, 14%, 28%);
-  --bg0: white;
-  --bg0_transparent: rgba(255, 255, 255, 0);
-  --bg1: rgb(253, 253, 254);
-  --bg1_transparent: rgba(253, 253, 254, 0);
-  --bg2: hsl(204, 33%, 98%);
-  --bg3: hsl(204, 33%, 97%);
-  --bg4: hsl(204, 33%, 94%);
-  --tooltip: rgb(253, 253, 254);
-  --twitter_accent: rgb(29, 161, 242);
-  --accent1: rgb(29, 161, 242);
-  --accent1rgb: 29, 161, 242;
-  --accent2: rgb(29, 161, 242);
-  --error: hsl(360, 90%, 60%);
-  --errorHighlighting: hsla(352, 100%, 55%, 0.2);
-  --success: hsl(130, 55%, 44%);
-  --success-transparent: hsla(130, 55%, 44%, 0.1);
-  --orange: hsl(29, 100%, 58%);
-  --dark-orange: hsl(29, 90%, 50%);
-  --uiBorderColor: hsl(204, 25%, 94%);
-  --shadowColor: hsla(200, 60%, 20%, 0.05);
-  --modalBackground: hsla(0, 0%, 0%, 0.2);
-  --verified-badge: rgb(29, 161, 242);
+  min-height: 100% !important;
+  height: 100%;
+}
+
+html,
+body {
+  min-height: 100% !important;
+  height: 100%;
 }
 
 body {
@@ -197,4 +172,9 @@ input[type="file"] {
 .about-link:hover {
   text-decoration: none;
   color: white;
+}
+
+/* Selected tab */
+[data-selected] {
+  color: black;
 }

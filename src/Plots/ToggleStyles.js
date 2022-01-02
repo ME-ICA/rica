@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import React, { Component } from "react";
 
 export const Switch = styled.div`
   position: relative;
@@ -40,9 +39,9 @@ export const SwitchSelection = styled.span`
   left: 0px;
   width: 80px;
   padding: 0 5px;
-  height: 26px;
+  height: 2rem;
   background: #e4e4e4;
-  border-radius: 3px;
+  border-radius: 0.375rem;
   transition: left 0.25s ease-out;
 `;
 
@@ -52,7 +51,7 @@ export const SwitchLabel = styled.label`
   float: left;
   width: 80px;
   padding: 0 5px;
-  line-height: 26px;
+  line-height: 2rem;
   color: rgba(0, 0, 0, 0.6);
   text-align: center;
   cursor: pointer;

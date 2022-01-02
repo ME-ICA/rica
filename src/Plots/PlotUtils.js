@@ -1,9 +1,9 @@
-const acceptedColor = "#A8E3A5";
-const acceptedColorHover = "#68AC64";
-const rejedtecColor = "#E99497";
-const rejedtecColorHover = "#B35458";
-const ignoredColor = "#B5DEFF";
-const ignoredColorHover = "#689FCC";
+const acceptedColor = "#86EFAC";
+const acceptedColorHover = "#16A34A";
+const rejedtecColor = "#FCA5A5";
+const rejedtecColorHover = "#DC2626";
+const ignoredColor = "#7DD3FC";
+const ignoredColorHover = "#0284C7";
 
 // This functions converts the data into 4 objects corresponding to the 4 plots.
 // The objects have the necessary structure to feed the chartjs plots.
