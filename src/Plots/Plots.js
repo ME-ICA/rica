@@ -260,8 +260,8 @@ class Plots extends React.Component {
               to pan.
             </p>
           </div>
-          <div className="plot-container-in">
-            <div className="plot-box kappa_rho">
+          <div className="grid float-left w-1/2 h-auto grid-cols-2 bg-white gap-x-5 gap-y-4 plot-container-in">
+            <div className="plot-box">
               <Line
                 data={this.state.kappaRho}
                 height={21}
@@ -298,9 +298,9 @@ class Plots extends React.Component {
               />
             </div>
           </div>
-          <div className="component-plots-image">
+          <div className="flex float-right w-5/12 mt-12 mr-16">
             <img
-              className="imgComponentPlot"
+              className="w-full max-w-full"
               alt=""
               src={this.state.clickedElement}
             />

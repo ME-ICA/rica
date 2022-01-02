@@ -19,11 +19,6 @@ body {
   font-size: 15px;
 }
 
-.main-container {
-  text-align: center;
-  overflow: hidden;
-}
-
 #app {
   border-radius: 3px;
   border: 1px solid var(--c6);
@@ -69,34 +64,9 @@ ul.inline {
   color: var(--c3);
 }
 
-.plot-container-out {
-  /* margin: 20px auto; */
-  width: 100%;
-  height: auto;
-  background-color: #fff;
-  display: table;
-}
-
-.help-text {
-  color: var(--c3);
-  font-size: 14px;
-  margin-top: 10px;
-  margin-left: 10px;
-}
-
 .plot-container-in {
-  /* margin: 20px auto; */
-  width: 50%;
-  height: auto;
-  background-color: #fff;
-  display: grid;
-  grid-template-columns: 40% 40%;
+  /* grid-template-columns: 40% 40%; */
   grid-row: auto auto;
-  grid-column-gap: 5%;
-  grid-row-gap: 6%;
-  float: left;
-  position: absolute;
-  /* display: table-cell; */
 }
 
 .plot-box {
@@ -118,12 +88,6 @@ ul.inline {
   display: flex;
   width: 45%;
   float: right;
-  margin-top: 5%;
-}
-
-.imgComponentPlot {
-  max-width: 100% !important;
-  width: 100%;
 }
 
 .kappa_rho {
