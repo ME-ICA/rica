@@ -8,6 +8,8 @@
     "@fortawesome/free-regular-svg-icons": "^5.15.4",
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
     "@fortawesome/react-fontawesome": "^0.1.15",
+    "@reach/rect": "^0.16.0",
+    "@reach/tabs": "^0.16.4",
     "chart.js": "^3.5.0",
     "chartjs-plugin-datalabels": "^2.0.0",
     "chartjs-plugin-zoom": "^1.1.1",
