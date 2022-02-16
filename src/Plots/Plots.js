@@ -184,7 +184,7 @@ class Plots extends React.Component {
       compName = compName.join("");
       // If length of compName is 2, then add a 0 to the beginning
       if (compName.length === 2) {
-        compName = `0${compName}`;
+        compName = "0" + compName;
       }
       compName = `comp_${compName}.png`;
 
@@ -234,7 +234,7 @@ class Plots extends React.Component {
       compName = compName.join("");
       // If length of compName is 2, then add a 0 to the beginning
       if (compName.length === 2) {
-        compName = `0${compName}`;
+        compName = "0" + compName;
       }
       compName = `comp_${compName}.png`;
 
