@@ -119,9 +119,11 @@ class Plots extends React.Component {
       delete origData[i].colorHover;
       // Find index of component in variance object to get new classification
       var pieIndex = variance.labels.indexOf(origData[i].Component);
-      origData[i].manual_classification =
+      origData[i].original_classification = origData[i].classification;
+      origData[i].classification =
         this.state.variance.datasets[0].classification[pieIndex];
     }
+    console.log(origData);
 
     // grab the column headings (separated by tabs)
     const headings = Object.keys(origData[0]).join("\t");
