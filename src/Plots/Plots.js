@@ -122,6 +122,12 @@ class Plots extends React.Component {
       origData[i].original_classification = origData[i].classification;
       origData[i].classification =
         this.state.variance.datasets[0].classification[pieIndex];
+
+      // Change rationale of components that have different values in
+      // original_classification and classification
+      if (origData[i].classification !== origData[i].original_classification) {
+        origData[i].rationale = "I001";
+      }
     }
     console.log(origData);
 
