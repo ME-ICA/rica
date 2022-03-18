@@ -40,12 +40,32 @@ class App extends Component {
     };
   }
 
+  setToasterRef = (ref) => {
+    this.toaster = ref;
+  };
+
   toggleIntroPopup() {
     if (this.state.componentData.length !== 0) {
       this.setState({
         showIntroPopup: !this.state.showIntroPopup,
         showTabs: true,
       });
+    } else if (this.state.componentData.length === 0) {
+      // Show an alert
+      console.log("The metrics table is missing.");
+      alert("The metrics table is missing.");
+    } else if (this.state.componentFigures.length === 0) {
+      // Show an alert
+      console.log("The component figures are missing.");
+      alert("The component figures are missing.");
+    } else if (this.state.carpetFigures.length === 0) {
+      // Show an alert
+      console.log("The carpet figures are missing.");
+      alert("The carpet figures are missing.");
+    } else if (this.state.info === "") {
+      // Show an alert
+      console.log("The info is missing.");
+      alert("The info is missing.");
     }
   }
 
