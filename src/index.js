@@ -52,20 +52,28 @@ class App extends Component {
       });
     } else if (this.state.componentData.length === 0) {
       // Show an alert
-      console.log("The metrics table is missing.");
-      alert("The metrics table is missing.");
+      setTimeout(() => {
+        console.log("The metrics table is missing.");
+        alert("The metrics table is missing.");
+      }, 200);
     } else if (this.state.componentFigures.length === 0) {
       // Show an alert
-      console.log("The component figures are missing.");
-      alert("The component figures are missing.");
+      setTimeout(() => {
+        console.log("The component figures are missing.");
+        alert("The component figures are missing.");
+      }, 200);
     } else if (this.state.carpetFigures.length === 0) {
       // Show an alert
-      console.log("The carpet figures are missing.");
-      alert("The carpet figures are missing.");
+      setTimeout(() => {
+        console.log("The carpet figures are missing.");
+        alert("The carpet figures are missing.");
+      }, 200);
     } else if (this.state.info === "") {
       // Show an alert
-      console.log("The info is missing.");
-      alert("The info is missing.");
+      setTimeout(() => {
+        console.log("The info is missing.");
+        alert("The info is missing.");
+      }, 200);
     }
   }
 
