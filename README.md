@@ -4,6 +4,8 @@
 
 As part of the ME-ICA pipeline, `Rica` (Reports for ICA) provides a reporting tool for ICA decompositions performed with [tedana](https://github.com/ME-ICA/tedana) and [aroma](https://github.com/ME-ICA/aroma).
 
+**Pronunciation:** [ˈrika]. For an audio recording on how to pronounce Rica [see here](https://easypronunciation.com/en/spanish/word/rica).
+
 ## About
 
 `Rica` originally came out as an alternative to the reports provided by [tedana](https://github.com/ME-ICA/tedana), with the aim of making manual classification of ICA components possible. At the same time, the tool aspires to be of value for ICA decompositions made with tools other than `tedana`. `Rica` assumes you're working with files that mimic the outputs of `tedana`.
