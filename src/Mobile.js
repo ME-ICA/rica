@@ -14,8 +14,8 @@ class MobileMain extends Component {
             </h1>
             <div className="my-8">
               <p className="text-base">
-                It looks like you're visiting from a small screen. To use Rica,
-                please open it on your computer.
+                It looks like you're visiting from a small screen. Save me on
+                your shortcuts and visit me again from your computer.
               </p>
             </div>
             <div className="my-8">
