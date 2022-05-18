@@ -26,6 +26,12 @@ module.exports = {
       indigo: colors.indigo,
       yellow: colors.yellow,
       sky: colors.sky,
+      blue: colors.blue,
+      purple: colors.purple,
+      pink: colors.pink,
+      violet: colors.violet,
+      orange: colors.orange,
+      red: colors.red,
     },
   },
 };
