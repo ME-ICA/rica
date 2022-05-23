@@ -38,6 +38,7 @@ class App extends Component {
       showAboutPopup: false,
       showTabs: false,
       originalData: [],
+      dataRead: [],
       width: window.innerWidth,
     };
   }
@@ -47,36 +48,10 @@ class App extends Component {
   };
 
   toggleIntroPopup() {
-    if (this.state.componentData.length !== 0) {
-      this.setState({
-        showIntroPopup: !this.state.showIntroPopup,
-        showTabs: true,
-      });
-    } else if (this.state.componentData.length === 0) {
-      // Show an alert
-      setTimeout(() => {
-        console.log("The metrics table is missing.");
-        alert("The metrics table is missing.");
-      }, 400);
-    } else if (this.state.componentFigures.length === 0) {
-      // Show an alert
-      setTimeout(() => {
-        console.log("The component figures are missing.");
-        alert("The component figures are missing.");
-      }, 400);
-    } else if (this.state.carpetFigures.length === 0) {
-      // Show an alert
-      setTimeout(() => {
-        console.log("The carpet figures are missing.");
-        alert("The carpet figures are missing.");
-      }, 400);
-    } else if (this.state.info === "") {
-      // Show an alert
-      setTimeout(() => {
-        console.log("The info is missing.");
-        alert("The info is missing.");
-      }, 400);
-    }
+    this.setState({
+      showIntroPopup: !this.state.showIntroPopup,
+      showTabs: true,
+    });
   }
 
   toggleAboutPopup() {
@@ -91,12 +66,28 @@ class App extends Component {
     });
   }
 
-  callbackFunction = (childData) => {
-    this.setState({ componentData: childData[2] });
-    this.setState({ componentFigures: childData[0] });
-    this.setState({ carpetFigures: childData[1] });
-    this.setState({ info: childData[3] });
-    this.setState({ originalData: childData[4] });
+  onDataLoad = (childData) => {
+    this.setState({ dataRead: childData }, () => {
+      console.log(this.state.dataRead);
+      setTimeout(() => {
+        this.setState({ componentData: this.state.dataRead[2] }, () => {
+          console.log(this.state.componentData);
+          this.setState({ componentFigures: this.state.dataRead[0] }, () => {
+            console.log(this.state.componentFigures);
+            this.setState({ carpetFigures: this.state.dataRead[1] }, () => {
+              console.log(this.state.carpetFigures);
+              this.setState({ info: this.state.dataRead[3] }, () => {
+                console.log(this.state.info);
+                this.setState({ originalData: this.state.dataRead[4] }, () => {
+                  console.log(this.state.originalData);
+                  this.toggleIntroPopup();
+                });
+              });
+            });
+          });
+        });
+      }, 5000);
+    });
   };
 
   componentWillMount() {
@@ -128,13 +119,13 @@ class App extends Component {
         <div className="h-full min-h-full overflow-hidden text-center ">
           {this.state.showIntroPopup ? (
             <IntroPopup
-              callBack={this.callbackFunction}
+              onDataLoad={this.onDataLoad}
               closePopup={this.toggleIntroPopup.bind(this)}
             />
           ) : null}
           {this.state.showAboutPopup ? (
             <AboutPopup
-              callBack={this.callbackFunction}
+              callBack={this.onDataLoad}
               closePopup={this.toggleAboutPopup.bind(this)}
             />
           ) : null}

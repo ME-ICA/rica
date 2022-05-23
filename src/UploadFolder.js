@@ -112,10 +112,12 @@ class UploadFolder extends Component {
     data.push(info);
     data.push(originalData);
 
-    console.log("Data read into dictionary.");
-
     // Pass data to parent
-    this.props.parentCallback(data);
+    this.props.onDataLoad(data);
+
+    console.log(data);
+
+    console.log("Data read into dictionary.");
 
     // Wait until data is loaded to close popup
     setTimeout(() => {
