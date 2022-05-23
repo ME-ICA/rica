@@ -8,6 +8,7 @@ const ignoredColorHover = "#0284C7";
 // This functions converts the data into 4 objects corresponding to the 4 plots.
 // The objects have the necessary structure to feed the chartjs plots.
 export function parseData(data) {
+  console.log(data);
   let kappa_rho = {
     labels: data.map((e) => e.Component),
     datasets: [
