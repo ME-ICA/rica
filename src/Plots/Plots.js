@@ -16,6 +16,7 @@ import {
   updateScatterColors,
   resetAndUpdateColors,
 } from "./PlotUtils";
+import { HotKeys } from "react-hotkeys";
 
 Chart.register(zoomPlugin); // REGISTER PLUGIN
 
@@ -25,6 +26,14 @@ const rejedtecColor = "#FCA5A5";
 const rejedtecColorHover = "#EF4444";
 const ignoredColor = "#7DD3FC";
 const ignoredColorHover = "#0EA5E9";
+
+const keyMap = {
+  ACCEPT: "a",
+  REJECT: "r",
+  IGNORE: "i",
+  MOVE_UP: "left",
+  MOVE_DOWN: "right",
+};
 
 class Plots extends React.Component {
   constructor(props) {
@@ -38,8 +47,72 @@ class Plots extends React.Component {
       selectedLabel: 0,
       selectedColor: { acceptedColor },
       selectedClassification: "accepted",
+      selectedScatter: true,
+      selectedPie: false,
+      selectedIndex: 0,
     };
   }
+
+  handlers = {
+    ACCEPT: (event) => {
+      this.handleNewSelection("accepted");
+    },
+    REJECT: (event) => {
+      this.handleNewSelection("rejected");
+    },
+    IGNORE: (event) => {
+      this.handleNewSelection("ignored");
+    },
+    MOVE_UP: (event) => {
+      if (this.state.selectedPie) {
+        if (this.state.selectedIndex > 0) {
+          this.setState({ selectedIndex: this.state.selectedIndex - 1 }, () => {
+            this.updatePiePlot(this.state.selectedIndex);
+          });
+        }
+      }
+      if (this.state.selectedScatter) {
+        // Get the new rank as the current one minus one
+        var kappa = { ...this.state.kappa };
+        var newRank = kappa.datasets[0].data[this.state.selectedIndex].x - 1;
+        if (newRank > 0) {
+          // Find kappa.datasets[0].data.x that is equal to newRank
+          var newIndex = kappa.datasets[0].data.findIndex(
+            (element) => element.x === newRank
+          );
+          this.setState({ selectedIndex: newIndex }, () => {
+            this.updateScatterPlots(newIndex);
+          });
+        }
+      }
+    },
+    MOVE_DOWN: (event) => {
+      if (this.state.selectedPie) {
+        if (
+          this.state.selectedIndex <
+          this.state.variance.datasets[0].data.length - 1
+        ) {
+          this.setState({ selectedIndex: this.state.selectedIndex + 1 }, () => {
+            this.updatePiePlot(this.state.selectedIndex);
+          });
+        }
+      }
+      if (this.state.selectedScatter) {
+        // Get the new rank as the current one plus one
+        var kappa = { ...this.state.kappa };
+        var newRank = kappa.datasets[0].data[this.state.selectedIndex].x + 1;
+        if (newRank < kappa.datasets[0].data.length) {
+          // Find kappa.datasets[0].data.x that is equal to newRank
+          var newIndex = kappa.datasets[0].data.findIndex(
+            (element) => element.x === newRank
+          );
+          this.setState({ selectedIndex: newIndex }, () => {
+            this.updateScatterPlots(newIndex);
+          });
+        }
+      }
+    },
+  };
 
   // Parse the original data provided by the user into the necessary 4 objects
   readOriginalData() {
@@ -154,176 +227,196 @@ class Plots extends React.Component {
     hiddenElement.click();
   }
 
+  updatePiePlot(index) {
+    // Set hover color as background to show selection
+    var variance = { ...this.state.variance };
+    resetAndUpdateColors(variance, index, true);
+    this.setState({ variance: variance });
+    var selectedLabel = variance.labels[index];
+    this.setState({ selectedLabel: selectedLabel });
+    this.setState({
+      selectedColor: variance.datasets[0].hoverBackgroundColor[index],
+    });
+    this.setState({
+      selectedClassification: variance.datasets[0].classification[index],
+    });
+
+    var kappaRho = { ...this.state.kappaRho };
+    var scatterIndex = kappaRho.labels.indexOf(selectedLabel);
+    resetAndUpdateColors(kappaRho, scatterIndex, false);
+    this.setState({ kappaRho: kappaRho });
+
+    var kappa = { ...this.state.kappa };
+    resetAndUpdateColors(kappa, scatterIndex, false);
+    this.setState({ kappa: kappa });
+
+    var rho = { ...this.state.rho };
+    resetAndUpdateColors(rho, scatterIndex, false);
+    this.setState({ rho: rho });
+
+    // Get component name of selected component
+    var compName = this.state.variance.labels[index].match(/\d/g);
+    compName = compName.join("");
+    // If length of compName is 2, then add a 0 to the beginning
+    if (compName.length === 2) {
+      compName = "0" + compName;
+    }
+    compName = `comp_${compName}.png`;
+
+    // iterate over each element in the array to retrieve image of selected component based on name
+    for (var i = 0; i < this.props.componentFigures.length; i++) {
+      // look for the entry with a matching `compName` value
+      if (this.props.componentFigures[i].name === compName) {
+        this.setState({ clickedElement: this.props.componentFigures[i].img });
+      }
+    }
+  }
+
+  updateScatterPlots(index) {
+    // Set hover color as background to show selection
+    var kappaRho = { ...this.state.kappaRho };
+    resetAndUpdateColors(kappaRho, index, false);
+    this.setState({ kappaRho: kappaRho });
+    var selectedLabel = kappaRho.labels[index];
+    this.setState({ selectedLabel: selectedLabel });
+    this.setState({
+      selectedColor: kappaRho.datasets[0].pointHoverBackgroundColor[index],
+    });
+    this.setState({
+      selectedClassification: kappaRho.datasets[0].classification[index],
+    });
+
+    var kappa = { ...this.state.kappa };
+    resetAndUpdateColors(kappa, index, false);
+    this.setState({ kappa: kappa });
+
+    var rho = { ...this.state.rho };
+    resetAndUpdateColors(rho, index, false);
+    this.setState({ rho: rho });
+
+    var variance = { ...this.state.variance };
+    var pieIndex = variance.labels.indexOf(selectedLabel);
+    resetAndUpdateColors(variance, pieIndex, true);
+    this.setState({ variance: variance });
+
+    // Get component name of selected component
+    var compName = this.state.kappaRho.labels[index].match(/\d/g);
+    compName = compName.join("");
+    // If length of compName is 2, then add a 0 to the beginning
+    if (compName.length === 2) {
+      compName = "0" + compName;
+    }
+    compName = `comp_${compName}.png`;
+
+    // iterate over each element in the array to retrieve image of selected component based on name
+    for (var i = 0; i < this.props.componentFigures.length; i++) {
+      // look for the entry with a matching `compName` value
+      if (this.props.componentFigures[i].name === compName) {
+        this.setState({ clickedElement: this.props.componentFigures[i].img });
+      }
+    }
+  }
+
   render() {
     // Handle onClick events on the Pie chart
     const getPieElementAtEvent = (element) => {
       if (!element.length) return;
 
+      this.setState({ selectedScatter: false });
+      this.setState({ selectedPie: true });
+
       const { datasetIndex, index } = element[0];
 
-      // Set hover color as background to show selection
-      var variance = { ...this.state.variance };
-      resetAndUpdateColors(variance, index, true);
-      this.setState({ variance: variance });
-      var selectedLabel = variance.labels[index];
-      this.setState({ selectedLabel: selectedLabel });
-      this.setState({
-        selectedColor: variance.datasets[0].hoverBackgroundColor[index],
-      });
-      this.setState({
-        selectedClassification: variance.datasets[0].classification[index],
-      });
+      this.setState({ selectedIndex: index });
 
-      var kappaRho = { ...this.state.kappaRho };
-      var scatterIndex = kappaRho.labels.indexOf(selectedLabel);
-      resetAndUpdateColors(kappaRho, scatterIndex, false);
-      this.setState({ kappaRho: kappaRho });
-
-      var kappa = { ...this.state.kappa };
-      resetAndUpdateColors(kappa, scatterIndex, false);
-      this.setState({ kappa: kappa });
-
-      var rho = { ...this.state.rho };
-      resetAndUpdateColors(rho, scatterIndex, false);
-      this.setState({ rho: rho });
-
-      // Get component name of selected component
-      var compName = this.state.variance.labels[index].match(/\d/g);
-      compName = compName.join("");
-      // If length of compName is 2, then add a 0 to the beginning
-      if (compName.length === 2) {
-        compName = "0" + compName;
-      }
-      compName = `comp_${compName}.png`;
-
-      // iterate over each element in the array to retrieve image of selected component based on name
-      for (var i = 0; i < this.props.componentFigures.length; i++) {
-        // look for the entry with a matching `compName` value
-        if (this.props.componentFigures[i].name === compName) {
-          this.setState({ clickedElement: this.props.componentFigures[i].img });
-        }
-      }
+      this.updatePiePlot(index);
     };
 
     // Handle onClick events on the Scatter charts
     const getScatterElementAtEvent = (element) => {
       if (!element.length) return;
 
+      this.setState({ selectedScatter: true });
+      this.setState({ selectedPie: false });
+
       const { datasetIndex, index } = element[0];
 
-      // Set hover color as background to show selection
-      var kappaRho = { ...this.state.kappaRho };
-      resetAndUpdateColors(kappaRho, index, false);
-      this.setState({ kappaRho: kappaRho });
-      var selectedLabel = kappaRho.labels[index];
-      this.setState({ selectedLabel: selectedLabel });
-      this.setState({
-        selectedColor: kappaRho.datasets[0].pointHoverBackgroundColor[index],
-      });
-      this.setState({
-        selectedClassification: kappaRho.datasets[0].classification[index],
-      });
+      this.setState({ selectedIndex: index });
 
-      var kappa = { ...this.state.kappa };
-      resetAndUpdateColors(kappa, index, false);
-      this.setState({ kappa: kappa });
-
-      var rho = { ...this.state.rho };
-      resetAndUpdateColors(rho, index, false);
-      this.setState({ rho: rho });
-
-      var variance = { ...this.state.variance };
-      var pieIndex = variance.labels.indexOf(selectedLabel);
-      resetAndUpdateColors(variance, pieIndex, true);
-      this.setState({ variance: variance });
-
-      // Get component name of selected component
-      var compName = this.state.kappaRho.labels[index].match(/\d/g);
-      compName = compName.join("");
-      // If length of compName is 2, then add a 0 to the beginning
-      if (compName.length === 2) {
-        compName = "0" + compName;
-      }
-      compName = `comp_${compName}.png`;
-
-      // iterate over each element in the array to retrieve image of selected component based on name
-      for (var i = 0; i < this.props.componentFigures.length; i++) {
-        // look for the entry with a matching `compName` value
-        if (this.props.componentFigures[i].name === compName) {
-          this.setState({ clickedElement: this.props.componentFigures[i].img });
-        }
-      }
+      this.updateScatterPlots(index);
     };
 
     return (
-      <center>
-        <div className="inline-block mt-10">
-          <ToggleSwitch
-            values={["accepted", "rejected", "ignored"]}
-            selected={this.state.selectedClassification}
-            colors={[acceptedColor, rejedtecColor, ignoredColor]}
-            handleNewSelection={this.handleNewSelection.bind(this)}
-          />
-        </div>
-        <ResetAndSave
-          handleReset={this.readOriginalData.bind(this)}
-          handleSave={this.saveManualClassification.bind(this)}
-        />
-        <div className="table w-full h-auto bg-white">
-          <div className="flex items-center justify-center mt-6 ml-4 text-base text-gray-500 ">
-            <p>
-              Select an area or use the wheel to zoom in. Shift + click and drag
-              to pan.
-            </p>
-          </div>
-          <div className="grid float-left w-1/2 h-auto grid-cols-2 ml-16 bg-white gap-x-1 gap-y-1 plot-container-in">
-            <div className="relative flex items-center justify-center w-full h-full px-1 py-4 text-lg bg-white ">
-              <Line
-                className="pt-2"
-                data={this.state.kappaRho}
-                height={21}
-                width={20}
-                options={options_kappa_rho}
-                getElementAtEvent={getScatterElementAtEvent}
-              />
-            </div>
-            <div className="relative flex items-center justify-center w-full h-full px-1 py-4 text-lg bg-white">
-              <Pie
-                data={this.state.variance}
-                height={20}
-                width={20}
-                options={optionsPie}
-                getElementAtEvent={getPieElementAtEvent}
-              />
-            </div>
-            <div className="relative flex items-center justify-center w-full h-full px-1 py-4 text-lg bg-white">
-              <Line
-                data={this.state.rho}
-                height={21}
-                width={20}
-                options={options_rho}
-                getElementAtEvent={getScatterElementAtEvent}
-              />
-            </div>
-            <div className="relative flex items-center justify-center w-full h-full px-1 py-4 text-lg bg-white">
-              <Line
-                data={this.state.kappa}
-                height={21}
-                width={20}
-                options={options_kappa}
-                getElementAtEvent={getScatterElementAtEvent}
-              />
-            </div>
-          </div>
-          <div className="flex float-right w-5/12 mt-12 mr-16 z-5">
-            <img
-              className="w-full max-w-full"
-              alt=""
-              src={this.state.clickedElement}
+      <HotKeys keyMap={keyMap} handlers={this.handlers}>
+        <center>
+          <div className="inline-block mt-10">
+            <ToggleSwitch
+              values={["accepted", "rejected", "ignored"]}
+              selected={this.state.selectedClassification}
+              colors={[acceptedColor, rejedtecColor, ignoredColor]}
+              handleNewSelection={this.handleNewSelection.bind(this)}
             />
           </div>
-        </div>
-      </center>
+          <ResetAndSave
+            handleReset={this.readOriginalData.bind(this)}
+            handleSave={this.saveManualClassification.bind(this)}
+          />
+          <div className="table w-full h-auto bg-white">
+            <div className="flex items-center justify-center mt-6 ml-4 text-base text-gray-500 ">
+              <p>
+                Select an area or use the wheel to zoom in. Shift + click and
+                drag to pan.
+              </p>
+            </div>
+            <div className="grid float-left w-1/2 h-auto grid-cols-2 ml-16 bg-white gap-x-1 gap-y-1 plot-container-in">
+              <div className="relative flex items-center justify-center w-full h-full px-1 py-4 text-lg bg-white ">
+                <Line
+                  className="pt-2"
+                  data={this.state.kappaRho}
+                  height={21}
+                  width={20}
+                  options={options_kappa_rho}
+                  getElementAtEvent={getScatterElementAtEvent}
+                />
+              </div>
+              <div className="relative flex items-center justify-center w-full h-full px-1 py-4 text-lg bg-white">
+                <Pie
+                  data={this.state.variance}
+                  height={20}
+                  width={20}
+                  options={optionsPie}
+                  getElementAtEvent={getPieElementAtEvent}
+                />
+              </div>
+              <div className="relative flex items-center justify-center w-full h-full px-1 py-4 text-lg bg-white">
+                <Line
+                  data={this.state.rho}
+                  height={21}
+                  width={20}
+                  options={options_rho}
+                  getElementAtEvent={getScatterElementAtEvent}
+                />
+              </div>
+              <div className="relative flex items-center justify-center w-full h-full px-1 py-4 text-lg bg-white">
+                <Line
+                  data={this.state.kappa}
+                  height={21}
+                  width={20}
+                  options={options_kappa}
+                  getElementAtEvent={getScatterElementAtEvent}
+                />
+              </div>
+            </div>
+            <div className="flex float-right w-5/12 mt-12 mr-16 z-5">
+              <img
+                className="w-full max-w-full"
+                alt=""
+                src={this.state.clickedElement}
+              />
+            </div>
+          </div>
+        </center>
+      </HotKeys>
     );
   }
 }
