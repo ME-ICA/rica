@@ -10,6 +10,18 @@ As part of the ME-ICA pipeline, `Rica` (Reports for ICA) provides a reporting to
 
 `Rica` originally came out as an alternative to the reports provided by [tedana](https://github.com/ME-ICA/tedana), with the aim of making manual classification of ICA components possible. At the same time, the tool aspires to be of value for ICA decompositions made with tools other than `tedana`. `Rica` assumes you're working with files that mimic the outputs of `tedana`.
 
+## How to use Rica
+
+Even if Rica is designed to be simple to use, you might want to see how you can use the app by watching this [tutorial video](https://www.loom.com/share/ad37cf6f3c2d41e48721f62168a8284e).
+
+Rica also supports keyboard shortcuts on the ICA components page. You can use the following shortcuts:
+
+- `a`: Accept component.
+- `r`: Reject component.
+- `i`: Ignore component.
+- `left arrow`: Go to previous component.
+- `right arrow`: Go to next component.
+
 ## Using Rica online
 
 Just head over to https://rica-fmri.netlify.app and have fun!
@@ -40,10 +52,6 @@ open build/rica.html
 ```
 
 > Pro tip: when you open rica.html for the first time, BOOKMARK IT 😉
-
-## Using Rica
-
-Even if Rica is designed to be simple to use, you might want to see how you can use the app by watching this [tutorial video](https://www.loom.com/share/ad37cf6f3c2d41e48721f62168a8284e).
 
 ## Getting involved
 
