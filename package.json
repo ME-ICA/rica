@@ -1,6 +1,6 @@
 {
   "name": "rica",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "private": true,
   "dependencies": {
     "@blueprintjs/core": "^3.53.0",
