@@ -11,6 +11,7 @@
     "@fortawesome/react-fontawesome": "^0.1.15",
     "@reach/rect": "^0.16.0",
     "@reach/tabs": "^0.16.4",
+    "@remix-run/react": "^1.7.5",
     "chart.js": "3.5.0",
     "chartjs-plugin-datalabels": "2.0.0",
     "chartjs-plugin-zoom": "1.1.1",
