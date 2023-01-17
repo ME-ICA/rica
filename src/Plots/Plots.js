@@ -202,7 +202,6 @@ class Plots extends React.Component {
         origData[i].rationale = "I001";
       }
     }
-    console.log(origData);
 
     // grab the column headings (separated by tabs)
     const headings = Object.keys(origData[0]).join("\t");
@@ -218,13 +217,52 @@ class Plots extends React.Component {
       }, [])
       .join("\n");
 
+    // Extract the indices of the components that have been manually accepted into a new array
+    // Do the same with rejected components
+    var accepted = [];
+    var rejected = [];
+    for (var i = 0; i < origData.length; i++) {
+      // If classification is accepted and rationale is I001, add to accepted array
+      if (
+        origData[i].classification === "accepted" &&
+        origData[i].rationale === "I001"
+      ) {
+        accepted.push(i);
+      }
+
+      // If classification is rejected and rationale is I001, add to rejected array
+      if (
+        origData[i].classification === "rejected" &&
+        origData[i].rationale === "I001"
+      ) {
+        rejected.push(i);
+      }
+    }
+
+    // Save accepted and rejected arrays to their respective txt files
+    var acceptedCsv = accepted.join(",");
+    var hiddenElementAccepted = document.createElement("a");
+    hiddenElementAccepted.href =
+      "data:text/txt;charset=utf-8," + encodeURI(acceptedCsv);
+    hiddenElementAccepted.download = "accepted.txt";
+    hiddenElementAccepted.click();
+    hiddenElementAccepted.remove();
+
+    var rejectedCsv = rejected.join(",");
+    var hiddenElementRejected = document.createElement("a");
+    hiddenElementRejected.href =
+      "data:text/txt;charset=utf-8," + encodeURI(rejectedCsv);
+    hiddenElementRejected.download = "rejected.txt";
+    hiddenElementRejected.click();
+    hiddenElementRejected.remove();
+
     // Merge into a tsv file and make it downloadable
     var tsv = [headings, rows].join("\n");
-    var hiddenElement = document.createElement("a");
-    hiddenElement.href = "data:text/tsv;charset=utf-8," + encodeURI(tsv);
-    // hiddenElement.target = "_blank";
-    hiddenElement.download = "manual_classification.tsv";
-    hiddenElement.click();
+    var hiddenElementTable = document.createElement("a");
+    hiddenElementTable.href = "data:text/tsv;charset=utf-8," + encodeURI(tsv);
+    hiddenElementTable.download = "manual_classification.tsv";
+    hiddenElementTable.click();
+    hiddenElementTable.remove();
   }
 
   updatePiePlot(index) {
