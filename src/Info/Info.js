@@ -21,7 +21,7 @@ class Info extends React.Component {
         {/* Make a rounded square for the path. The background color should be red. */}
         <div className="flex justify-center mb-8">
           {/* Show folder icon on the left and text on the right */}
-          <div className="rounded-xl bg-sky-300 flex items-center">
+          <div className="rounded-xl bg-sky-500 flex items-center">
             <div className="p-8 flex items-center">
               <FontAwesomeIcon
                 icon={["fas", "folder"]}
