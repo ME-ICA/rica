@@ -196,10 +196,11 @@ class Plots extends React.Component {
       origData[i].classification =
         this.state.variance.datasets[0].classification[pieIndex];
 
-      // Change rationale of components that have different values in
-      // original_classification and classification
+      // Append "manual reclassify with Rica" to classification_tags of components
+      // that have different values in original_classification and classification
       if (origData[i].classification !== origData[i].original_classification) {
-        origData[i].rationale = "I001";
+        origData[i].classification_tags =
+          origData[i].classification_tags + ", Manual reclassify with Rica";
       }
     }
 
