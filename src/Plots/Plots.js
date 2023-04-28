@@ -223,18 +223,18 @@ class Plots extends React.Component {
     var accepted = [];
     var rejected = [];
     for (var i = 0; i < origData.length; i++) {
-      // If classification is accepted and rationale is I001, add to accepted array
+      // If classification is accepted and classification_tags has "Manual reclassify with Rica"
       if (
         origData[i].classification === "accepted" &&
-        origData[i].rationale === "I001"
+        origData[i].classification_tags.includes("Manual reclassify with Rica")
       ) {
         accepted.push(i);
       }
 
-      // If classification is rejected and rationale is I001, add to rejected array
+      // If classification is rejected and classification_tags has "Manual reclassify with Rica"
       if (
         origData[i].classification === "rejected" &&
-        origData[i].rationale === "I001"
+        origData[i].classification_tags.includes("Manual reclassify with Rica")
       ) {
         rejected.push(i);
       }
