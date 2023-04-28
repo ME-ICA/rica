@@ -196,13 +196,13 @@ class Plots extends React.Component {
       origData[i].classification =
         this.state.variance.datasets[0].classification[pieIndex];
 
-      // Change rationale of components that have different values in
-      // original_classification and classification
+      // Append "manual reclassify with Rica" to classification_tags of components
+      // that have different values in original_classification and classification
       if (origData[i].classification !== origData[i].original_classification) {
-        origData[i].rationale = "I001";
+        origData[i].classification_tags =
+          origData[i].classification_tags + ", Manual reclassify with Rica";
       }
     }
-    console.log(origData);
 
     // grab the column headings (separated by tabs)
     const headings = Object.keys(origData[0]).join("\t");
@@ -218,13 +218,52 @@ class Plots extends React.Component {
       }, [])
       .join("\n");
 
+    // Extract the indices of the components that have been manually accepted into a new array
+    // Do the same with rejected components
+    var accepted = [];
+    var rejected = [];
+    for (var i = 0; i < origData.length; i++) {
+      // If classification is accepted and classification_tags has "Manual reclassify with Rica"
+      if (
+        origData[i].classification === "accepted" &&
+        origData[i].classification_tags.includes("Manual reclassify with Rica")
+      ) {
+        accepted.push(i);
+      }
+
+      // If classification is rejected and classification_tags has "Manual reclassify with Rica"
+      if (
+        origData[i].classification === "rejected" &&
+        origData[i].classification_tags.includes("Manual reclassify with Rica")
+      ) {
+        rejected.push(i);
+      }
+    }
+
+    // Save accepted and rejected arrays to their respective txt files
+    var acceptedCsv = accepted.join(",");
+    var hiddenElementAccepted = document.createElement("a");
+    hiddenElementAccepted.href =
+      "data:text/txt;charset=utf-8," + encodeURI(acceptedCsv);
+    hiddenElementAccepted.download = "accepted.txt";
+    hiddenElementAccepted.click();
+    hiddenElementAccepted.remove();
+
+    var rejectedCsv = rejected.join(",");
+    var hiddenElementRejected = document.createElement("a");
+    hiddenElementRejected.href =
+      "data:text/txt;charset=utf-8," + encodeURI(rejectedCsv);
+    hiddenElementRejected.download = "rejected.txt";
+    hiddenElementRejected.click();
+    hiddenElementRejected.remove();
+
     // Merge into a tsv file and make it downloadable
     var tsv = [headings, rows].join("\n");
-    var hiddenElement = document.createElement("a");
-    hiddenElement.href = "data:text/tsv;charset=utf-8," + encodeURI(tsv);
-    // hiddenElement.target = "_blank";
-    hiddenElement.download = "manual_classification.tsv";
-    hiddenElement.click();
+    var hiddenElementTable = document.createElement("a");
+    hiddenElementTable.href = "data:text/tsv;charset=utf-8," + encodeURI(tsv);
+    hiddenElementTable.download = "manual_classification.tsv";
+    hiddenElementTable.click();
+    hiddenElementTable.remove();
   }
 
   updatePiePlot(index) {
