@@ -201,6 +201,10 @@ class Plots extends React.Component {
       if (origData[i].classification !== origData[i].original_classification) {
         origData[i].classification_tags =
           origData[i].classification_tags + ", Manual reclassify with Rica";
+        // If origData has "rationale", then add "I001" to it
+        if (origData[i].rationale) {
+          origData[i].rationale = "I001";
+        }
       }
     }
 
@@ -223,18 +227,24 @@ class Plots extends React.Component {
     var accepted = [];
     var rejected = [];
     for (var i = 0; i < origData.length; i++) {
-      // If classification is accepted and classification_tags has "Manual reclassify with Rica"
+      // If classification is accepted, classification_tag exists, and classification_tags has "Manual reclassify with Rica"
+      // Or if rationale is "I001"
       if (
-        origData[i].classification === "accepted" &&
-        origData[i].classification_tags.includes("Manual reclassify with Rica")
+        (origData[i].classification === "accepted" &&
+          origData[i].classification_tags &&
+          origData[i].classification_tags.includes("Manual reclassify with Rica"))
+        || (origData[i].rationale == "I001")
       ) {
         accepted.push(i);
       }
 
-      // If classification is rejected and classification_tags has "Manual reclassify with Rica"
+      // If classification is rejected, classification_tag exists and classification_tags has "Manual reclassify with Rica"
+      // Or if rationale is "I001"
       if (
-        origData[i].classification === "rejected" &&
-        origData[i].classification_tags.includes("Manual reclassify with Rica")
+        (origData[i].classification === "rejected" &&
+          origData[i].classification_tags &&
+          origData[i].classification_tags.includes("Manual reclassify with Rica"))
+        || (origData[i].rationale == "I001")
       ) {
         rejected.push(i);
       }
