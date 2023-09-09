@@ -27,7 +27,7 @@ function rankComponents(data: any) {
   let rankKappa = rankArray(kappa);
   let rankRho = rankArray(rho);
 
-  for (i = 0; i < data.length; i++) {
+  for (let i = 0; i < data.length; i++) {
     data[i]["variance explained rank"] = rankVariance[i];
     data[i]["kappa rank"] = rankKappa[i];
     data[i]["rho rank"] = rankRho[i];
