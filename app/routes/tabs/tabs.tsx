@@ -8,7 +8,10 @@ const info_example = [
 ];
 
 const TabsDemo = () => (
-  <Tabs.Root className="flex flex-col items-center" defaultValue="tab1">
+  <Tabs.Root
+    className="flex flex-col items-center h-[100%]"
+    defaultValue="tab1"
+  >
     <Tabs.List
       className="flex border-b shrink-0 border-mauve6"
       aria-label="Manage your account"

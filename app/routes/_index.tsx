@@ -13,7 +13,7 @@ export const meta: V2_MetaFunction = () => {
 export default function Index() {
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
-      <div className="flex flex-col">
+      <div className="flex flex-col h-[100%]">
         <TabsDemo />
         <LoadButton />
       </div>
