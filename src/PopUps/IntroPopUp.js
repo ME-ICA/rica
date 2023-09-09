@@ -4,10 +4,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFolder } from "@fortawesome/free-solid-svg-icons";
 
 function rankArray(data) {
-  var sorted = data.slice().sort(function (a, b) {
+  var sorted = data.slice().sort(function(a, b) {
     return b - a;
   });
-  var ranks = data.map(function (v) {
+  var ranks = data.map(function(v) {
     return sorted.indexOf(v) + 1;
   });
   return ranks;
@@ -50,6 +50,7 @@ class IntroPopup extends Component {
     let comps = [];
     let info = [];
     let originalData = [];
+    let dir_path = [];
 
     let files = e.target.files;
 
@@ -105,6 +106,24 @@ class IntroPopup extends Component {
             comps.push(compData);
           };
         }
+
+        // Save file path. Filename starts with "tedana_20" and ends with ".tsv"
+        if (filename.startsWith("tedana_20") && filename.endsWith(".tsv")) {
+          let reader = new FileReader();
+          reader.readAsText(files[i]);
+          reader.onload = (e) => {
+            // Find file path. Should be on the last column of the first row
+            let dataTXT = e.target.result;
+            let compData = readString(dataTXT, {
+              header: false,
+              skipEmptyLines: true,
+            })["data"];
+            let dir_path_str = compData[0][compData[0].length - 1];
+            // Only keep the path, which is after the colon. Make sure it has no spaces before or after
+            dir_path_str = dir_path_str.split(":")[1].trim();
+            dir_path.push(dir_path_str);
+          };
+        }
       }
     }
     data.push(compFigures);
@@ -112,6 +131,7 @@ class IntroPopup extends Component {
     data.push(comps);
     data.push(info);
     data.push(originalData);
+    data.push(dir_path);
 
     // Pass data to parent
     this.props.onDataLoad(data);

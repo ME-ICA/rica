@@ -4,12 +4,12 @@
             "name": "Uruñuela, Eneko",
             "affiliation": "Basque Center on Cognition, Brain and Language",
             "orcid": "0000-0001-6849-9088"
-        },
+        }
     ],
     "keywords": [
         "neuroimaging",
         "fMRI",
-        "multi-echo",
+        "multi-echo"
     ],
     "license": "LGPL-2.1",
     "upload_type": "software"

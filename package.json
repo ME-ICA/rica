@@ -1,6 +1,6 @@
 {
   "name": "rica",
-  "version": "1.0.16",
+  "version": "1.1.1",
   "private": true,
   "dependencies": {
     "@blueprintjs/core": "^3.53.0",
@@ -19,6 +19,7 @@
     "react": "^17.0.2",
     "react-chartjs-2": "3.0.4",
     "react-dom": "^17.0.2",
+    "react-helmet": "^6.1.0",
     "react-hotkeys": "^2.0.0",
     "react-icons": "^4.2.0",
     "react-papaparse": "^3.17.2",
