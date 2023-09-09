@@ -3,21 +3,21 @@ import * as Tooltip from "@radix-ui/react-tooltip";
 import { PlusIcon } from "@radix-ui/react-icons";
 import { readString } from "react-papaparse";
 
-function rankArray(data) {
-  var sorted = data.slice().sort(function (a, b) {
+function rankArray(data: any) {
+  let sorted = data.slice().sort(function (a: any, b: any) {
     return b - a;
   });
-  var ranks = data.map(function (v) {
+  let ranks = data.map(function (v: any) {
     return sorted.indexOf(v) + 1;
   });
   return ranks;
 }
 
-function rankComponents(data) {
+function rankComponents(data: any) {
   let varNormalized = [];
   let kappa = [];
   let rho = [];
-  for (var i = 0; i < data.length; i++) {
+  for (let i = 0; i < data.length; i++) {
     varNormalized.push(data[i]["normalized variance explained"]);
     kappa.push(data[i]["kappa"]);
     rho.push(data[i]["rho"]);
@@ -34,15 +34,8 @@ function rankComponents(data) {
   }
 }
 
-class LoadButton extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      file: "",
-    };
-  }
-
-  readFiles(e) {
+const LoadButton = () => {
+  function readFiles(e: any) {
     console.log("Reading data...");
     let data = [];
     let compFigures = [];
@@ -141,36 +134,34 @@ class LoadButton extends React.Component {
     console.log("Data read into dictionary.");
   }
 
-  render() {
-    return (
-      <Tooltip.Provider>
-        <Tooltip.Root>
-          <Tooltip.Trigger asChild>
-            <button className="text-violet11 shadow-blackA7 hover:bg-violet3 inline-flex h-[35px] w-[35px] items-center justify-center rounded-full bg-gray-200 shadow-[0_2px_10px] outline-none focus:shadow-[0_0_0_2px] focus:shadow-black right-0 fixed top-0 mr-8 mt-2 ">
-              <PlusIcon />
-              <input
-                id="file-upload"
-                type="file"
-                name="file"
-                directory=""
-                webkitdirectory=""
-                onChange={(e) => this.readFiles(e)}
-              ></input>
-            </button>
-          </Tooltip.Trigger>
-          <Tooltip.Portal>
-            <Tooltip.Content
-              className="data-[state=delayed-open]:data-[side=top]:animate-slideDownAndFade data-[state=delayed-open]:data-[side=right]:animate-slideLeftAndFade data-[state=delayed-open]:data-[side=left]:animate-slideRightAndFade data-[state=delayed-open]:data-[side=bottom]:animate-slideUpAndFade text-violet11 select-none rounded-[4px] bg-white px-[15px] py-[10px] text-[15px] leading-none shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] will-change-[transform,opacity]"
-              sideOffset={5}
-            >
-              Load new data
-              <Tooltip.Arrow className="fill-white" />
-            </Tooltip.Content>
-          </Tooltip.Portal>
-        </Tooltip.Root>
-      </Tooltip.Provider>
-    );
-  }
-}
+  return (
+    <Tooltip.Provider>
+      <Tooltip.Root>
+        <Tooltip.Trigger asChild>
+          <button className="text-violet11 shadow-blackA7 hover:bg-violet3 inline-flex h-[35px] w-[35px] items-center justify-center rounded-full bg-gray-200 shadow-[0_2px_10px] outline-none focus:shadow-[0_0_0_2px] focus:shadow-black right-0 fixed top-0 mr-8 mt-2 ">
+            <PlusIcon />
+            <input
+              id="file-upload"
+              type="file"
+              name="file"
+              directory=""
+              webkitdirectory=""
+              onChange={(e) => readFiles(e)}
+            ></input>
+          </button>
+        </Tooltip.Trigger>
+        <Tooltip.Portal>
+          <Tooltip.Content
+            className="data-[state=delayed-open]:data-[side=top]:animate-slideDownAndFade data-[state=delayed-open]:data-[side=right]:animate-slideLeftAndFade data-[state=delayed-open]:data-[side=left]:animate-slideRightAndFade data-[state=delayed-open]:data-[side=bottom]:animate-slideUpAndFade text-violet11 select-none rounded-[4px] bg-white px-[15px] py-[10px] text-[15px] leading-none shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] will-change-[transform,opacity]"
+            sideOffset={5}
+          >
+            Load new data
+            <Tooltip.Arrow className="fill-white" />
+          </Tooltip.Content>
+        </Tooltip.Portal>
+      </Tooltip.Root>
+    </Tooltip.Provider>
+  );
+};
 
 export default LoadButton;
