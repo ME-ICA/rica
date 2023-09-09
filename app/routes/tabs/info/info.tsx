@@ -13,7 +13,7 @@ class Info extends React.Component {
         {/* Make a rounded square for the path. The background color should be red. */}
         <div className="flex justify-center mb-8">
           {/* Show folder icon on the left and text on the right */}
-          <div className="flex items-center bg-gray-300 rounded-lg">
+          <div className="flex items-center bg-gray-200 rounded-lg">
             <div className="flex items-center px-2 py-2">
               <h1 className="italic font-semibold text-center">
                 {this.state.info[1]}
