@@ -1,4 +1,3 @@
-import { Tabs } from "@radix-ui/react-tabs";
 import type { V2_MetaFunction } from "@remix-run/node";
 import TabsRica from "./tabs/tabs";
 import LoadButton from "./tabs/loadButton";
