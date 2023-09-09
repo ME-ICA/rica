@@ -1,58 +1,70 @@
-# Rica
+> **Warning**  
+> The `@remix-run/netlify` runtime adapter has been deprecated in favor of
+> `@netlify/remix-adapter` and will be removed in Remix v2. Please update your
+> code by changing all `@remix-run/netlify` imports to `@netlify/remix-adapter`.  
+> Keep in mind that `@netlify/remix-adapter` requires `@netlify/functions@^1.0.0`,
+> which is a breaking change compared to the current supported `@netlify/functions`
+> versions in `@remix-run/netlify`.
 
-[![DOI](https://zenodo.org/badge/391155862.svg)](https://zenodo.org/badge/latestdoi/391155862)
+# Welcome to Remix!
 
-As part of the ME-ICA pipeline, `Rica` (Reports for ICA) provides a reporting tool for ICA decompositions performed with [tedana](https://github.com/ME-ICA/tedana) and [aroma](https://github.com/ME-ICA/aroma).
+- [Remix Docs](https://remix.run/docs)
+- [Netlify Functions](https://www.netlify.com/products/functions/)
 
-**Pronunciation:** [ˈrika]. For an audio recording on how to pronounce Rica [see here](https://easypronunciation.com/en/spanish/word/rica).
+## Netlify Setup
 
-## About
+1. Install the [Netlify CLI](https://www.netlify.com/products/dev/):
 
-`Rica` originally came out as an alternative to the reports provided by [tedana](https://github.com/ME-ICA/tedana), with the aim of making manual classification of ICA components possible. At the same time, the tool aspires to be of value for ICA decompositions made with tools other than `tedana`. `Rica` assumes you're working with files that mimic the outputs of `tedana`.
-
-## How to use Rica
-
-Even if Rica is designed to be simple to use, you might want to see how you can use the app by watching this [tutorial video](https://www.loom.com/share/ad37cf6f3c2d41e48721f62168a8284e).
-
-Rica also supports keyboard shortcuts on the ICA components page. You can use the following shortcuts:
-
-- `a`: Accept component.
-- `r`: Reject component.
-- `i`: Ignore component.
-- `left arrow`: Go to previous component.
-- `right arrow`: Go to next component.
-
-## Using Rica online
-
-Just head over to https://rica-fmri.netlify.app and have fun!
-
-## Using Rica locally
-
-### Installation
-
-`Rica` can be installed by cloning this repository and executing the following command in the cloned repository:
-
-```npm install```
-
-In order to run the tool locally, two options exist:
-
-#### 1. Using a localhost
-
-By executing the `npm start` command in the cloned repository, `Rica` will open in a new browser tab at [http://localhost:3000](http://localhost:3000) and you will be able to use the tool.
-
-#### 2. Compiling the tool
-
-You could also compile the project so that you can use the tool just by opening an HTML file. For that, it is necessary to execute the following commands in the cloned repository.
-
-```bash
-npm run build
-npx gulp
-mv build/index.html build/rica.html
-open build/rica.html
+```sh
+npm i -g netlify-cli
 ```
 
-> Pro tip: when you open rica.html for the first time, BOOKMARK IT 😉
+If you have previously installed the Netlify CLI, you should update it to the latest version:
 
-## Getting involved
+```sh
+npm i -g netlify-cli@latest
+```
 
-Want to learn more about our plans for developing `Rica`? Have a question, comment, or suggestion? Open or comment on one of our issues!
+2. Sign up and log in to Netlify:
+
+```sh
+netlify login
+```
+
+3. Create a new site:
+
+```sh
+netlify init
+```
+
+## Development
+
+The Remix dev server starts your app in development mode, rebuilding assets on file changes. To start the Remix dev server:
+
+```sh
+npm run dev
+```
+
+Open up [http://localhost:3000](http://localhost:3000), and you should be ready to go!
+
+The Netlify CLI builds a production version of your Remix App Server and splits it into Netlify Functions that run locally. This includes any custom Netlify functions you've developed. The Netlify CLI runs all of this in its development mode.
+
+```sh
+netlify dev
+```
+
+Open up [http://localhost:3000](http://localhost:3000), and you should be ready to go!
+
+Note: When running the Netlify CLI, file changes will rebuild assets, but you will not see the changes to the page you are on unless you do a browser refresh of the page. Due to how the Netlify CLI builds the Remix App Server, it does not support hot module reloading.
+
+## Deployment
+
+There are two ways to deploy your app to Netlify, you can either link your app to your git repo and have it auto deploy changes to Netlify, or you can deploy your app manually. If you've followed the setup instructions already, all you need to do is run this:
+
+```sh
+# preview deployment
+netlify deploy --build
+
+# production deployment
+netlify deploy --build --prod
+```
