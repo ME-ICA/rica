@@ -1,5 +1,6 @@
 import React from "react";
 import * as Tabs from "@radix-ui/react-tabs";
+import Info from "./info/info";
 
 const TabsDemo = () => (
   <Tabs.Root className="flex flex-col items-center" defaultValue="tab1">
@@ -42,40 +43,7 @@ const TabsDemo = () => (
       className="grow p-5 bg-white rounded-b-md outline-none focus:shadow-[0_0_0_2px] focus:shadow-black w-[80%]"
       value="tab1"
     >
-      <p className="mb-5 text-mauve11 text-[15px] leading-normal">
-        Make changes to your account here. Click save when you're done.
-      </p>
-      <fieldset className="mb-[15px] w-full flex flex-col justify-start">
-        <label
-          className="text-[13px] leading-none mb-2.5 text-violet12 block"
-          htmlFor="name"
-        >
-          Name
-        </label>
-        <input
-          className="grow shrink-0 rounded px-2.5 text-[15px] leading-none text-violet11 shadow-[0_0_0_1px] shadow-violet7 h-[35px] focus:shadow-[0_0_0_2px] focus:shadow-violet8 outline-none"
-          id="name"
-          defaultValue="Pedro Duarte"
-        />
-      </fieldset>
-      <fieldset className="mb-[15px] w-full flex flex-col justify-start">
-        <label
-          className="text-[13px] leading-none mb-2.5 text-violet12 block"
-          htmlFor="username"
-        >
-          Username
-        </label>
-        <input
-          className="grow shrink-0 rounded px-2.5 text-[15px] leading-none text-violet11 shadow-[0_0_0_1px] shadow-violet7 h-[35px] focus:shadow-[0_0_0_2px] focus:shadow-violet8 outline-none"
-          id="username"
-          defaultValue="@peduarte"
-        />
-      </fieldset>
-      <div className="flex justify-end mt-5">
-        <button className="inline-flex items-center justify-center rounded px-[15px] text-[15px] leading-none font-medium h-[35px] bg-green4 text-green11 hover:bg-green5 focus:shadow-[0_0_0_2px] focus:shadow-green7 outline-none cursor-default">
-          Save changes
-        </button>
-      </div>
+      <Info info={["This is the info tab", "Info"]} />
     </Tabs.Content>
     <Tabs.Content
       className="grow p-5 bg-white rounded-b-md outline-none focus:shadow-[0_0_0_2px] focus:shadow-black"
