@@ -2,6 +2,11 @@ import React from "react";
 import * as Tabs from "@radix-ui/react-tabs";
 import Info from "./info/info";
 
+const info_example = [
+  "This is an example of a tabbed interface.",
+  "/User/rica/data/tedana/results",
+];
+
 const TabsDemo = () => (
   <Tabs.Root className="flex flex-col items-center" defaultValue="tab1">
     <Tabs.List
@@ -43,7 +48,7 @@ const TabsDemo = () => (
       className="grow p-5 bg-white rounded-b-md outline-none focus:shadow-[0_0_0_2px] focus:shadow-black w-[80%]"
       value="tab1"
     >
-      <Info info={["This is the info tab", "Info"]} />
+      <Info info={info_example} />
     </Tabs.Content>
     <Tabs.Content
       className="grow p-5 bg-white rounded-b-md outline-none focus:shadow-[0_0_0_2px] focus:shadow-black"
