@@ -1,33 +1,41 @@
-import type { V2_MetaFunction } from "@remix-run/node";
-import TabsRica from "./tabs/tabs";
-import LoadButton from "./tabs/loadButton";
-import React from "react";
+import type { ActionArgs, V2_MetaFunction } from "@remix-run/node";
+import TabsRica from "./tabs";
+import LoadButton from "./loadButton";
+import { useLoaderData } from "@remix-run/react";
+import { getSession } from "../sessions";
 
 export const meta: V2_MetaFunction = () => {
   return [
-    { title: "New Remix App" },
-    { name: "description", content: "Welcome to Remix!" },
+    { title: "Rica" },
+    { name: "description", content: "Reports for ICA" },
   ];
 };
 
+// export async function loader() {
+//   return [
+//     {
+//       info: "This is an example of a tabbed interface.",
+//       path: "/User/rica/data/tedana/results",
+//     },
+//   ];
+// }
+
 export default function Index() {
-  // Set default values for the states
-  const [componentData, setComponentData] = React.useState<any>([]);
-  const [componentFigures, setComponentFigures] = React.useState<any>([]);
-  const [carpetFigures, setCarpetFigures] = React.useState<any>([]);
-  const [info, setInfo] = React.useState<any>([]);
-  const [showIntroPopup, setShowIntroPopup] = React.useState<boolean>(true);
-  const [showAboutPopup, setShowAboutPopup] = React.useState<boolean>(false);
-  const [showTabs, setShowTabs] = React.useState<boolean>(false);
-  const [originalData, setOriginalData] = React.useState<any>([]);
-  const [dataRead, setDataRead] = React.useState<boolean>(false);
+  let data = useLoaderData();
 
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
       <div className="flex flex-col h-[100%]">
-        <TabsRica />
+        <TabsRica data={data} />
         <LoadButton />
       </div>
     </div>
   );
+}
+
+export async function action({ request }: ActionArgs) {
+  const session = await getSession(request.headers.get("Cookie"));
+  session.set("info", "This is an example of a tabbed interface.");
+  session.set("path", "/User/rica/data/tedana/results");
+  // etc.
 }

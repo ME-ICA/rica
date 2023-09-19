@@ -1,18 +1,42 @@
-import React from "react";
+import { LoaderArgs } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
+import { getSession } from "~/sessions";
 
-const Info = (info: any) => {
+export async function loader({ request }: LoaderArgs) {
+  const session = await getSession(request.headers.get("Cookie"));
+  return session.get("info"), session.get("path");
+}
+
+const Info = () => {
+  // Get data from session storage or loader if there is no data
+  let info,
+    path = useLoaderData();
+
+  console.log(info);
+
   return (
     <div className="mt-16 text-base text-justify whitespace-pre-wrap mx-80 ">
-      {/* Make a rounded square for the path. The background color should be red. */}
-      <div className="flex justify-center mb-8">
-        {/* Show folder icon on the left and text on the right */}
-        <div className="flex items-center bg-gray-200 rounded-lg">
-          <div className="flex items-center px-2 py-2">
-            <h1 className="italic font-semibold text-center">{info.info[1]}</h1>
-          </div>
+      {/* If data isn't null */}
+      {/* {Object.keys(infoData).length ? (
+        <div>
+          {infoData.map((item) => (
+            <div>
+              <div className="flex justify-center mb-8">
+                <div className="flex items-center bg-gray-200 rounded-lg">
+                  <div className="flex items-center px-2 py-2">
+                    <h1 className="italic font-semibold text-center">
+                      {item.path}
+                    </h1>
+                  </div>
+                </div>
+              </div>
+              <p>{item.info}</p>
+            </div>
+          ))}
         </div>
-      </div>
-      <p>{info.info[0]}</p>
+      ) : (
+        <p className="text-center">Loading...</p>
+      )} */}
     </div>
   );
 };

@@ -35,15 +35,18 @@ function rankComponents(data: any) {
 }
 
 const LoadButton = () => {
+  // Set default values for the states
+  const [componentData, setComponentData] = React.useState<any>([]);
+  const [componentFigures, setComponentFigures] = React.useState<any>([]);
+  const [carpetFigures, setCarpetFigures] = React.useState<any>([]);
+  const [info, setInfo] = React.useState<any>([]);
+  const [originalData, setOriginalData] = React.useState<any>([]);
+
   function readFiles(e: any) {
     console.log("Reading data...");
-    let data = [];
-    let compFigures = [];
-    let carpetFigures = [];
-    let comps = [];
-    let info = [];
-    let originalData = [];
-    let dir_path = [];
+
+    let dirPath = [];
+    let infoData = [];
 
     let files = e.target.files;
 
@@ -55,7 +58,7 @@ const LoadButton = () => {
           let imgReader = new FileReader();
           imgReader.readAsDataURL(files[i]);
           imgReader.onload = (e) => {
-            compFigures.push({
+            setComponentFigures({
               name: filename,
               img: e.target.result,
             });
@@ -67,7 +70,7 @@ const LoadButton = () => {
           let imgReader = new FileReader();
           imgReader.readAsDataURL(files[i]);
           imgReader.onload = (e) => {
-            carpetFigures.push({
+            setCarpetFigures({
               name: filename,
               img: e.target.result,
             });
@@ -80,7 +83,7 @@ const LoadButton = () => {
           reader.readAsText(files[i]);
           reader.onload = (e) => {
             let info_holder = e.target.result;
-            info.push(info_holder);
+            infoData.push(info_holder);
           };
         }
 
@@ -94,9 +97,9 @@ const LoadButton = () => {
               header: true,
               skipEmptyLines: true,
             })["data"];
-            originalData.push(Object.assign([], compData));
+            setOriginalData(Object.assign([], compData));
             rankComponents(compData);
-            comps.push(compData);
+            setComponentData(compData);
           };
         }
 
@@ -111,27 +114,20 @@ const LoadButton = () => {
               header: false,
               skipEmptyLines: true,
             })["data"];
-            let dir_path_str = compData[0][compData[0].length - 1];
+            let dirPathStr = compData[0][compData[0].length - 1];
             // Only keep the path, which is after the colon. Make sure it has no spaces before or after
-            dir_path_str = dir_path_str.split(":")[1].trim();
-            dir_path.push(dir_path_str);
+            dirPathStr = dirPathStr.split(":")[1].trim();
+            dirPath.push(dirPathStr);
           };
         }
       }
     }
-    data.push(compFigures);
-    data.push(carpetFigures);
-    data.push(comps);
-    data.push(info);
-    data.push(originalData);
-    data.push(dir_path);
+    // Append to the end of the info array
+    setInfo([infoData, dirPath]);
 
-    // Pass data to parent
-    // this.props.onDataLoad(data);
+    setTimeout(() => {}, 1000);
 
-    console.log(data);
-
-    console.log("Data read into dictionary.");
+    console.log("Data read into states.");
   }
 
   return (
