@@ -11,17 +11,19 @@ export const meta: V2_MetaFunction = () => {
   ];
 };
 
-// export async function loader() {
-//   return [
-//     {
-//       info: "This is an example of a tabbed interface.",
-//       path: "/User/rica/data/tedana/results",
-//     },
-//   ];
-// }
+// Set default values and save into cookies
+export const loader = async ({ request }: ActionArgs) => {
+  const session = await getSession(request.headers.get("Cookie"));
+  session.set("info", "This is an example of a tabbed interface.");
+  session.set("path", "/User/rica/data/tedana/results");
+  // etc.
+  return { message: "Hello, World!" };
+};
 
 export default function Index() {
   let data = useLoaderData();
+
+  console.log("data", data);
 
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
@@ -31,11 +33,4 @@ export default function Index() {
       </div>
     </div>
   );
-}
-
-export async function action({ request }: ActionArgs) {
-  const session = await getSession(request.headers.get("Cookie"));
-  session.set("info", "This is an example of a tabbed interface.");
-  session.set("path", "/User/rica/data/tedana/results");
-  // etc.
 }
