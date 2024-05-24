@@ -235,7 +235,8 @@ class Plots extends React.Component {
           origData[i].classification_tags.includes(
             "Manual reclassify with Rica"
           )) ||
-        origData[i].rationale == "I001"
+        (origData[i].classification === "accepted" &&
+          origData[i].rationale == "I001")
       ) {
         accepted.push(i);
       }
@@ -248,7 +249,8 @@ class Plots extends React.Component {
           origData[i].classification_tags.includes(
             "Manual reclassify with Rica"
           )) ||
-        origData[i].rationale == "I001"
+        (origData[i].classification === "rejected" &&
+          origData[i].rationale == "I001")
       ) {
         rejected.push(i);
       }
