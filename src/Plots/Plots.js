@@ -232,8 +232,11 @@ class Plots extends React.Component {
       if (
         (origData[i].classification === "accepted" &&
           origData[i].classification_tags &&
-          origData[i].classification_tags.includes("Manual reclassify with Rica"))
-        || (origData[i].classification === "accepted" && origData[i].rationale == "I001")
+          origData[i].classification_tags.includes(
+            "Manual reclassify with Rica"
+          )) ||
+        (origData[i].classification === "accepted" &&
+          origData[i].rationale == "I001")
       ) {
         accepted.push(i);
       }
@@ -243,8 +246,11 @@ class Plots extends React.Component {
       if (
         (origData[i].classification === "rejected" &&
           origData[i].classification_tags &&
-          origData[i].classification_tags.includes("Manual reclassify with Rica"))
-        || (origData[i].classification === "rejected" && origData[i].rationale == "I001")
+          origData[i].classification_tags.includes(
+            "Manual reclassify with Rica"
+          )) ||
+        (origData[i].classification === "rejected" &&
+          origData[i].rationale == "I001")
       ) {
         rejected.push(i);
       }
@@ -306,6 +312,7 @@ class Plots extends React.Component {
     // Get component name of selected component
     var compName = this.state.variance.labels[index].match(/\d/g);
     compName = compName.join("");
+
     // If length of compName is 2, then add a 0 to the beginning
     if (compName.length === 2) {
       compName = "0" + compName;
@@ -314,8 +321,8 @@ class Plots extends React.Component {
 
     // iterate over each element in the array to retrieve image of selected component based on name
     for (var i = 0; i < this.props.componentFigures.length; i++) {
-      // look for the entry with a matching `compName` value
-      if (this.props.componentFigures[i].name === compName) {
+      // look for the entry that contains the `compName` string
+      if (this.props.componentFigures[i].name.includes(compName)) {
         this.setState({ clickedElement: this.props.componentFigures[i].img });
       }
     }
@@ -360,7 +367,7 @@ class Plots extends React.Component {
     // iterate over each element in the array to retrieve image of selected component based on name
     for (var i = 0; i < this.props.componentFigures.length; i++) {
       // look for the entry with a matching `compName` value
-      if (this.props.componentFigures[i].name === compName) {
+      if (this.props.componentFigures[i].name.includes(compName)) {
         this.setState({ clickedElement: this.props.componentFigures[i].img });
       }
     }
