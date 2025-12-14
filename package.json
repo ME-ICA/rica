@@ -2,6 +2,9 @@
   "name": "rica",
   "version": "1.1.2",
   "private": true,
+  "engines": {
+    "node": ">=16.0.0 <20.0.0"
+  },
   "dependencies": {
     "@blueprintjs/core": "^3.53.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
@@ -30,7 +33,10 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build:inline": "react-scripts build && gulp",
     "test": "react-scripts test",
+    "lint": "eslint --ext .js,.jsx src/",
+    "lint:fix": "eslint --ext .js,.jsx src/ --fix",
     "eject": "react-scripts eject",
     "watch:css": "postcss -w src/styles/tailwind.css -o src/styles/output.css"
   },
