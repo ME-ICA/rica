@@ -123,28 +123,21 @@ function PieChart({
               const renderArc = (arc, i) => {
                 const isSelected = arc.data.index === selectedIndex;
                 const isHovered = arc.data.index === hoveredIndex;
-                // Only scale selected slices, not hovered (prevents flickering)
-                const scale = isSelected ? 1.05 : 1;
 
                 return (
                   <g
                     key={`arc-${arc.data.index}`}
-                    style={{
-                      cursor: "pointer",
-                      transition: "transform 0.15s ease-out",
-                      transform: `scale(${scale})`,
-                      transformOrigin: "center",
-                    }}
+                    style={{ cursor: "pointer" }}
                   >
                     {/* Visible slice with mouse events */}
                     <path
                       d={pie.path(arc)}
                       fill={getColor(arc.data)}
-                      stroke={isSelected ? "#1f2937" : (isHovered ? "#9ca3af" : "#ffffff")}
-                      strokeWidth={isSelected ? 2 : (isHovered ? 2 : 1)}
+                      stroke={isSelected ? "#1f2937" : (isHovered ? "#6b7280" : "#ffffff")}
+                      strokeWidth={isSelected ? 3 : (isHovered ? 2 : 1)}
                       style={{
                         filter: isSelected
-                          ? "drop-shadow(0 4px 6px rgba(0, 0, 0, 0.15))"
+                          ? "drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))"
                           : "none",
                       }}
                       onMouseMove={(e) => handleMouseOver(e, arc)}

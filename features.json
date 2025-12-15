@@ -466,6 +466,35 @@
         "Verify moving between segments updates smoothly"
       ],
       "passes": true
+    },
+    {
+      "id": "wraparound_navigation",
+      "category": "interactivity",
+      "description": "Arrow key navigation wraps around the pie chart continuously",
+      "steps": [
+        "Load a tedana folder",
+        "Navigate to the ICA tab",
+        "Select a component and use right arrow to navigate",
+        "Continue pressing right arrow past the last component",
+        "Verify navigation wraps to the first component",
+        "Press left arrow to navigate backwards",
+        "Verify navigation wraps from first to last component"
+      ],
+      "passes": true
+    },
+    {
+      "id": "pie_selection_no_displacement",
+      "category": "visualization",
+      "description": "Selected pie chart slice appears on top without being displaced",
+      "steps": [
+        "Load a tedana folder",
+        "Navigate to the ICA tab",
+        "Click on different pie chart segments",
+        "Verify selected segment stays in its original position",
+        "Verify selected segment appears on top of neighbors",
+        "Verify selection is indicated by dark border and shadow"
+      ],
+      "passes": true
     }
   ]
 }

@@ -166,14 +166,14 @@ function Plots({ componentData, componentFigures, originalData, mixingMatrix, ni
   useHotkeys(
     "left",
     () => {
-      // Navigate using pie chart order
+      // Navigate using pie chart order (wraps around)
+      if (pieData.length === 0) return;
       const currentPieIdx = pieData.findIndex((d) => d.originalIdx === selectedIndex);
-      if (currentPieIdx > 0) {
-        const newOriginalIdx = pieData[currentPieIdx - 1].originalIdx;
-        setSelectedIndex(newOriginalIdx);
-        setSelectedClassification(processedData[newOriginalIdx]?.classification || "accepted");
-        findComponentImage(newOriginalIdx, processedData);
-      }
+      const newPieIdx = currentPieIdx <= 0 ? pieData.length - 1 : currentPieIdx - 1;
+      const newOriginalIdx = pieData[newPieIdx].originalIdx;
+      setSelectedIndex(newOriginalIdx);
+      setSelectedClassification(processedData[newOriginalIdx]?.classification || "accepted");
+      findComponentImage(newOriginalIdx, processedData);
     },
     [selectedIndex, pieData, processedData, findComponentImage]
   );
@@ -181,14 +181,14 @@ function Plots({ componentData, componentFigures, originalData, mixingMatrix, ni
   useHotkeys(
     "right",
     () => {
-      // Navigate using pie chart order
+      // Navigate using pie chart order (wraps around)
+      if (pieData.length === 0) return;
       const currentPieIdx = pieData.findIndex((d) => d.originalIdx === selectedIndex);
-      if (currentPieIdx < pieData.length - 1) {
-        const newOriginalIdx = pieData[currentPieIdx + 1].originalIdx;
-        setSelectedIndex(newOriginalIdx);
-        setSelectedClassification(processedData[newOriginalIdx]?.classification || "accepted");
-        findComponentImage(newOriginalIdx, processedData);
-      }
+      const newPieIdx = currentPieIdx >= pieData.length - 1 ? 0 : currentPieIdx + 1;
+      const newOriginalIdx = pieData[newPieIdx].originalIdx;
+      setSelectedIndex(newOriginalIdx);
+      setSelectedClassification(processedData[newOriginalIdx]?.classification || "accepted");
+      findComponentImage(newOriginalIdx, processedData);
     },
     [selectedIndex, pieData, processedData, findComponentImage]
   );

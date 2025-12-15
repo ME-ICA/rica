@@ -664,6 +664,37 @@ const blue2white = {
 
 ---
 
+## Session 3.6 - Final Polish (2025-12-14)
+
+### Goals
+- Fix pie chart selected slice displacement
+- Add wrap-around navigation for arrow keys
+- Remove focus outline from brain viewer
+
+### Changes Made
+
+#### Pie Chart Selection (PieChart.js)
+- Removed scale transform on selected slices (was causing displacement)
+- Selected slice now stays in place while appearing on top of neighbors
+- Visual selection indicators: thicker dark border (3px) and drop shadow
+- Slice rendered last in SVG order to appear on top
+
+#### Arrow Key Wrap-Around (Plots.js)
+- Left arrow at first component now wraps to last component
+- Right arrow at last component now wraps to first component
+- Enables continuous circular navigation through pie chart order
+
+#### Brain Viewer Focus Outline (BrainViewer.js)
+- Added `outline: "none"` to canvas element
+- Prevents blue focus outline when using keyboard navigation
+
+### Files Modified
+- `src/Plots/PieChart.js` - Removed scale transform, kept border/shadow selection
+- `src/Plots/Plots.js` - Wrap-around logic for arrow key navigation
+- `src/Plots/BrainViewer.js` - Canvas outline removal
+
+---
+
 ## Template for Future Sessions
 
 ```
