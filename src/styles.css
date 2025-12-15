@@ -139,6 +139,36 @@ input[type="file"] {
 }
 
 /* Selected tab */
-[data-selected] {
+[data-selected],
+[aria-selected="true"] {
   color: black;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
 }

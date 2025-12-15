@@ -1,79 +1,118 @@
-import React from "react";
-import { useRect } from "@reach/rect";
-import { Tabs, useTabsContext, Tab } from "@reach/tabs";
+import React, { useRef, useState, useLayoutEffect, useCallback } from "react";
+import { TabsProvider, useTabsContext } from "./TabComponents";
 
 const HORIZONTAL_PADDING = 16;
-const AnimatedContext = React.createContext();
 
-function AnimatedTabs({ children, ...rest }) {
-  // some state to store the position we want to animate to
-  const [activeRect, setActiveRect] = React.useState(null);
-  const ref = React.useRef();
-  const rect = useRect(ref);
+function AnimatedTabs({ children, defaultIndex = 0, ...rest }) {
+  const [activeRect, setActiveRect] = useState(null);
+  const containerRef = useRef(null);
+  const [containerRect, setContainerRect] = useState(null);
+
+  // Update container rect on mount and resize
+  useLayoutEffect(() => {
+    const updateRect = () => {
+      if (containerRef.current) {
+        setContainerRect(containerRef.current.getBoundingClientRect());
+      }
+    };
+
+    updateRect();
+    window.addEventListener("resize", updateRect);
+    return () => window.removeEventListener("resize", updateRect);
+  }, []);
 
   return (
-    // put the function to change the styles on context so an active Tab
-    // can call it, then style it up
-    <AnimatedContext.Provider value={setActiveRect}>
-      {/* make sure to forward props since we're wrapping Tabs */}
-      <Tabs
-        {...rest}
-        ref={ref}
-        style={{
-          ...rest.style,
-          position: "relative",
-        }}
-      >
+    <TabsProvider defaultIndex={defaultIndex}>
+      <TabsContextBridge setActiveRect={setActiveRect}>
         <div
-          className="absolute bg-sky-500"
-          style={{
-            height: 4,
-            transition: "all 300ms ease",
-            left:
-              (activeRect && activeRect.left) -
-              (rect && rect.left) +
-              HORIZONTAL_PADDING,
-            top: (activeRect && activeRect.bottom) - (rect && rect.top) - 3,
-            // subtract both sides of horizontal padding to center the div
-            width: activeRect && activeRect.width - HORIZONTAL_PADDING * 1.5,
-          }}
-        />
-        {children}
-      </Tabs>
-    </AnimatedContext.Provider>
+          ref={containerRef}
+          style={{ ...rest.style, position: "relative" }}
+          {...rest}
+        >
+          {/* Animated underline indicator */}
+          <div
+            className="absolute bg-sky-500"
+            style={{
+              height: 4,
+              transition: "all 300ms ease",
+              left: activeRect && containerRect
+                ? activeRect.left - containerRect.left + HORIZONTAL_PADDING
+                : 0,
+              top: activeRect && containerRect
+                ? activeRect.bottom - containerRect.top - 3
+                : 0,
+              width: activeRect ? activeRect.width - HORIZONTAL_PADDING * 1.5 : 0,
+              opacity: activeRect ? 1 : 0,
+            }}
+          />
+          {children}
+        </div>
+      </TabsContextBridge>
+    </TabsProvider>
   );
 }
 
-function AnimatedTab({ index, ...props }) {
-  // get the currently selected index from useTabsContext
-  const { selectedIndex } = useTabsContext();
+// Helper component to access context and pass setActiveRect
+function TabsContextBridge({ children, setActiveRect }) {
+  return (
+    <ActiveRectContext.Provider value={setActiveRect}>
+      {children}
+    </ActiveRectContext.Provider>
+  );
+}
+
+const ActiveRectContext = React.createContext(null);
+
+function AnimatedTab({ index, children, style, ...props }) {
+  const { selectedIndex, selectTab } = useTabsContext();
   const isSelected = selectedIndex === index;
+  const tabRef = useRef(null);
+  const setActiveRect = React.useContext(ActiveRectContext);
 
-  // measure the size of our element, only listen to rect if active
-  const ref = React.useRef();
-  const rect = useRect(ref, { observe: isSelected });
-
-  // get the style changing function from context
-  const setActiveRect = React.useContext(AnimatedContext);
-
-  // callup to set styles whenever we're active
-  React.useLayoutEffect(() => {
-    if (isSelected) {
-      setActiveRect(rect);
+  // Update active rect when this tab becomes selected
+  useLayoutEffect(() => {
+    if (isSelected && tabRef.current) {
+      setActiveRect(tabRef.current.getBoundingClientRect());
     }
-  }, [isSelected, rect, setActiveRect]);
+  }, [isSelected, setActiveRect]);
+
+  // Also update on resize
+  useLayoutEffect(() => {
+    if (!isSelected) return;
+
+    const updateRect = () => {
+      if (tabRef.current) {
+        setActiveRect(tabRef.current.getBoundingClientRect());
+      }
+    };
+
+    window.addEventListener("resize", updateRect);
+    return () => window.removeEventListener("resize", updateRect);
+  }, [isSelected, setActiveRect]);
+
+  const handleClick = useCallback(() => {
+    selectTab(index);
+  }, [selectTab, index]);
 
   return (
-    <Tab
-      className="text-gray-500 hover:cursor-pointer"
-      ref={ref}
-      {...props}
+    <button
+      ref={tabRef}
+      role="tab"
+      aria-selected={isSelected}
+      className={`text-gray-500 hover:cursor-pointer focus:outline-none transition-colors duration-200 ${
+        isSelected ? "text-gray-900" : ""
+      }`}
+      onClick={handleClick}
       style={{
-        ...props.style,
+        ...style,
         padding: `8px ${HORIZONTAL_PADDING}px`,
         background: "white",
+        border: "none",
       }}
-    />
+      {...props}
+    >
+      {children}
+    </button>
   );
 }
 

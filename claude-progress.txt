@@ -1,0 +1,349 @@
+# Rica - Claude Code Progress Log
+
+## Project Overview
+
+**Name**: rica (Reports for ICA)
+**Version**: 1.1.2
+**Purpose**: React-based interactive visualization tool for multi-echo fMRI ICA component analysis from tedana/ME-ICA outputs.
+
+### Main Libraries (v2.0.0)
+- React 18.2.0 (functional components with hooks)
+- visx (D3 + React visualization library for scatter plots, pie charts)
+- Tailwind CSS 3.4.0 (styling)
+- papaparse 5.4.1 (CSV/TSV parsing)
+- react-hotkeys-hook 4.4.4 (keyboard shortcuts)
+- Custom tab implementation (replaced @reach/tabs)
+
+### Component Structure (v2.0.0)
+```
+src/
+  index.js              - Main App component (functional, hooks, lazy loading)
+  Mobile.js             - Mobile fallback view (<1024px)
+  TabFunctions.js       - Animated tab components
+  TabComponents.js      - Custom tabs context and components
+  LoadingSpinner.js     - Reusable loading spinner
+  Carpets/
+    Carpets.js          - Carpet plot display with dropdown selector
+  Info/
+    Info.js             - Report info display tab
+  Plots/
+    Plots.js            - ICA visualization (visx scatter plots, pie chart)
+    ScatterPlot.js      - visx scatter plot with zoom/pan/tooltips
+    PieChart.js         - visx donut chart with hover effects
+    PlotUtils.js        - Data parsing and color management utilities
+    ToggleSwitch.js     - Classification toggle (accepted/rejected)
+    ResetAndSave.js     - Reset/Save action buttons
+  PopUps/
+    IntroPopUp.js       - File upload dialog with Promise-based loading
+    AboutPopUp.js       - About modal with version info
+  styles/
+    tailwind.css        - Tailwind directives
+    output.css          - Compiled Tailwind output
+```
+
+### Build System
+- Create React App (react-scripts 5.0.0)
+- PostCSS with Tailwind CSS JIT compilation
+- Gulp 3.9.1 for post-build asset inlining (single-file HTML distribution)
+
+### Data Formats Expected
+- `*_metrics.tsv`: Component metrics table (not PCA metrics)
+- `comp_*.png`: Individual component figure images
+- `*.svg`: Carpet plot visualizations
+- `report.txt`: Tedana text report
+- `tedana_20*.tsv`: Metadata with folder path
+
+---
+
+## Session 0 - Initializer (2025-12-14)
+
+### Files Inspected
+1. **package.json** - Dependencies, scripts, version info
+2. **src/index.js** - Main App component with state management
+3. **src/Plots/Plots.js** - Core ICA visualization logic (~480 lines)
+4. **src/Plots/PlotUtils.js** - Data parsing functions
+5. **src/Plots/PlotOptions.js** - Chart.js configuration
+6. **src/Carpets/Carpets.js** - Carpet plot display
+7. **src/PopUps/IntroPopUp.js** - File loading and data parsing
+8. **src/Info/Info.js** - Report display
+9. **src/Mobile.js** - Mobile fallback
+10. **src/TabFunctions.js** - Animated tabs
+11. **tailwind.config.js** - Tailwind configuration
+12. **postcss.config.js** - PostCSS configuration
+13. **gulpfile.js** - Build post-processing
+14. **.gitignore** - Git ignore patterns
+
+### Important Findings
+
+#### Code Quality Issues
+1. **Console.log statements in production code**: Multiple `console.log` calls remain in `index.js` and `IntroPopUp.js` (data loading debugging)
+2. **Deprecated lifecycle methods**: `componentWillMount` used in `index.js` (should be `componentDidMount`)
+3. **Typo in variable names**: `rejedtecColor` instead of `rejectedColor` in PlotUtils.js and Plots.js
+4. **JSX attribute errors**: `class` used instead of `className` in PopUp SVG icons
+5. **Missing key props**: `<span>` elements in ToggleSwitch.js missing key props in map()
+
+#### Dependency Issues
+1. **Gulp 3.9.1 is severely outdated**: Current version is 4.x, v3 has known vulnerabilities
+2. **Tailwind config uses deprecated `purge` key**: Should be `content` in Tailwind 3.x
+3. **No Node.js version specified**: Missing `.nvmrc` or `engines` field
+4. **Some peer dependency warnings likely**: React 17 vs newer library versions
+
+#### Missing Infrastructure
+1. **No test files**: No `__tests__/` directory, no `*.test.js` files
+2. **No dedicated lint/format scripts**: Only eslint from react-app config
+3. **No CI/CD configuration**: No GitHub Actions, CircleCI, etc.
+4. **No environment variable documentation**: `.env.example` missing
+
+#### Architecture Observations
+1. **All class components**: Could benefit from React Hooks refactor for cleaner state management
+2. **Nested setTimeout chains**: Data loading in index.js uses nested timeouts (fragile)
+3. **No loading states**: User doesn't see progress during 5-second data load delay
+4. **No error boundaries**: File loading errors could crash the app
+
+### Files Created
+1. **features.json** - 22 features covering all visualization workflows
+2. **claude-progress.txt** - This progress tracking file
+3. **scripts/init_env.sh** - Environment setup script
+4. **scripts/dev.sh** - Development server script
+5. **scripts/build.sh** - Production build script
+6. **scripts/test.sh** - Test runner script
+7. **scripts/lint.sh** - Linting script
+8. **.nvmrc** - Node.js version specification (v18)
+
+### Files Modified
+1. **package.json** - Added `engines` field, `lint`, `lint:fix`, and `build:inline` scripts
+2. **.gitignore** - Added IDE directories, .env, and OS files
+
+### Known Limitations and TODOs
+
+#### High Priority
+- [ ] Add unit tests for PlotUtils.js (data parsing functions)
+- [ ] Add integration tests for file loading workflow
+- [x] Fix deprecated `componentWillMount` usage *(Completed in v2.0.0 - converted to useEffect)*
+- [x] Remove console.log statements or add proper logging *(Completed in v2.0.0)*
+- [x] Update Gulp to v4 or replace with modern bundler post-processing *(Completed in v2.0.0)*
+
+#### Medium Priority
+- [x] Add loading indicator during data parsing *(Completed in v2.0.0 - progress bar added)*
+- [ ] Add error handling for malformed input files
+- [x] Fix JSX attribute errors (`class` -> `className`) *(Completed in v2.0.0)*
+- [x] Add .nvmrc file for Node.js version management *(Already exists)*
+- [x] Update Tailwind config from `purge` to `content` *(Completed in v2.0.0)*
+- [ ] Add Prettier for code formatting consistency
+
+#### Low Priority
+- [x] Consider migrating class components to functional components with hooks *(Completed in v2.0.0 - all components converted)*
+- [ ] Add TypeScript support for better maintainability
+- [ ] Improve mobile experience (currently just shows redirect message)
+- [ ] Add component-level documentation/JSDoc comments
+- [ ] Add Storybook for component development
+
+### Open Questions for Future Sessions
+1. ~~Is Recharts intentionally included but unused, or should it be removed?~~ **RESOLVED: Removed in v2.0.0**
+2. What's the expected behavior when loading folders with missing files?
+3. ~~Should the "5 second delay" in data loading be replaced with actual async completion detection?~~ **RESOLVED: Replaced with Promise-based loading in v2.0.0**
+4. Are there plans to support additional ICA tools beyond tedana?
+
+---
+
+## Session 1 - Major Modernization (2025-12-14)
+
+### Goals
+- Modernize the app for better performance and snappier UI
+- Upgrade to React 18 with functional components
+- Remove 5-second data loading delay
+- Add loading progress indicator
+- Enable smooth chart animations
+- Fix dependency bloat
+
+### Changes Made
+
+#### Package Updates (package.json)
+- **React**: 17.0.2 → 18.2.0
+- **Chart.js**: 3.5.0 → 4.4.1
+- **react-chartjs-2**: 3.0.4 → 5.2.0
+- **Tailwind CSS**: 2.2.19 → 3.4.0
+- **Gulp**: 3.9.1 → 4.0.2
+- **Removed**: @blueprintjs/core, recharts, react-icons, @reach/tabs, styled-components, react-papaparse, react-hotkeys
+- **Added**: papaparse, react-helmet-async, react-hotkeys-hook
+
+#### Component Rewrites (Class → Functional)
+1. **src/index.js** - Main App component with hooks, lazy loading, createRoot API
+2. **src/Plots/Plots.js** - Memoized chart data, useHotkeys, ref-based click handlers
+3. **src/PopUps/IntroPopUp.js** - Promise-based file reading, progress bar
+4. **src/Carpets/Carpets.js** - Functional component
+5. **src/Info/Info.js** - Functional component
+6. **src/Plots/ToggleSwitch.js** - Functional component (removed styled-components)
+7. **src/Plots/ResetAndSave.js** - Functional component
+8. **src/PopUps/AboutPopUp.js** - Functional component
+9. **src/Mobile.js** - Functional component
+
+#### New Files Created
+- **src/LoadingSpinner.js** - Reusable loading spinner component
+- **src/TabComponents.js** - Custom tabs context and components
+- **src/TabFunctions.js** - Animated tabs (replaced @reach/tabs)
+
+#### Files Removed
+- **src/Plots/ToggleStyles.js** - Replaced with inline Tailwind
+- **src/Carpets/CarpetOption.js** - Simplified into Carpets.js
+
+#### Configuration Updates
+- **tailwind.config.js** - Updated for Tailwind v3 (purge → content)
+- **gulpfile.js** - Updated for Gulp v4 syntax
+- **PlotOptions.js** - Added smooth animations (400ms duration)
+
+### Performance Improvements
+1. **Data Loading**: Removed 5-second setTimeout, now uses Promise.all for parallel file reading
+2. **Loading Feedback**: Progress bar shows file processing status
+3. **Lazy Loading**: Info, Plots, Carpets tabs load on-demand with React.lazy
+4. **Chart Animations**: Smooth 400ms initial animation, fast 100ms updates
+5. **Memoization**: Chart options memoized to prevent unnecessary re-renders
+
+### Bug Fixes (Session 1.1)
+- Fixed navigation bar layout (Carpets tab was hidden behind New/About buttons)
+- Fixed tab spacing (tabs were too spread apart with justify-around)
+- Fixed chart click interactions (updated for react-chartjs-2 v5 API with refs and getElementAtEvent)
+
+### Features Updated
+- load_tedana_folder: Loading now instant with progress indicator
+- select_component_scatter: Click interactions restored with v5 API
+- select_component_pie: Click interactions restored with v5 API
+- animated_tab_navigation: Custom implementation replaces @reach/tabs
+
+### Issues Encountered
+- Node.js v24 incompatible with fsevents/chokidar (resolved by using Node 18)
+- react-chartjs-2 v5 removed direct onClick prop (resolved with refs + getElementAtEvent)
+- @reach/tabs deprecated (resolved with custom TabComponents implementation)
+
+### Next Steps
+- Test all features from features.json
+- Mark features as passing after verification
+- Consider adding error boundaries for robustness
+
+---
+
+## Session 2 - visx Migration (2025-12-14)
+
+### Goals
+- Replace Chart.js with visx (Airbnb's D3 + React library) for prettier graphs
+- Improve chart interactivity and visual aesthetics
+- Add zoom/pan functionality to scatter plots
+
+### Changes Made
+
+#### Package Updates (package.json)
+- **Removed**: chart.js, react-chartjs-2, chartjs-plugin-zoom
+- **Added**: @visx/axis, @visx/event, @visx/grid, @visx/group, @visx/responsive, @visx/scale, @visx/shape, @visx/tooltip, @visx/zoom, d3-shape
+
+#### New Components Created
+1. **src/Plots/ScatterPlot.js** - visx-based scatter plot with:
+   - Zoom/pan functionality (scroll to zoom, drag to pan, double-click to zoom in)
+   - Tooltips showing component details on hover
+   - Color-coded points by classification
+   - Selected point highlighting with border
+   - Grid lines and axis labels
+
+2. **src/Plots/PieChart.js** - visx-based donut chart with:
+   - Hover effects with scale transform
+   - Tooltips showing variance percentage
+   - Click handling for slice selection
+   - Center text label
+
+#### Files Modified
+1. **src/Plots/Plots.js** - Rewrote to use visx components with fixed dimensions
+
+#### Files Removed
+1. **src/Plots/PlotOptions.js** - No longer needed (was Chart.js configuration)
+
+### Technical Details
+- Using fixed chart dimensions (340x300) instead of ParentSize for reliability
+- All hooks called before conditional returns to comply with React rules
+- Guard clauses added for invalid dimensions
+- Smooth transitions on hover/select (0.15s ease-out)
+
+### Issues Encountered
+- @visx/grid package was missing initially (resolved by adding to dependencies)
+- ParentSize component returning 0 dimensions (resolved by using fixed dimensions)
+- React hooks rules violation when using early returns (resolved by moving guards after hooks)
+
+### Session 2.1 - Layout and UX Updates
+- Changed layout: 4 interactive plots on LEFT in 2x2 grid, brain image on RIGHT
+- Changed chart backgrounds from gray (#fafafa) to white (#ffffff)
+- Fixed tooltip z-index issue using `useTooltipInPortal` to render tooltips in a portal
+- Made tooltips smaller and more compact
+- Fixed pie chart sorting: groups by classification (accepted, rejected, ignored) then by variance descending within each group
+
+### Next Steps
+- Verify all chart interactions work correctly
+- Test keyboard shortcuts (A/R/I for classification, arrow keys for navigation)
+- Update features.json with passing tests
+
+---
+
+## Session 2.2 - UX Polish and Cleanup (2025-12-14)
+
+### Goals
+- Improve chart interaction UX
+- Fix layout issues with controls
+- Remove deprecated "ignored" classification
+- Polish visual details
+
+### Changes Made
+
+#### Chart Interactions
+1. **Arrow key navigation now follows pie chart order** - Components are navigated in the same order as they appear in the pie chart (grouped by classification, sorted by variance)
+2. **Selected elements render on top** - In both scatter plots and pie chart, the selected element is rendered last so it's always fully visible
+3. **Invisible hit areas for small pie slices** - Added 20px transparent stroke around pie slices for easier clicking on small segments
+
+#### Layout Updates
+1. **50/50 layout** - Interactive plots grid now takes 50% width, brain image takes 50% width
+2. **Chart dimensions increased** - Charts now 420x380 pixels for better visibility in 2x2 grid
+3. **Fixed Reset/Save button layout** - Buttons now appear inline to the right of the toggle switch (removed absolute positioning)
+
+#### Classification Changes
+1. **Removed "ignored" classification** - tedana no longer generates ignored components
+   - Removed from ToggleSwitch values
+   - Removed "I" keyboard shortcut
+   - Updated help text from "A/R/I" to "A/R"
+
+#### Style Fixes
+1. **Icon spacing** - Reset/Save icons now have proper spacing from text (inline style marginRight: 8px)
+2. **Toggle switch vertical centering** - Labels now use flexbox with `items-center justify-center` for proper vertical alignment
+3. **Cursor pointer** - Toggle switch labels now show pointer cursor on hover (inline style)
+4. **Fixed slider position calculation** - Changed from percentage-based to pixel-based (`index * 90px`) for 2 values
+
+### Files Modified
+1. **src/Plots/Plots.js** - Arrow key navigation, layout changes, removed "ignored"
+2. **src/Plots/ScatterPlot.js** - Selected point renders last (on top)
+3. **src/Plots/PieChart.js** - Selected slice renders last, invisible hit areas
+4. **src/Plots/ToggleSwitch.js** - Vertical centering, cursor pointer, slider position fix
+5. **src/Plots/ResetAndSave.js** - Icon spacing, removed absolute positioning
+
+### Technical Notes
+- Tailwind CSS classes like `cursor-pointer` and `mr-*` weren't being applied to FontAwesome icons and some elements; resolved by using inline styles
+- SVG rendering order determines visual stacking (elements rendered last appear on top)
+
+---
+
+## Template for Future Sessions
+
+```
+## Session N - [Brief Description] (YYYY-MM-DD)
+
+### Goals
+- Goal 1
+- Goal 2
+
+### Changes Made
+1. **file.js** - Description of changes
+2. **file2.js** - Description of changes
+
+### Features Updated
+- feature_id: now passes=true (description of test/verification)
+
+### Issues Encountered
+- Issue description and resolution
+
+### Next Steps
+- Recommended follow-up work
+```

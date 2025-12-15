@@ -1,0 +1,285 @@
+{
+  "projectName": "rica",
+  "version": "2.0.0",
+  "description": "React-based interactive visualization tool for multi-echo fMRI ICA component analysis",
+  "lastUpdated": "2025-12-14",
+  "modernizationNotes": "v2.0.0 - Upgraded to React 18, functional components, removed 5s loading delay, added progress indicator",
+  "features": [
+    {
+      "id": "load_tedana_folder",
+      "category": "data-loading",
+      "description": "Load a tedana output folder containing metrics TSV, component PNGs, carpet SVGs, and report text files",
+      "steps": [
+        "Click the intro popup folder button",
+        "Select a tedana output directory via file picker",
+        "Wait for all files to be parsed (metrics, figures, reports)",
+        "Verify app transitions to tabbed view with loaded data"
+      ],
+      "passes": false
+    },
+    {
+      "id": "display_info_tab",
+      "category": "visualization",
+      "description": "Display the Info tab showing tedana report text and source folder path",
+      "steps": [
+        "Load a tedana folder",
+        "Click on the 'Info' tab",
+        "Verify report text content is displayed",
+        "Verify folder path is shown in header badge"
+      ],
+      "passes": false
+    },
+    {
+      "id": "display_ica_scatter_plots",
+      "category": "visualization",
+      "description": "Display interactive scatter plots showing Kappa/Rho, Kappa/Rank, and Rho/Rank for ICA components",
+      "steps": [
+        "Load a tedana folder",
+        "Navigate to the 'ICA' tab",
+        "Verify three scatter plots are rendered (Kappa vs Rho, Kappa vs Rank, Rho vs Rank)",
+        "Verify components are color-coded by classification (accepted=green, rejected=red)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "display_variance_pie_chart",
+      "category": "visualization",
+      "description": "Display a pie chart showing variance explained by each ICA component",
+      "steps": [
+        "Load a tedana folder",
+        "Navigate to the 'ICA' tab",
+        "Verify pie chart renders with component segments",
+        "Verify segments are color-coded by classification",
+        "Hover over segments to see variance percentage tooltips"
+      ],
+      "passes": false
+    },
+    {
+      "id": "select_component_scatter",
+      "category": "interactivity",
+      "description": "Click on a scatter plot point to select a component and display its figure",
+      "steps": [
+        "Navigate to the 'ICA' tab with data loaded",
+        "Click on any scatter plot point",
+        "Verify the component figure image loads on the right panel",
+        "Verify all scatter plots highlight the selected component",
+        "Verify pie chart highlights the corresponding segment"
+      ],
+      "passes": false
+    },
+    {
+      "id": "select_component_pie",
+      "category": "interactivity",
+      "description": "Click on a pie chart segment to select a component and display its figure",
+      "steps": [
+        "Navigate to the 'ICA' tab with data loaded",
+        "Click on any pie chart segment",
+        "Verify the component figure image loads on the right panel",
+        "Verify all scatter plots highlight the selected component"
+      ],
+      "passes": false
+    },
+    {
+      "id": "zoom_pan_scatter",
+      "category": "interactivity",
+      "description": "Zoom and pan scatter plots using mouse wheel and shift+drag",
+      "steps": [
+        "Navigate to the 'ICA' tab with data loaded",
+        "Use mouse wheel to zoom in/out on any scatter plot",
+        "Hold Shift and drag to pan the plot",
+        "Drag to select a rectangular zoom area",
+        "Verify zoom limits prevent going beyond original data bounds"
+      ],
+      "passes": false
+    },
+    {
+      "id": "reclassify_component_toggle",
+      "category": "interactivity",
+      "description": "Manually reclassify a component using the toggle switch (accepted/rejected)",
+      "steps": [
+        "Select a component on scatter or pie chart",
+        "Click on the classification toggle switch (Accepted/Rejected)",
+        "Verify component color updates across all plots",
+        "Verify toggle switch reflects new classification"
+      ],
+      "passes": false
+    },
+    {
+      "id": "reclassify_component_keyboard",
+      "category": "interactivity",
+      "description": "Use keyboard shortcuts to reclassify components (A=accept, R=reject)",
+      "steps": [
+        "Select a component",
+        "Press 'A' key to accept component",
+        "Verify component turns green across all plots",
+        "Press 'R' key to reject component",
+        "Verify component turns red across all plots"
+      ],
+      "passes": false
+    },
+    {
+      "id": "navigate_components_keyboard",
+      "category": "interactivity",
+      "description": "Navigate between components using left/right arrow keys",
+      "steps": [
+        "Select a component in scatter or pie chart",
+        "Press left arrow to move to previous component (by rank)",
+        "Verify new component is highlighted and figure updates",
+        "Press right arrow to move to next component",
+        "Verify component selection follows rank order in scatter mode and pie order in pie mode"
+      ],
+      "passes": false
+    },
+    {
+      "id": "reset_classifications",
+      "category": "interactivity",
+      "description": "Reset all manual classifications back to original tedana values",
+      "steps": [
+        "Make one or more manual classification changes",
+        "Click the 'Reset' button",
+        "Verify all components revert to their original classifications",
+        "Verify plot colors reflect original state"
+      ],
+      "passes": false
+    },
+    {
+      "id": "save_manual_classification",
+      "category": "export",
+      "description": "Export manually reclassified components as TSV file and separate accepted/rejected text files",
+      "steps": [
+        "Make one or more manual classification changes",
+        "Click the 'Save' button",
+        "Verify manual_classification.tsv downloads with updated classifications",
+        "Verify accepted.txt downloads with indices of manually accepted components",
+        "Verify rejected.txt downloads with indices of manually rejected components",
+        "Verify classification_tags and rationale fields are updated for changed components"
+      ],
+      "passes": false
+    },
+    {
+      "id": "display_carpet_plots",
+      "category": "visualization",
+      "description": "Display carpet plots from tedana SVG output files",
+      "steps": [
+        "Load a tedana folder",
+        "Navigate to the 'Carpets' tab",
+        "Verify first carpet plot SVG is displayed",
+        "Verify dropdown menu lists all available carpet plots"
+      ],
+      "passes": false
+    },
+    {
+      "id": "switch_carpet_plot",
+      "category": "interactivity",
+      "description": "Switch between different carpet plot visualizations using dropdown",
+      "steps": [
+        "Navigate to the 'Carpets' tab with data loaded",
+        "Click the dropdown menu",
+        "Select a different carpet plot option",
+        "Verify the displayed image updates to show selected carpet plot"
+      ],
+      "passes": false
+    },
+    {
+      "id": "load_new_session",
+      "category": "ui",
+      "description": "Load a new tedana folder without reloading the page",
+      "steps": [
+        "Have a session already loaded",
+        "Click the 'New' button in the header",
+        "Verify intro popup appears",
+        "Select a new folder",
+        "Verify data is replaced with new folder contents"
+      ],
+      "passes": false
+    },
+    {
+      "id": "show_about_popup",
+      "category": "ui",
+      "description": "Display the About popup with version and GitHub link",
+      "steps": [
+        "Click the 'About' button in the header",
+        "Verify popup appears with project description",
+        "Verify version number is displayed",
+        "Verify GitHub contribute link is present and clickable"
+      ],
+      "passes": false
+    },
+    {
+      "id": "animated_tab_navigation",
+      "category": "ui",
+      "description": "Navigate between tabs (Info, ICA, Carpets) with animated underline indicator",
+      "steps": [
+        "Have data loaded and tabs visible",
+        "Click on 'Info' tab",
+        "Verify blue underline animates to Info tab",
+        "Click on 'ICA' tab",
+        "Verify underline animates smoothly to ICA tab",
+        "Click on 'Carpets' tab",
+        "Verify underline animates to Carpets tab"
+      ],
+      "passes": false
+    },
+    {
+      "id": "mobile_fallback",
+      "category": "ui",
+      "description": "Show mobile-friendly fallback message on screens narrower than 1024px",
+      "steps": [
+        "Open application on a device/window with width < 1024px",
+        "Verify mobile fallback view is displayed instead of main app",
+        "Verify message asks user to visit from a computer",
+        "Verify 'Learn more' link to GitHub is present"
+      ],
+      "passes": false
+    },
+    {
+      "id": "dynamic_page_title",
+      "category": "ui",
+      "description": "Update browser tab title to show the loaded data folder path",
+      "steps": [
+        "Load a tedana folder",
+        "Check browser tab title",
+        "Verify title shows the folder path extracted from tedana metadata"
+      ],
+      "passes": false
+    },
+    {
+      "id": "component_tooltips",
+      "category": "visualization",
+      "description": "Display tooltips with component details on chart hover",
+      "steps": [
+        "Navigate to 'ICA' tab with data loaded",
+        "Hover over a scatter plot point",
+        "Verify tooltip shows component name and metric value",
+        "Hover over a pie chart segment",
+        "Verify tooltip shows component name and variance percentage"
+      ],
+      "passes": false
+    },
+    {
+      "id": "production_build",
+      "category": "infrastructure",
+      "description": "Build production bundle with inlined CSS and JS for single-file distribution",
+      "steps": [
+        "Run 'npm run build'",
+        "Run gulp default task to inline assets",
+        "Verify build/index.html contains inlined JavaScript and CSS",
+        "Open build/index.html in browser",
+        "Verify application works as single-file deployment"
+      ],
+      "passes": false
+    },
+    {
+      "id": "tailwind_jit_compilation",
+      "category": "infrastructure",
+      "description": "Compile Tailwind CSS with JIT mode for development and production",
+      "steps": [
+        "Run 'npm run watch:css' for development",
+        "Verify src/styles/output.css is generated",
+        "Modify a component to use a new Tailwind class",
+        "Verify the class is compiled into output.css"
+      ],
+      "passes": false
+    }
+  ]
+}
