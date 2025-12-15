@@ -8,7 +8,7 @@ import TimeSeries from "./TimeSeries";
 import FFTSpectrum from "./FFTSpectrum";
 import BrainViewer from "./BrainViewer";
 import ComponentTable from "./ComponentTable";
-import { assignColor } from "./PlotUtils";
+import { assignColor, formatComponentName } from "./PlotUtils";
 
 // Chart dimensions - sized to fit 2x2 in half screen width
 // Each chart takes ~45% of half the screen width (with gap)
@@ -41,9 +41,10 @@ function Plots({ componentData, componentFigures, originalData, mixingMatrix, ni
     return mixingMatrix.data[selectedIndex] || [];
   }, [mixingMatrix, selectedIndex]);
 
-  // Get current component label
+  // Get current component label (formatted for display)
   const currentComponentLabel = useMemo(() => {
-    return processedData[selectedIndex]?.label || "";
+    const label = processedData[selectedIndex]?.label || "";
+    return formatComponentName(label);
   }, [processedData, selectedIndex]);
 
   // Initialize data from props

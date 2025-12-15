@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useMemo } from "react";
+import { formatComponentName } from "./PlotUtils";
 
 const COLORS = {
   accepted: "#86EFAC",
@@ -10,6 +11,10 @@ const COLORS = {
 // Format cell value based on type
 function formatValue(value, key) {
   if (value === null || value === undefined || value === "") return "—";
+  // Format component names for display (ICA_01 → ICA 01)
+  if (key === "Component") {
+    return formatComponentName(value);
+  }
   if (typeof value === "number") {
     // Very small numbers in scientific notation
     if (Math.abs(value) < 0.0001 && value !== 0) {
@@ -143,7 +148,7 @@ function ComponentTable({ data, selectedIndex, onRowClick, classifications }) {
         }}
       >
         <table className="w-full text-sm" style={{ borderCollapse: "separate", borderSpacing: "0" }}>
-          <thead className="sticky top-0 bg-gray-100 text-gray-700 z-10">
+          <thead>
             <tr>
               {columns.map((col) => (
                 <th
@@ -153,6 +158,13 @@ function ComponentTable({ data, selectedIndex, onRowClick, classifications }) {
                       ? "text-left"
                       : "text-right"
                   }`}
+                  style={{
+                    position: "sticky",
+                    top: 0,
+                    backgroundColor: "#f3f4f6",
+                    color: "#374151",
+                    zIndex: 10,
+                  }}
                 >
                   {getColumnLabel(col)}
                 </th>

@@ -3,6 +3,7 @@ import { Group } from "@visx/group";
 import { Pie } from "@visx/shape";
 import { useTooltip, useTooltipInPortal, defaultStyles } from "@visx/tooltip";
 import { localPoint } from "@visx/event";
+import { formatComponentName } from "./PlotUtils";
 
 const COLORS = {
   accepted: "#86EFAC",
@@ -103,7 +104,7 @@ function PieChart({
           {title}
         </text>
 
-        <Group top={centerY} left={centerX}>
+        <Group top={centerY} left={centerX} onMouseLeave={handleMouseLeave}>
           <Pie
             data={pieData}
             pieValue={(d) => d.value}
@@ -122,7 +123,8 @@ function PieChart({
               const renderArc = (arc, i) => {
                 const isSelected = arc.data.index === selectedIndex;
                 const isHovered = arc.data.index === hoveredIndex;
-                const scale = (isSelected || isHovered) ? 1.05 : 1;
+                // Only scale selected slices, not hovered (prevents flickering)
+                const scale = isSelected ? 1.05 : 1;
 
                 return (
                   <g
@@ -134,29 +136,20 @@ function PieChart({
                       transformOrigin: "center",
                     }}
                   >
-                    {/* Invisible larger hit area for easier clicking on small slices */}
-                    <path
-                      d={pie.path(arc)}
-                      fill="transparent"
-                      stroke="transparent"
-                      strokeWidth={20}
-                      style={{ pointerEvents: "stroke" }}
-                      onMouseEnter={(e) => handleMouseOver(e, arc)}
-                      onMouseLeave={handleMouseLeave}
-                      onClick={() => onSliceClick(arc.data.index)}
-                    />
-                    {/* Visible slice */}
+                    {/* Visible slice with mouse events */}
                     <path
                       d={pie.path(arc)}
                       fill={getColor(arc.data)}
-                      stroke={isSelected ? "#1f2937" : "#ffffff"}
-                      strokeWidth={isSelected ? 2 : 1}
+                      stroke={isSelected ? "#1f2937" : (isHovered ? "#9ca3af" : "#ffffff")}
+                      strokeWidth={isSelected ? 2 : (isHovered ? 2 : 1)}
                       style={{
-                        pointerEvents: "none",
-                        filter: (isSelected || isHovered)
+                        filter: isSelected
                           ? "drop-shadow(0 4px 6px rgba(0, 0, 0, 0.15))"
                           : "none",
                       }}
+                      onMouseMove={(e) => handleMouseOver(e, arc)}
+                      onMouseLeave={handleMouseLeave}
+                      onClick={() => onSliceClick(arc.data.index)}
                     />
                   </g>
                 );
@@ -202,7 +195,7 @@ function PieChart({
           }}
         >
           <div style={{ fontWeight: "bold" }}>
-            {tooltipData.label}
+            {formatComponentName(tooltipData.label)}
           </div>
           <div>
             Variance: {tooltipData.value?.toFixed(2)}% ({tooltipData.classification})

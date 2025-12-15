@@ -619,6 +619,51 @@ const blue2white = {
 
 ---
 
+## Session 3.5 - UX Polish and Display Improvements (2025-12-14)
+
+### Goals
+- Remove focus outline on chart container
+- Format component names for display (replace underscores with spaces)
+- Improve pie chart hover behavior (reduce flickering)
+- Make table header sticky when scrolling
+
+### Changes Made
+
+#### Focus Outline Removal (Plots.js)
+- Added `outline: "none"` and `boxShadow: "none"` inline styles
+- Added Tailwind classes `focus:outline-none focus:ring-0`
+- Prevents blue outline when using keyboard navigation (arrow keys)
+
+#### Component Name Formatting (PlotUtils.js)
+- New utility function `formatComponentName()` - converts "ICA_01" to "ICA 01"
+- Applied to:
+  - ScatterPlot tooltips
+  - PieChart tooltips
+  - ComponentTable Component column
+  - TimeSeries title
+  - BrainViewer title
+- Original names preserved for saving manual classifications
+
+#### Pie Chart Hover Improvements (PieChart.js)
+- Changed from `onMouseEnter` to `onMouseMove` for more reliable detection
+- Removed scale effect on hover (only selected slices scale now)
+- Hovered slices show gray border instead of scaling (prevents flickering)
+- Added `onMouseLeave` to parent Group for proper cleanup
+
+#### Sticky Table Header (ComponentTable.js)
+- Applied sticky positioning to each `th` element with inline styles
+- Position: sticky, top: 0, backgroundColor: #f3f4f6, zIndex: 10
+- Header stays visible when scrolling through component rows
+
+### Files Modified
+- `src/Plots/Plots.js` - Focus outline removal, component label formatting
+- `src/Plots/PlotUtils.js` - New formatComponentName() function
+- `src/Plots/ScatterPlot.js` - Import and use formatComponentName for tooltips
+- `src/Plots/PieChart.js` - Import and use formatComponentName, improved hover
+- `src/Plots/ComponentTable.js` - Import and use formatComponentName, sticky header
+
+---
+
 ## Template for Future Sessions
 
 ```

@@ -426,6 +426,46 @@
         "Verify the path matches the 'Using output directory' from tedana log"
       ],
       "passes": true
+    },
+    {
+      "id": "formatted_component_names",
+      "category": "ui",
+      "description": "Display component names with spaces instead of underscores (ICA 01 instead of ICA_01)",
+      "steps": [
+        "Load a tedana folder",
+        "Hover over scatter plot points to see tooltips",
+        "Verify component names show as 'ICA 01' not 'ICA_01'",
+        "Check pie chart tooltips, component table, and brain viewer title",
+        "Save manual classifications and verify original names (with underscores) are preserved"
+      ],
+      "passes": true
+    },
+    {
+      "id": "sticky_table_header",
+      "category": "ui",
+      "description": "Component table header stays visible when scrolling through rows",
+      "steps": [
+        "Load a tedana folder with many components",
+        "Navigate to the ICA tab",
+        "Scroll down in the component metrics table",
+        "Verify the header row stays fixed at the top",
+        "Verify column labels remain visible while scrolling"
+      ],
+      "passes": true
+    },
+    {
+      "id": "improved_pie_hover",
+      "category": "interactivity",
+      "description": "Pie chart hover works smoothly without flickering",
+      "steps": [
+        "Load a tedana folder",
+        "Navigate to the ICA tab",
+        "Hover over different pie chart segments",
+        "Verify tooltip appears reliably without flickering",
+        "Verify hovered segment shows gray border highlight",
+        "Verify moving between segments updates smoothly"
+      ],
+      "passes": true
     }
   ]
 }

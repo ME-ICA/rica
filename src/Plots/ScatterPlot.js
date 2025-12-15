@@ -7,6 +7,7 @@ import { GridRows, GridColumns } from "@visx/grid";
 import { useTooltip, useTooltipInPortal, defaultStyles } from "@visx/tooltip";
 import { localPoint } from "@visx/event";
 import { Zoom } from "@visx/zoom";
+import { formatComponentName } from "./PlotUtils";
 
 const COLORS = {
   accepted: "#86EFAC",
@@ -303,7 +304,7 @@ function ScatterPlot({
           }}
         >
           <div style={{ fontWeight: "bold" }}>
-            {tooltipData.label}
+            {formatComponentName(tooltipData.label)}
           </div>
           <div>
             {xLabel}: {getX(tooltipData).toFixed(2)} | {yLabel}: {getY(tooltipData).toFixed(2)}
