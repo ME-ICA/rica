@@ -113,58 +113,146 @@ function App() {
         {showAboutPopup && <AboutPopup closePopup={toggleAboutPopup} />}
         {showTabs && (
           <AnimatedTabs defaultIndex={0}>
-            <TabList className="text-base border-b border-b-gray-300 flex items-center relative">
-              <div className="flex justify-center flex-1">
+            {/* Modern Notion-style navbar */}
+            <nav
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "12px 24px",
+                backgroundColor: "#ffffff",
+                borderBottom: "1px solid #e5e5e5",
+                boxShadow: "0 1px 3px rgba(0, 0, 0, 0.04)",
+              }}
+            >
+              {/* Left: Logo/Brand */}
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <img
+                  src="/favicon.ico"
+                  alt="Rica logo"
+                  style={{
+                    width: "28px",
+                    height: "28px",
+                  }}
+                />
+                <span
+                  style={{
+                    fontSize: "20px",
+                    fontWeight: "700",
+                    color: "#1f2937",
+                    letterSpacing: "-0.5px",
+                  }}
+                >
+                  Rica
+                </span>
+                <span
+                  style={{
+                    fontSize: "11px",
+                    fontWeight: "500",
+                    color: "#9ca3af",
+                    backgroundColor: "#f3f4f6",
+                    padding: "2px 8px",
+                    borderRadius: "4px",
+                  }}
+                >
+                  v2.0
+                </span>
+              </div>
+
+              {/* Center: Navigation Tabs */}
+              <TabList
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "4px",
+                  backgroundColor: "#f3f4f6",
+                  padding: "4px",
+                  borderRadius: "10px",
+                }}
+              >
                 <AnimatedTab index={0}>
                   <FontAwesomeIcon
                     icon={["fas", "info-circle"]}
-                    size="lg"
-                    className="mx-2"
+                    style={{ marginRight: "6px", fontSize: "14px" }}
                   />
                   <span>Info</span>
                 </AnimatedTab>
                 <AnimatedTab index={1}>
                   <FontAwesomeIcon
                     icon={["fas", "chart-pie"]}
-                    size="lg"
-                    className="mx-2"
+                    style={{ marginRight: "6px", fontSize: "14px" }}
                   />
                   <span>ICA</span>
                 </AnimatedTab>
                 <AnimatedTab index={2}>
                   <FontAwesomeIcon
                     icon={["fas", "layer-group"]}
-                    size="lg"
-                    className="mx-2"
+                    style={{ marginRight: "6px", fontSize: "14px" }}
                   />
                   <span>Carpets</span>
                 </AnimatedTab>
-              </div>
-              <div className="flex items-center mr-4">
+              </TabList>
+
+              {/* Right: Action Buttons */}
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 <button
-                  className="flex items-center px-4 py-2 text-base text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 transition-colors duration-200"
                   onClick={toggleIntroPopup}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    padding: "8px 14px",
+                    fontSize: "14px",
+                    fontWeight: "500",
+                    color: "#374151",
+                    backgroundColor: "#ffffff",
+                    border: "1px solid #e5e7eb",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                    transition: "all 0.15s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = "#f9fafb";
+                    e.currentTarget.style.borderColor = "#d1d5db";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "#ffffff";
+                    e.currentTarget.style.borderColor = "#e5e7eb";
+                  }}
                 >
-                  <FontAwesomeIcon
-                    icon={["fas", "plus"]}
-                    size="lg"
-                    className="mx-2"
-                  />
+                  <FontAwesomeIcon icon={["fas", "plus"]} style={{ fontSize: "12px" }} />
                   <span>New</span>
                 </button>
                 <button
-                  className="flex items-center px-4 py-2 text-base text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 transition-colors duration-200"
                   onClick={toggleAboutPopup}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "36px",
+                    height: "36px",
+                    fontSize: "14px",
+                    color: "#6b7280",
+                    backgroundColor: "#ffffff",
+                    border: "1px solid #e5e7eb",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                    transition: "all 0.15s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = "#f9fafb";
+                    e.currentTarget.style.borderColor = "#d1d5db";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "#ffffff";
+                    e.currentTarget.style.borderColor = "#e5e7eb";
+                  }}
+                  title="About"
                 >
-                  <FontAwesomeIcon
-                    icon={["fas", "question"]}
-                    size="lg"
-                    className="mx-2"
-                  />
-                  <span>About</span>
+                  <FontAwesomeIcon icon={["fas", "question"]} />
                 </button>
               </div>
-            </TabList>
+            </nav>
             <TabPanels>
               <TabPanel index={0}>
                 <Suspense fallback={<LoadingSpinner />}>

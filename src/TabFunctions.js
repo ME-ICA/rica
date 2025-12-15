@@ -1,94 +1,20 @@
-import React, { useRef, useState, useLayoutEffect, useCallback } from "react";
+import React, { useRef, useCallback } from "react";
 import { TabsProvider, useTabsContext } from "./TabComponents";
 
-const HORIZONTAL_PADDING = 16;
-
 function AnimatedTabs({ children, defaultIndex = 0, ...rest }) {
-  const [activeRect, setActiveRect] = useState(null);
-  const containerRef = useRef(null);
-  const [containerRect, setContainerRect] = useState(null);
-
-  // Update container rect on mount and resize
-  useLayoutEffect(() => {
-    const updateRect = () => {
-      if (containerRef.current) {
-        setContainerRect(containerRef.current.getBoundingClientRect());
-      }
-    };
-
-    updateRect();
-    window.addEventListener("resize", updateRect);
-    return () => window.removeEventListener("resize", updateRect);
-  }, []);
-
   return (
     <TabsProvider defaultIndex={defaultIndex}>
-      <TabsContextBridge setActiveRect={setActiveRect}>
-        <div
-          ref={containerRef}
-          style={{ ...rest.style, position: "relative" }}
-          {...rest}
-        >
-          {/* Animated underline indicator */}
-          <div
-            className="absolute bg-sky-500"
-            style={{
-              height: 4,
-              transition: "all 300ms ease",
-              left: activeRect && containerRect
-                ? activeRect.left - containerRect.left + HORIZONTAL_PADDING
-                : 0,
-              top: activeRect && containerRect
-                ? activeRect.bottom - containerRect.top - 3
-                : 0,
-              width: activeRect ? activeRect.width - HORIZONTAL_PADDING * 1.5 : 0,
-              opacity: activeRect ? 1 : 0,
-            }}
-          />
-          {children}
-        </div>
-      </TabsContextBridge>
+      <div style={{ ...rest.style }} {...rest}>
+        {children}
+      </div>
     </TabsProvider>
   );
 }
-
-// Helper component to access context and pass setActiveRect
-function TabsContextBridge({ children, setActiveRect }) {
-  return (
-    <ActiveRectContext.Provider value={setActiveRect}>
-      {children}
-    </ActiveRectContext.Provider>
-  );
-}
-
-const ActiveRectContext = React.createContext(null);
 
 function AnimatedTab({ index, children, style, ...props }) {
   const { selectedIndex, selectTab } = useTabsContext();
   const isSelected = selectedIndex === index;
   const tabRef = useRef(null);
-  const setActiveRect = React.useContext(ActiveRectContext);
-
-  // Update active rect when this tab becomes selected
-  useLayoutEffect(() => {
-    if (isSelected && tabRef.current) {
-      setActiveRect(tabRef.current.getBoundingClientRect());
-    }
-  }, [isSelected, setActiveRect]);
-
-  // Also update on resize
-  useLayoutEffect(() => {
-    if (!isSelected) return;
-
-    const updateRect = () => {
-      if (tabRef.current) {
-        setActiveRect(tabRef.current.getBoundingClientRect());
-      }
-    };
-
-    window.addEventListener("resize", updateRect);
-    return () => window.removeEventListener("resize", updateRect);
-  }, [isSelected, setActiveRect]);
 
   const handleClick = useCallback(() => {
     selectTab(index);
@@ -99,15 +25,33 @@ function AnimatedTab({ index, children, style, ...props }) {
       ref={tabRef}
       role="tab"
       aria-selected={isSelected}
-      className={`text-gray-500 hover:cursor-pointer focus:outline-none transition-colors duration-200 ${
-        isSelected ? "text-gray-900" : ""
-      }`}
       onClick={handleClick}
       style={{
-        ...style,
-        padding: `8px ${HORIZONTAL_PADDING}px`,
-        background: "white",
+        display: "flex",
+        alignItems: "center",
+        padding: "6px 12px",
+        fontSize: "13px",
+        fontWeight: isSelected ? "600" : "500",
+        color: isSelected ? "#1f2937" : "#6b7280",
+        backgroundColor: isSelected ? "#ffffff" : "transparent",
         border: "none",
+        borderRadius: "6px",
+        cursor: "pointer",
+        transition: "all 0.15s ease",
+        boxShadow: isSelected ? "0 1px 2px rgba(0, 0, 0, 0.05)" : "none",
+        ...style,
+      }}
+      onMouseEnter={(e) => {
+        if (!isSelected) {
+          e.currentTarget.style.color = "#374151";
+          e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.5)";
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!isSelected) {
+          e.currentTarget.style.color = "#6b7280";
+          e.currentTarget.style.backgroundColor = "transparent";
+        }
       }}
       {...props}
     >

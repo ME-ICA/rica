@@ -136,13 +136,17 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading }) {
           // Dataset path
           if (filename.startsWith("tedana_20") && filename.endsWith(".tsv")) {
             const text = await readFileAsText(file);
-            const parsed = Papa.parse(text, {
-              header: false,
-              skipEmptyLines: true,
-            });
-            const row = parsed.data[0];
-            const pathStr = row[row.length - 1];
-            dirPath = pathStr.includes(":") ? pathStr.split(":")[1].trim() : pathStr;
+            // Look for the line containing "Using output directory:"
+            const lines = text.split("\n");
+            for (const line of lines) {
+              if (line.includes("Using output directory:")) {
+                const match = line.match(/Using output directory:\s*(.+)/);
+                if (match) {
+                  dirPath = match[1].trim();
+                  break;
+                }
+              }
+            }
             processed++;
             setLoadingProgress((prev) => ({ ...prev, current: processed }));
           }
@@ -198,8 +202,14 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading }) {
   );
 
   return (
-    <div className="fixed z-10 flex items-center justify-center w-full h-full bg-gray-500 bg-opacity-50 backdrop-blur-sm">
-      <div className="absolute z-20 w-1/3 px-16 py-10 m-auto bg-white h-fit rounded-xl drop-shadow-2xl transition-all duration-300">
+    <div
+      className="fixed z-10 flex items-center justify-center w-full h-full bg-gray-500 bg-opacity-50 backdrop-blur-sm"
+      onClick={closePopup}
+    >
+      <div
+        className="absolute z-20 w-1/3 px-16 py-10 m-auto bg-white h-fit rounded-xl drop-shadow-2xl transition-all duration-300"
+        onClick={(e) => e.stopPropagation()}
+      >
         <button
           onClick={closePopup}
           type="button"

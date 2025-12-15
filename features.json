@@ -386,6 +386,46 @@
         "Verify the classification badge in the table updates"
       ],
       "passes": true
+    },
+    {
+      "id": "modern_navbar",
+      "category": "ui",
+      "description": "Display modern Notion-style navbar with logo, pill tabs, and action buttons",
+      "steps": [
+        "Load data and view the navbar",
+        "Verify favicon logo appears next to 'Rica' text",
+        "Verify version badge (v2.0) is displayed",
+        "Verify tabs are in pill-style container with gray background",
+        "Verify selected tab has white background",
+        "Verify New and About buttons have modern styling"
+      ],
+      "passes": true
+    },
+    {
+      "id": "click_outside_close_popup",
+      "category": "ui",
+      "description": "Close popups by clicking outside the modal card",
+      "steps": [
+        "Click 'New' button to open intro popup",
+        "Click outside the white card (on the gray backdrop)",
+        "Verify popup closes",
+        "Click 'About' button to open about popup",
+        "Click outside the white card",
+        "Verify popup closes"
+      ],
+      "passes": true
+    },
+    {
+      "id": "display_data_path",
+      "category": "visualization",
+      "description": "Display the correct output directory path in the Info tab",
+      "steps": [
+        "Load a tedana folder",
+        "Navigate to the 'Info' tab",
+        "Verify the output directory path is displayed in the blue badge",
+        "Verify the path matches the 'Using output directory' from tedana log"
+      ],
+      "passes": true
     }
   ]
 }

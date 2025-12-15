@@ -4,8 +4,14 @@ import { faGithub } from "@fortawesome/free-brands-svg-icons";
 
 function AboutPopup({ closePopup }) {
   return (
-    <div className="fixed z-10 flex items-center justify-center w-full h-full bg-gray-500 bg-opacity-50 backdrop-blur-sm">
-      <div className="absolute z-20 w-1/3 px-16 py-10 m-auto bg-white h-fit rounded-xl drop-shadow-2xl animate-fadeIn">
+    <div
+      className="fixed z-10 flex items-center justify-center w-full h-full bg-gray-500 bg-opacity-50 backdrop-blur-sm"
+      onClick={closePopup}
+    >
+      <div
+        className="absolute z-20 w-1/3 px-16 py-10 m-auto bg-white h-fit rounded-xl drop-shadow-2xl animate-fadeIn"
+        onClick={(e) => e.stopPropagation()}
+      >
         <button
           onClick={closePopup}
           type="button"

@@ -575,6 +575,50 @@ const blue2white = {
 
 ---
 
+## Session 3.4 - Modern Navbar and UX Polish (2025-12-14)
+
+### Goals
+- Modernize the top navbar with Notion-style design
+- Add click-outside-to-close functionality for popups
+- Add favicon as logo in navbar
+- Fix data path extraction for Info tab
+
+### Changes Made
+
+#### Modern Navbar (index.js)
+- **Left section**: Favicon logo (28x28px) + "Rica" text + version badge (v2.0)
+- **Center section**: Pill-style tab navigation with gray background container
+  - Selected tab has white background with subtle shadow
+  - Smooth hover effects on unselected tabs
+- **Right section**:
+  - "New" button with border and plus icon
+  - Icon-only "About" button (cleaner look)
+- Clean white background with subtle shadow
+- Better spacing and typography
+
+#### Tab Styling (TabFunctions.js)
+- Removed underline indicator animation
+- Changed to pill-style selected state (white background, rounded corners)
+- Simplified component by removing unused refs and effects
+
+#### Click-Outside-to-Close (IntroPopUp.js, AboutPopUp.js)
+- Added onClick handler on backdrop to close popup
+- Inner card uses stopPropagation() to prevent closing when clicking inside
+- Same behavior as clicking the X button
+
+#### Path Extraction Fix (IntroPopUp.js)
+- Fixed regex to properly extract output directory from tedana log
+- Now searches for "Using output directory:" and extracts full path
+- Handles paths with colons correctly
+
+### Files Modified
+- `src/index.js` - Modern navbar layout with favicon
+- `src/TabFunctions.js` - Pill-style tabs, removed underline
+- `src/PopUps/IntroPopUp.js` - Click-outside-to-close, path extraction fix
+- `src/PopUps/AboutPopUp.js` - Click-outside-to-close
+
+---
+
 ## Template for Future Sessions
 
 ```
