@@ -4,6 +4,9 @@ import ToggleSwitch from "./ToggleSwitch";
 import ResetAndSave from "./ResetAndSave";
 import ScatterPlot from "./ScatterPlot";
 import PieChart from "./PieChart";
+import TimeSeries from "./TimeSeries";
+import FFTSpectrum from "./FFTSpectrum";
+import BrainViewer from "./BrainViewer";
 import { assignColor } from "./PlotUtils";
 
 // Chart dimensions - sized to fit 2x2 in half screen width
@@ -20,11 +23,27 @@ const COLORS = {
   ignoredHover: "#0EA5E9",
 };
 
-function Plots({ componentData, componentFigures, originalData }) {
+function Plots({ componentData, componentFigures, originalData, mixingMatrix, niftiBuffer, maskBuffer }) {
   const [processedData, setProcessedData] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedClassification, setSelectedClassification] = useState("accepted");
   const [clickedElement, setClickedElement] = useState("");
+
+  // Check if we have the new interactive visualization data
+  const hasInteractiveViews = mixingMatrix?.data && niftiBuffer;
+
+  // Get current component's time series from mixing matrix
+  const currentTimeSeries = useMemo(() => {
+    if (!mixingMatrix?.data || selectedIndex < 0 || selectedIndex >= mixingMatrix.data.length) {
+      return [];
+    }
+    return mixingMatrix.data[selectedIndex] || [];
+  }, [mixingMatrix, selectedIndex]);
+
+  // Get current component label
+  const currentComponentLabel = useMemo(() => {
+    return processedData[selectedIndex]?.label || "";
+  }, [processedData, selectedIndex]);
 
   // Initialize data from props
   const initializeData = useCallback(() => {
@@ -333,14 +352,63 @@ function Plots({ componentData, componentFigures, originalData }) {
               </div>
             </div>
 
-        {/* Right side: Component brain image - 50% width */}
-        <div className="w-1/2 flex items-start justify-center">
-          {clickedElement && (
-            <img
-              className="max-w-full h-auto rounded-lg shadow-lg"
-              alt="Component visualization"
-              src={clickedElement}
-            />
+        {/* Right side: Component visualization - 50% width */}
+        <div
+          style={{
+            width: '50%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '8px'
+          }}
+        >
+          {hasInteractiveViews ? (
+            <>
+              {/* Time series on top */}
+              <div style={{ width: '100%' }}>
+                <TimeSeries
+                  data={currentTimeSeries}
+                  width={800}
+                  height={180}
+                  title="Time Series"
+                  componentLabel={currentComponentLabel}
+                  lineColor={selectedClassification === 'accepted' ? '#22C55E' : '#EF4444'}
+                />
+              </div>
+
+              {/* Brain stat map viewer in middle */}
+              <div style={{ width: '100%' }}>
+                <BrainViewer
+                  niftiBuffer={niftiBuffer}
+                  maskBuffer={maskBuffer}
+                  componentIndex={selectedIndex}
+                  width={800}
+                  height={350}
+                  componentLabel={currentComponentLabel}
+                />
+              </div>
+
+              {/* FFT on bottom */}
+              <div style={{ width: '100%' }}>
+                <FFTSpectrum
+                  timeSeries={currentTimeSeries}
+                  width={800}
+                  height={180}
+                  title="Power Spectrum"
+                  sampleRate={1}
+                  lineColor={selectedClassification === 'accepted' ? '#22C55E' : '#EF4444'}
+                />
+              </div>
+            </>
+          ) : (
+            /* Fallback to existing PNG display */
+            clickedElement && (
+              <img
+                className="max-w-full h-auto rounded-lg shadow-lg"
+                alt="Component visualization"
+                src={clickedElement}
+              />
+            )
           )}
         </div>
       </div>

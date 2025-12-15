@@ -325,6 +325,218 @@ src/
 
 ---
 
+## Session 3 - Niivue Integration (2025-12-14)
+
+### Goals
+- Replace static PNG brain images with interactive Niivue 3D viewer
+- Add interactive time series visualization
+- Add FFT power spectrum visualization
+- Synchronize all visualizations with component selection
+
+### Changes Made
+
+#### New Dependencies (package.json)
+- `@niivue/niivue` - WebGL2-based neuroimaging viewer
+- `fft.js` - Fast Fourier Transform for power spectrum computation
+
+#### New Utility Files
+1. **src/utils/tsvParser.js** - Parse mixing matrix TSV file
+   - `parseMixingMatrix()` - Converts TSV to component time series array
+   - `getComponentIndex()` - Maps component labels to array indices
+
+2. **src/utils/fftUtils.js** - FFT computation utilities
+   - `computePowerSpectrum()` - One-sided power spectrum from time series
+   - `powerToDecibels()` - Convert power to dB scale
+
+#### New Visualization Components
+1. **src/Plots/TimeSeries.js** - visx line chart for component time series
+   - Zoom/pan support with @visx/zoom
+   - Hover tooltips showing TR and value
+   - Blue line (#3b82f6) color scheme
+
+2. **src/Plots/FFTSpectrum.js** - visx line chart for power spectrum
+   - Computes FFT internally using fft.js (memoized)
+   - X-axis: Frequency (cycles/TR)
+   - Y-axis: Power with exponential notation
+   - Green line (#10b981) color scheme
+
+3. **src/Plots/BrainViewer.js** - Niivue wrapper component
+   - Loads 4D NIfTI from ArrayBuffer
+   - Uses `setFrame4D()` to display selected component
+   - Warm colormap for z-scores
+   - Multi-planar slice view
+   - Loading and error states
+
+#### Data Loading Updates (IntroPopUp.js)
+- Added `readFileAsArrayBuffer()` helper
+- New file patterns:
+  - `*_mixing.tsv` (excluding PCA) - ICA time series
+  - `*stat-z_components.nii.gz` (ICA) - 4D brain maps
+- Passes `mixingMatrix` and `niftiBuffer` to parent
+
+#### State Management (index.js)
+- New state: `mixingMatrix`, `niftiBuffer`
+- Passes new props to Plots component
+
+#### Plots.js Integration
+- New props: `mixingMatrix`, `niftiBuffer`
+- `hasInteractiveViews` - Conditional rendering flag
+- `currentTimeSeries` - Memoized time series for selected component
+- Graceful fallback to PNG if NIfTI/mixing files not available
+
+### New Layout (Right Side)
+```
++---------------------------+
+|   Time Series (600x180)   |
++---------------------------+
+|   Brain Stat Map          |
+|   (Niivue - 600x400)      |
++---------------------------+
+|   FFT Spectrum (600x180)  |
++---------------------------+
+```
+
+### Files Created
+- `src/utils/tsvParser.js`
+- `src/utils/fftUtils.js`
+- `src/Plots/TimeSeries.js`
+- `src/Plots/FFTSpectrum.js`
+- `src/Plots/BrainViewer.js`
+
+### Files Modified
+- `package.json` - Added @niivue/niivue, fft.js
+- `src/PopUps/IntroPopUp.js` - Load mixing TSV + NIfTI
+- `src/index.js` - Add state, pass props
+- `src/Plots/Plots.js` - Import new components, conditional layout
+
+### Technical Notes
+- Niivue requires WebGL2 canvas
+- 4D NIfTI loaded as ArrayBuffer from FileReader
+- `setFrame4D(volumeId, index)` switches displayed volume
+- FFT memoized to prevent expensive recomputation
+- Graceful degradation if new files not present
+
+### Test Data
+Location: `/Users/eurunuela/tedana_for_rica_tests/`
+- 32 ICA components
+- ~200 timepoints
+- 3MB NIfTI file
+
+---
+
+## Session 3.1 - Niivue Fixes (2025-12-14)
+
+### Issues Addressed
+1. **NIfTI loading error** - "Failed to parse NIfTI file components.nii.gz"
+2. **Wrong layout order** - Brain map should be in middle, not on top
+3. **Width mismatch** - Visualizations should match previous PNG width
+
+### Changes Made
+
+#### BrainViewer.js Fixes
+- Changed from `loadVolumes()` with `buffer` property to `loadFromArrayBuffer()`
+- Added Uint8Array conversion: `new Uint8Array(niftiBuffer)`
+- Made `attachToCanvas()` async (added await)
+```javascript
+// Before (broken)
+const volumeData = { url: "components.nii.gz", buffer: niftiBuffer };
+await nv.loadVolumes([volumeData]);
+
+// After (working)
+const uint8Array = new Uint8Array(niftiBuffer);
+await nv.loadFromArrayBuffer(uint8Array, "components.nii.gz");
+```
+
+#### Plots.js Layout Update
+- Changed order: Time Series (top) → Brain Map (middle) → FFT (bottom)
+- Unified width to 600px for all components
+- Adjusted heights: TimeSeries 180px, BrainViewer 400px, FFTSpectrum 180px
+- Changed gap from 4 to 2 for tighter stacking
+
+### Files Modified
+- `src/Plots/BrainViewer.js` - Fixed Niivue ArrayBuffer loading
+- `src/Plots/Plots.js` - Updated layout order and dimensions
+
+---
+
+## Session 3.2 - Niivue Colormap and Display Polish (2025-12-14)
+
+### Goals
+- Implement proper RdBu colormap matching matplotlib
+- Configure multiplanar view (axial, sagittal, coronal in row)
+- Match visualization widths and colors with component classification
+- Polish background and colormap display
+
+### Changes Made
+
+#### BrainViewer.js - Colormap Implementation
+1. **Custom RdBu colormap** - Created two half-colormaps to match matplotlib's RdBu:
+   - `white2red`: For positive values (white at 0 → red at max)
+   - `blue2white`: For negative values (blue at -max → white at 0)
+
+2. **Colormap range**: Set to 90% of absolute maximum for symmetric display
+
+3. **Multiplanar configuration**:
+   - `setSliceType(nv.sliceTypeMultiplanar)` - Enable multiplanar view
+   - `setMultiplanarLayout(3)` - ROW layout (axial, sagittal, coronal side by side)
+   - `multiplanarShowRender = 0` - Disable 3D render
+   - `multiplanarEqualSize = true` - Equal size panels
+   - `multiplanarPadPixels = 0` - No gaps between views
+
+4. **Background**: White background (`backColor: [1, 1, 1, 1]`)
+
+5. **Loading method**: Changed to Blob URL approach for reliable NIfTI loading
+
+#### Plots.js - Visualization Updates
+1. **Width**: All visualizations (TimeSeries, BrainViewer, FFTSpectrum) set to 800px
+2. **Line colors**: Dynamic based on classification
+   - Accepted components: Green (#22C55E)
+   - Rejected components: Red (#EF4444)
+
+#### TimeSeries.js & FFTSpectrum.js
+- Added `lineColor` prop for dynamic coloring
+- Default colors updated to match app theme
+
+#### IntroPopUp.js - Mask Loading
+- Added detection and loading of mask files (`*_mask.nii*`)
+- Passes `maskBuffer` to parent component for optional underlay
+
+### Technical Details
+```javascript
+// Custom colormaps for diverging display
+const white2red = {
+  R: [255, 254, 252, 250, 246, 239, 229, 215, 199, 180, 165, 146, 127, 103, 84, 67],
+  G: [255, 240, 220, 199, 175, 150, 125, 99, 75, 55, 40, 28, 18, 8, 2, 0],
+  B: [255, 237, 214, 190, 165, 140, 114, 89, 68, 50, 38, 28, 20, 13, 7, 3],
+  ...
+};
+
+const blue2white = {
+  R: [5, 24, 47, 75, 103, 134, 162, 186, 206, 222, 235, 244, 250, 253, 254, 255],
+  G: [48, 78, 111, 143, 173, 197, 217, 232, 243, 250, 253, 254, 254, 254, 255, 255],
+  B: [97, 127, 157, 183, 206, 224, 238, 247, 252, 254, 254, 254, 254, 254, 255, 255],
+  ...
+};
+```
+
+### Files Modified
+- `src/Plots/BrainViewer.js` - Custom RdBu colormap, multiplanar config, Blob URL loading
+- `src/Plots/Plots.js` - Width 800px, dynamic line colors
+- `src/Plots/TimeSeries.js` - Added lineColor prop
+- `src/Plots/FFTSpectrum.js` - Added lineColor prop
+- `src/PopUps/IntroPopUp.js` - Mask file loading
+- `src/index.js` - maskBuffer state
+
+### Colormap Evolution
+1. Started with `blue2red` built-in colormap
+2. Tried `jet` colormap (user disliked green background)
+3. Added 0.001 threshold to hide near-zero values
+4. Implemented custom RdBu matching matplotlib
+5. Split into two half-colormaps for proper diverging display
+6. Removed threshold as no longer needed with proper colormap
+
+---
+
 ## Template for Future Sessions
 
 ```

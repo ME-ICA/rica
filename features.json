@@ -280,6 +280,73 @@
         "Verify the class is compiled into output.css"
       ],
       "passes": false
+    },
+    {
+      "id": "display_brain_stat_map",
+      "category": "visualization",
+      "description": "Display interactive 3D brain stat map using Niivue for selected ICA component",
+      "steps": [
+        "Load a tedana folder containing *stat-z_components.nii.gz",
+        "Navigate to the 'ICA' tab",
+        "Verify brain viewer displays axial, sagittal, and coronal views in a row",
+        "Verify RdBu colormap (blue-white-red) is applied",
+        "Select different components and verify brain map updates"
+      ],
+      "passes": true
+    },
+    {
+      "id": "display_time_series",
+      "category": "visualization",
+      "description": "Display interactive time series plot for selected ICA component from mixing matrix",
+      "steps": [
+        "Load a tedana folder containing *_mixing.tsv",
+        "Navigate to the 'ICA' tab",
+        "Verify time series chart displays above brain viewer",
+        "Verify line color matches component classification (green=accepted, red=rejected)",
+        "Hover to see TR and value tooltips",
+        "Use scroll to zoom and drag to pan"
+      ],
+      "passes": true
+    },
+    {
+      "id": "display_fft_spectrum",
+      "category": "visualization",
+      "description": "Display FFT power spectrum for selected ICA component time series",
+      "steps": [
+        "Load a tedana folder containing *_mixing.tsv",
+        "Navigate to the 'ICA' tab",
+        "Verify FFT spectrum chart displays below brain viewer",
+        "Verify line color matches component classification",
+        "Verify X-axis shows frequency (cycles/TR) and Y-axis shows power",
+        "Hover to see frequency and power tooltips"
+      ],
+      "passes": true
+    },
+    {
+      "id": "synchronized_component_views",
+      "category": "interactivity",
+      "description": "All visualizations update synchronously when selecting a different component",
+      "steps": [
+        "Load a tedana folder with mixing matrix and NIfTI files",
+        "Select a component from scatter plot or pie chart",
+        "Verify brain stat map updates to show selected component volume",
+        "Verify time series updates to show selected component",
+        "Verify FFT spectrum updates based on new time series",
+        "Verify all views reflect component classification color"
+      ],
+      "passes": true
+    },
+    {
+      "id": "fallback_png_display",
+      "category": "visualization",
+      "description": "Fall back to static PNG display when NIfTI/mixing files are not available",
+      "steps": [
+        "Load a tedana folder without mixing TSV or NIfTI files",
+        "Navigate to the 'ICA' tab",
+        "Verify static PNG component images are displayed instead of interactive views",
+        "Verify component selection still updates displayed PNG"
+      ],
+      "passes": true
     }
   ]
 }

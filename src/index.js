@@ -40,6 +40,10 @@ function App() {
   const [originalData, setOriginalData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [width, setWidth] = useState(window.innerWidth);
+  // New state for Niivue integration
+  const [mixingMatrix, setMixingMatrix] = useState(null);
+  const [niftiBuffer, setNiftiBuffer] = useState(null);
+  const [maskBuffer, setMaskBuffer] = useState(null);
 
   // Handle window resize
   useEffect(() => {
@@ -76,6 +80,10 @@ function App() {
       setComponentData(data.components);
       setInfo([data.info, data.dirPath]);
       setOriginalData(data.originalData);
+      // New data for Niivue integration
+      setMixingMatrix(data.mixingMatrix);
+      setNiftiBuffer(data.niftiBuffer);
+      setMaskBuffer(data.maskBuffer);
       setIsLoading(false);
       toggleIntroPopup();
     },
@@ -169,6 +177,9 @@ function App() {
                     componentData={componentData}
                     componentFigures={componentFigures}
                     originalData={originalData}
+                    mixingMatrix={mixingMatrix}
+                    niftiBuffer={niftiBuffer}
+                    maskBuffer={maskBuffer}
                   />
                 </Suspense>
               </TabPanel>

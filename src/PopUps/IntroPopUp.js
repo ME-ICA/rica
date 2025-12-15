@@ -2,6 +2,7 @@ import React, { useState, useCallback } from "react";
 import Papa from "papaparse";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFolder, faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { parseMixingMatrix } from "../utils/tsvParser";
 
 // Rank array helper
 function rankArray(data) {
@@ -45,6 +46,15 @@ function readFileAsText(file) {
   });
 }
 
+function readFileAsArrayBuffer(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => resolve(e.target.result);
+    reader.onerror = reject;
+    reader.readAsArrayBuffer(file);
+  });
+}
+
 function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading }) {
   const [loadingProgress, setLoadingProgress] = useState({ current: 0, total: 0 });
 
@@ -59,7 +69,11 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading }) {
           f.name.includes(".svg") ||
           f.name === "report.txt" ||
           (f.name.includes("_metrics.tsv") && !f.name.includes("PCA")) ||
-          (f.name.startsWith("tedana_20") && f.name.endsWith(".tsv"))
+          (f.name.startsWith("tedana_20") && f.name.endsWith(".tsv")) ||
+          // New files for Niivue integration
+          (f.name.includes("_mixing.tsv") && !f.name.includes("PCA")) ||
+          (f.name.includes("stat-z_components.nii.gz") && f.name.includes("ICA")) ||
+          f.name.includes("_mask.nii")
       ).length;
 
       setLoadingProgress({ current: 0, total: totalFiles });
@@ -70,6 +84,9 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading }) {
       let components = [];
       let originalData = [];
       let dirPath = "";
+      let mixingMatrix = null;
+      let niftiBuffer = null;
+      let maskBuffer = null;
 
       let processed = 0;
 
@@ -129,6 +146,28 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading }) {
             processed++;
             setLoadingProgress((prev) => ({ ...prev, current: processed }));
           }
+
+          // ICA Mixing matrix (time series data for Niivue)
+          if (filename.includes("_mixing.tsv") && !filename.includes("PCA")) {
+            const text = await readFileAsText(file);
+            mixingMatrix = parseMixingMatrix(text);
+            processed++;
+            setLoadingProgress((prev) => ({ ...prev, current: processed }));
+          }
+
+          // ICA stat-z components NIfTI (4D brain maps for Niivue)
+          if (filename.includes("stat-z_components.nii.gz") && filename.includes("ICA")) {
+            niftiBuffer = await readFileAsArrayBuffer(file);
+            processed++;
+            setLoadingProgress((prev) => ({ ...prev, current: processed }));
+          }
+
+          // Brain mask NIfTI (for masking stat maps in Niivue)
+          if (filename.includes("_mask.nii") && !maskBuffer) {
+            maskBuffer = await readFileAsArrayBuffer(file);
+            processed++;
+            setLoadingProgress((prev) => ({ ...prev, current: processed }));
+          }
         } catch (error) {
           console.error(`Error reading file ${filename}:`, error);
         }
@@ -149,6 +188,10 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading }) {
         info,
         originalData: [originalData],
         dirPath,
+        // New data for Niivue integration
+        mixingMatrix,
+        niftiBuffer,
+        maskBuffer,
       });
     },
     [onDataLoad, onLoadingStart]
