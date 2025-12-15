@@ -275,7 +275,7 @@ function Plots({ componentData, componentFigures, originalData, mixingMatrix, ni
   }
 
   return (
-    <div tabIndex={0} className="outline-none w-full">
+    <div tabIndex={0} className="outline-none focus:outline-none focus:ring-0 w-full" style={{ outline: "none", boxShadow: "none" }}>
       {/* Top controls */}
       <div className="flex flex-row items-center justify-center gap-6 mt-6">
         <ToggleSwitch
