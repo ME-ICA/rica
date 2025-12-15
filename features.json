@@ -2,20 +2,21 @@
   "projectName": "rica",
   "version": "2.0.0",
   "description": "React-based interactive visualization tool for multi-echo fMRI ICA component analysis",
-  "lastUpdated": "2025-12-14",
-  "modernizationNotes": "v2.0.0 - Upgraded to React 18, functional components, removed 5s loading delay, added progress indicator",
+  "lastUpdated": "2025-12-15",
+  "modernizationNotes": "v2.0.0 - Upgraded to React 18, functional components, removed 5s loading delay, added progress indicator, Notion-style popups",
   "features": [
     {
       "id": "load_tedana_folder",
       "category": "data-loading",
       "description": "Load a tedana output folder containing metrics TSV, component PNGs, carpet SVGs, and report text files",
       "steps": [
-        "Click the intro popup folder button",
+        "Verify Notion-style intro popup appears centered on screen",
+        "Click 'Select folder' button",
         "Select a tedana output directory via file picker",
-        "Wait for all files to be parsed (metrics, figures, reports)",
+        "Verify progress bar shows file processing",
         "Verify app transitions to tabbed view with loaded data"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "display_info_tab",
@@ -199,11 +200,12 @@
       "description": "Display the About popup with version and GitHub link",
       "steps": [
         "Click the 'About' button in the header",
-        "Verify popup appears with project description",
-        "Verify version number is displayed",
-        "Verify GitHub contribute link is present and clickable"
+        "Verify Notion-style popup appears centered on screen",
+        "Verify version number (v2.0.0) is displayed",
+        "Verify 'View on GitHub' button is present and clickable",
+        "Click outside popup or X button to close"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "animated_tab_navigation",
@@ -289,8 +291,23 @@
         "Load a tedana folder containing *stat-z_components.nii.gz",
         "Navigate to the 'ICA' tab",
         "Verify brain viewer displays axial, sagittal, and coronal views in a row",
-        "Verify RdBu colormap (blue-white-red) is applied",
+        "Verify warm/cool diverging colormap is applied (warm for positive, cool for negative)",
+        "Verify colormap range is set to 10% of max absolute value by default",
         "Select different components and verify brain map updates"
+      ],
+      "passes": true
+    },
+    {
+      "id": "adjust_colormap_saturation",
+      "category": "interactivity",
+      "description": "Adjust brain stat map colormap saturation using slider control",
+      "steps": [
+        "Load a tedana folder with NIfTI files",
+        "Navigate to the 'ICA' tab",
+        "Locate the saturation slider below the brain viewer",
+        "Drag slider to adjust saturation (1% to 100%)",
+        "Verify brain map updates in real-time as slider moves",
+        "Verify percentage label updates to show current value"
       ],
       "passes": true
     },

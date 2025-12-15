@@ -29,6 +29,7 @@ function Plots({ componentData, componentFigures, originalData, mixingMatrix, ni
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedClassification, setSelectedClassification] = useState("accepted");
   const [clickedElement, setClickedElement] = useState("");
+  const [colormapSaturation, setColormapSaturation] = useState(0.1); // Default 10%
 
   // Check if we have the new interactive visualization data
   const hasInteractiveViews = mixingMatrix?.data && niftiBuffer;
@@ -354,10 +355,10 @@ function Plots({ componentData, componentFigures, originalData, mixingMatrix, ni
               </div>
             </div>
 
-        {/* Right side: Component visualization - 50% width */}
+        {/* Right side: Component visualization - 800px to match charts */}
         <div
           style={{
-            width: '50%',
+            width: '800px',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -387,7 +388,37 @@ function Plots({ componentData, componentFigures, originalData, mixingMatrix, ni
                   width={800}
                   height={350}
                   componentLabel={currentComponentLabel}
+                  saturation={colormapSaturation}
                 />
+              </div>
+
+              {/* Saturation slider */}
+              <div style={{
+                width: '800px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '12px',
+                padding: '8px 0',
+              }}>
+                <span style={{ fontSize: '12px', color: '#6b7280' }}>Saturation:</span>
+                <input
+                  type="range"
+                  min="1"
+                  max="100"
+                  value={colormapSaturation * 100}
+                  onChange={(e) => setColormapSaturation(parseFloat(e.target.value) / 100)}
+                  className="focus:outline-none"
+                  style={{
+                    width: '400px',
+                    cursor: 'pointer',
+                    accentColor: '#3b82f6',
+                    outline: 'none',
+                  }}
+                />
+                <span style={{ fontSize: '12px', color: '#374151', minWidth: '40px', textAlign: 'right' }}>
+                  {Math.round(colormapSaturation * 100)}%
+                </span>
               </div>
 
               {/* FFT on bottom */}

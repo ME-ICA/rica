@@ -203,102 +203,150 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading }) {
 
   return (
     <div
-      className="fixed z-10 flex items-center justify-center w-full h-full bg-gray-500 bg-opacity-50 backdrop-blur-sm"
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 50,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.4)',
+      }}
       onClick={closePopup}
     >
       <div
-        className="absolute z-20 w-1/3 px-16 py-10 m-auto bg-white h-fit rounded-xl drop-shadow-2xl transition-all duration-300"
+        style={{
+          position: 'relative',
+          width: '100%',
+          maxWidth: '480px',
+          margin: '0 16px',
+          backgroundColor: 'white',
+          borderRadius: '8px',
+          boxShadow: '0 0 0 1px rgba(0,0,0,0.05), 0 20px 50px rgba(0,0,0,0.2)',
+        }}
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Close button */}
         <button
           onClick={closePopup}
           type="button"
-          className="absolute top-0 right-0 inline-flex items-center p-2 ml-auto text-base text-gray-400 bg-transparent rounded-xl hover:bg-gray-200 hover:text-gray-900"
+          style={{
+            position: 'absolute',
+            top: '12px',
+            right: '12px',
+            width: '28px',
+            height: '28px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: '4px',
+            border: 'none',
+            backgroundColor: 'transparent',
+            color: '#9ca3af',
+            cursor: 'pointer',
+          }}
+          onMouseEnter={(e) => { e.target.style.backgroundColor = '#f3f4f6'; e.target.style.color = '#374151'; }}
+          onMouseLeave={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#9ca3af'; }}
         >
-          <svg
-            className="w-5 h-5"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              fillRule="evenodd"
-              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-              clipRule="evenodd"
-            />
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
+            <path d="M13.7 0.3c-0.4-0.4-1-0.4-1.4 0L7 5.6 1.7 0.3c-0.4-0.4-1-0.4-1.4 0s-0.4 1 0 1.4L5.6 7l-5.3 5.3c-0.4 0.4-0.4 1 0 1.4 0.2 0.2 0.4 0.3 0.7 0.3s0.5-0.1 0.7-0.3L7 8.4l5.3 5.3c0.2 0.2 0.5 0.3 0.7 0.3s0.5-0.1 0.7-0.3c0.4-0.4 0.4-1 0-1.4L8.4 7l5.3-5.3c0.4-0.4 0.4-1 0-1.4z"/>
           </svg>
         </button>
 
-        {isLoading ? (
-          <div className="text-center py-8">
-            <FontAwesomeIcon
-              icon={faSpinner}
-              size="3x"
-              className="text-sky-500 animate-spin mb-4"
-            />
-            <h2 className="text-xl font-semibold mb-2">Processing files...</h2>
-            {loadingProgress.total > 0 && (
-              <div className="mt-4">
-                <div className="w-full bg-gray-200 rounded-full h-2.5">
-                  <div
-                    className="bg-sky-500 h-2.5 rounded-full transition-all duration-300"
-                    style={{
-                      width: `${(loadingProgress.current / loadingProgress.total) * 100}%`,
-                    }}
-                  />
+        <div style={{ padding: '32px' }}>
+          {isLoading ? (
+            <div style={{ textAlign: 'center', padding: '24px 0' }}>
+              <FontAwesomeIcon
+                icon={faSpinner}
+                style={{ fontSize: '32px', color: '#3b82f6', marginBottom: '16px' }}
+                spin
+              />
+              <h2 style={{ fontSize: '16px', fontWeight: 600, color: '#111827', marginBottom: '8px' }}>
+                Processing files...
+              </h2>
+              {loadingProgress.total > 0 && (
+                <div style={{ marginTop: '20px' }}>
+                  <div style={{ width: '100%', height: '4px', backgroundColor: '#e5e7eb', borderRadius: '2px', overflow: 'hidden' }}>
+                    <div
+                      style={{
+                        width: `${(loadingProgress.current / loadingProgress.total) * 100}%`,
+                        height: '100%',
+                        backgroundColor: '#3b82f6',
+                        borderRadius: '2px',
+                        transition: 'width 0.3s ease',
+                      }}
+                    />
+                  </div>
+                  <p style={{ fontSize: '13px', color: '#6b7280', marginTop: '12px' }}>
+                    {loadingProgress.current} of {loadingProgress.total} files
+                  </p>
                 </div>
-                <p className="text-sm text-gray-500 mt-2">
-                  {loadingProgress.current} / {loadingProgress.total} files
+              )}
+            </div>
+          ) : (
+            <>
+              <h1 style={{ fontSize: '20px', fontWeight: 600, color: '#111827', marginBottom: '12px' }}>
+                Welcome to Rica
+              </h1>
+
+              <p style={{ fontSize: '14px', color: '#6b7280', lineHeight: 1.6, marginBottom: '16px' }}>
+                Rica is a visualization tool for ICA decompositions from <strong style={{ color: '#374151' }}>tedana</strong>.
+              </p>
+
+              <div style={{
+                backgroundColor: '#f9fafb',
+                borderRadius: '6px',
+                padding: '12px 14px',
+                marginBottom: '24px',
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '10px'
+              }}>
+                <span style={{ fontSize: '14px' }}>🔒</span>
+                <p style={{ fontSize: '13px', color: '#6b7280', lineHeight: 1.5, margin: 0 }}>
+                  Your files are processed locally and never uploaded to any server.
                 </p>
               </div>
-            )}
-          </div>
-        ) : (
-          <>
-            <h1 className="mb-8 text-3xl font-extrabold">
-              Hi, this is Rica{" "}
-              <span role="img" aria-label="wave">
 
-              </span>
-            </h1>
-            <p className="my-4 text-base">
-              Rica (Reports for ICA) is a reporting and visualization tool for ICA
-              decompositions performed with <i>tedana</i> and <i>aroma</i>.
-            </p>
-            <p className="my-4 text-base">
-              In order to generate beautiful reports, Rica needs access to your{" "}
-              <i>metrics</i>, <i>report</i>, <i>svg</i> and <i>component png</i>{" "}
-              files. Don't worry, files attached to Rica are <b>NOT</b> uploaded
-              to a remote server. Once the necessary data is read, Rica cannot
-              access the files again. We share your concerns about privacy and
-              data protection.{" "}
-              <span role="img" aria-label="lock">
-
-              </span>
-            </p>
-            <p className="my-4 text-base">
-              Now, select the folder you want to analyze.{" "}
-              <span role="img" aria-label="sunglasses">
-
-              </span>
-            </p>
-            <label
-              htmlFor="file-upload"
-              className="relative inline-flex items-center content-center justify-center w-fit h-10 px-5 pt-0.5 mt-4 text-base font-semibold text-center text-white bg-sky-500 rounded-xl hover:cursor-pointer hover:bg-sky-600 transition-colors duration-200"
-            >
-              <FontAwesomeIcon icon={faFolder} size="lg" className="-mt-0.5 mx-2" />
-              Select folder
-              <input
-                id="file-upload"
-                type="file"
-                name="file"
-                directory=""
-                webkitdirectory=""
-                onChange={processFiles}
-              />
-            </label>
-          </>
-        )}
+              <label
+                htmlFor="file-upload"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  width: '100%',
+                  height: '36px',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  color: 'white',
+                  backgroundColor: '#0ea5e9',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  border: 'none',
+                  transition: 'background-color 0.15s ease',
+                }}
+                onMouseEnter={(e) => e.target.style.backgroundColor = '#0284c7'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = '#0ea5e9'}
+              >
+                <FontAwesomeIcon icon={faFolder} />
+                Select folder
+                <input
+                  id="file-upload"
+                  type="file"
+                  name="file"
+                  directory=""
+                  webkitdirectory=""
+                  onChange={processFiles}
+                  style={{ display: 'none' }}
+                />
+              </label>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

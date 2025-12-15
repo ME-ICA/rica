@@ -1,11 +1,12 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import { Niivue } from "@niivue/niivue";
 
-function BrainViewer({ niftiBuffer, maskBuffer, componentIndex, width, height, componentLabel }) {
+function BrainViewer({ niftiBuffer, maskBuffer, componentIndex, width, height, componentLabel, saturation = 0.1 }) {
   const canvasRef = useRef(null);
   const nvRef = useRef(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState(null);
+  const maxAbsRef = useRef(null); // Store max absolute value for saturation adjustments
 
   // Initialize Niivue instance
   useEffect(() => {
@@ -28,32 +29,6 @@ function BrainViewer({ niftiBuffer, maskBuffer, componentIndex, width, height, c
         // Attach to canvas
         await nv.attachToCanvas(canvasRef.current);
 
-        // Create two half-colormaps for diverging display:
-        // - white2red: for positive values (white at threshold → red at max)
-        // - blue2white: for negative values (blue at -max → white at -threshold)
-
-        // White to Red colormap (for positive values)
-        // Matches the red half of matplotlib's RdBu_r
-        const white2red = {
-          R: [255, 254, 252, 250, 246, 239, 229, 215, 199, 180, 165, 146, 127, 103, 84, 67],
-          G: [255, 240, 220, 199, 175, 150, 125, 99, 75, 55, 40, 28, 18, 8, 2, 0],
-          B: [255, 237, 214, 190, 165, 140, 114, 89, 68, 50, 38, 28, 20, 13, 7, 3],
-          A: [255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255],
-          I: [0, 7, 13, 20, 27, 33, 40, 47, 53, 60, 67, 73, 80, 87, 93, 100],
-        };
-        nv.addColormap("white2red", white2red);
-
-        // Blue to White colormap (for negative values)
-        // Matches the blue half of matplotlib's RdBu_r
-        const blue2white = {
-          R: [5, 24, 47, 75, 103, 134, 162, 186, 206, 222, 235, 244, 250, 253, 254, 255],
-          G: [48, 78, 111, 143, 173, 197, 217, 232, 243, 250, 253, 254, 254, 254, 255, 255],
-          B: [97, 127, 157, 183, 206, 224, 238, 247, 252, 254, 254, 254, 254, 254, 255, 255],
-          A: [255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255],
-          I: [0, 7, 13, 20, 27, 33, 40, 47, 53, 60, 67, 73, 80, 87, 93, 100],
-        };
-        nv.addColormap("blue2white", blue2white);
-
         // Build volumes array
         const volumes = [];
 
@@ -71,15 +46,15 @@ function BrainViewer({ niftiBuffer, maskBuffer, componentIndex, width, height, c
           });
         }
 
-        // Load stat map with custom RdBu_r colormap (blue-white-red, matching matplotlib)
+        // Load stat map with warm/cool diverging colormap
         const statBlob = new Blob([niftiBuffer], { type: "application/gzip" });
         statBlobUrl = URL.createObjectURL(statBlob);
 
         const statVolume = {
           url: statBlobUrl,
           name: "components.nii.gz",
-          colormap: "white2red",
-          colormapNegative: "blue2white",
+          colormap: "warm",
+          colormapNegative: "cool",
           useQFormNotSForm: true,
         };
 
@@ -88,40 +63,46 @@ function BrainViewer({ niftiBuffer, maskBuffer, componentIndex, width, height, c
         // Load volumes
         await nv.loadVolumes(volumes);
 
-        // Set colormap range to 90% of absolute maximum (symmetric around zero)
-        const statVolIdx = nv.volumes.length - 1;
-        if (nv.volumes.length > 0) {
-          const vol = nv.volumes[statVolIdx]; // Get stat map (last volume)
-          const maxAbs = Math.max(Math.abs(vol.cal_min), Math.abs(vol.cal_max));
-          const range = maxAbs * 0.9;
-
-          // Positive values: 0 to max (white to red)
-          vol.cal_min = 0;
-          vol.cal_max = range;
-
-          // Negative values: -max to 0 (blue to white)
-          vol.cal_minNeg = -range;
-          vol.cal_maxNeg = 0;
-        }
-
         // Set display to multiplanar (axial, coronal, sagittal) without 3D in a row
         nv.setSliceType(nv.sliceTypeMultiplanar);
         nv.setMultiplanarLayout(3); // 3 = ROW layout
         nv.opts.multiplanarShowRender = 0; // NEVER show 3D render
         nv.opts.multiplanarEqualSize = true; // Make all views same size
-        nv.opts.multiplanarPadPixels = 0; // No gap between views
-        nv.drawScene();
+        nv.opts.multiplanarPadPixels = -30; // Negative to reduce gap between views
+        nv.opts.tileMargin = 0; // No margin around tiles
+
+        // Set initial frame for the stat map (last volume loaded)
+        const statVolIndex = maskBuffer ? 1 : 0;
+        if (nv.volumes.length > statVolIndex && componentIndex >= 0) {
+          nv.setFrame4D(nv.volumes[statVolIndex].id, componentIndex);
+        }
+
+        // Set colormap range AFTER setting frame (to ensure it applies correctly)
+        const statVolIdx = nv.volumes.length - 1;
+        if (nv.volumes.length > 0) {
+          const vol = nv.volumes[statVolIdx]; // Get stat map (last volume)
+          const maxAbs = Math.max(Math.abs(vol.cal_min), Math.abs(vol.cal_max));
+          maxAbsRef.current = maxAbs; // Store for saturation adjustments
+          const range = maxAbs * saturation;
+
+          // Positive values: 0 to max (warm colormap)
+          vol.cal_min = 0;
+          vol.cal_max = range;
+
+          // Negative values: -max to 0 (cool colormap)
+          vol.cal_minNeg = -range;
+          vol.cal_maxNeg = 0;
+
+          // Set white background and redraw
+          nv.opts.backColor = [1, 1, 1, 1];
+          nv.updateGLVolume();
+          nv.drawScene();
+        }
 
         if (mounted) {
           nvRef.current = nv;
           setIsLoaded(true);
           setError(null);
-
-          // Set initial frame for the stat map (last volume loaded)
-          const statVolIndex = maskBuffer ? 1 : 0;
-          if (nv.volumes.length > statVolIndex && componentIndex >= 0) {
-            nv.setFrame4D(nv.volumes[statVolIndex].id, componentIndex);
-          }
         }
       } catch (err) {
         console.error("Error initializing Niivue:", err);
@@ -166,6 +147,35 @@ function BrainViewer({ niftiBuffer, maskBuffer, componentIndex, width, height, c
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [componentIndex, isLoaded]);
+
+  // Update colormap range when saturation changes
+  useEffect(() => {
+    if (nvRef.current && isLoaded && maxAbsRef.current) {
+      try {
+        const nv = nvRef.current;
+        const statVolIndex = nv.volumes.length - 1;
+        if (nv.volumes && nv.volumes.length > 0) {
+          const vol = nv.volumes[statVolIndex];
+          const range = maxAbsRef.current * saturation;
+
+          // Update colormap range
+          vol.cal_min = 0;
+          vol.cal_max = range;
+          vol.cal_minNeg = -range;
+          vol.cal_maxNeg = 0;
+
+          // Set white background before redraw
+          nv.opts.backColor = [1, 1, 1, 1];
+
+          // Redraw the scene
+          nv.updateGLVolume();
+          nv.drawScene();
+        }
+      } catch (err) {
+        console.error("Error updating saturation:", err);
+      }
+    }
+  }, [saturation, isLoaded]);
 
   // Handle resize
   const handleResize = useCallback(() => {

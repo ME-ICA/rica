@@ -695,6 +695,100 @@ const blue2white = {
 
 ---
 
+## Session 4 - Colormap and Saturation Controls (2025-12-15)
+
+### Goals
+- Change brain viewer colormap to warm/cool diverging scheme
+- Add user-adjustable saturation slider for colormap range
+- Fix initialization order to apply colormap correctly on first load
+
+### Changes Made
+
+#### BrainViewer.js - Colormap Updates
+1. **Using NiiVue's built-in colormaps**:
+   - `warm` colormap for positive values (orange/red tones)
+   - `cool` colormap for negative values (cyan/blue tones)
+
+2. **Added saturation prop**:
+   - Accepts saturation value (0.01 to 1.0) to control colormap range
+   - Range calculated as `maxAbs * saturation`
+   - Stored `maxAbsRef` for dynamic saturation adjustments
+
+3. **Fixed initialization order**:
+   - Set frame with `setFrame4D` BEFORE setting colormap range
+   - Call `updateGLVolume()` and `drawScene()` after setting range
+   - Ensures correct colormap/saturation on first load
+
+4. **Reduced spacing between brain views**:
+   - `multiplanarPadPixels = -30` for tighter layout
+
+#### Plots.js - Saturation Slider
+1. **Added saturation state**: `colormapSaturation` with default 0.1 (10%)
+2. **Slider UI**:
+   - Range slider from 1% to 100%
+   - Positioned between brain viewer and FFT chart
+   - Shows current percentage value
+   - 400px width, centered with brain viewer
+
+3. **Layout fix**:
+   - Right side container changed from 50% to 800px width
+   - Matches chart width for proper centering
+
+### Files Modified
+- `src/Plots/BrainViewer.js` - Colormap, saturation prop, initialization order
+- `src/Plots/Plots.js` - Saturation slider UI, layout width fix
+
+### Technical Notes
+- Saturation slider updates colormap range in real-time without reinitializing NiiVue
+- White background maintained by setting `opts.backColor` before `drawScene()`
+
+---
+
+## Session 5 - Popup Modernization (2025-12-15)
+
+### Goals
+- Modernize IntroPopUp and AboutPopUp with Notion-inspired design
+- Fix popup centering issues
+- Update styling to match app theme
+
+### Changes Made
+
+#### IntroPopUp.js - Modern Redesign
+1. **Notion-inspired styling**:
+   - Clean modal with dark overlay (`rgba(0, 0, 0, 0.4)`)
+   - Proper centering using fixed positioning with flexbox
+   - Subtle shadow and 8px border radius
+   - 480px max width
+
+2. **Updated content**:
+   - Changed description to reference only tedana (removed aroma)
+   - Privacy notice with lock emoji
+   - Sky-500 accent color (`#0ea5e9`) for button
+
+3. **Improved close button**:
+   - Small 28px square button with hover effect
+   - Clean X icon
+
+#### AboutPopUp.js - Modern Redesign
+1. **Same Notion-inspired styling**:
+   - Consistent with IntroPopUp design
+   - 440px max width
+   - Dark GitHub button (`#111827`)
+
+2. **Fixed version display**:
+   - Hardcoded v2.0.0
+
+#### Plots.js - Slider Focus Fix
+- Removed focus outline from saturation slider
+
+### Files Modified
+- `src/PopUps/IntroPopUp.js` - Complete redesign with inline styles
+- `src/PopUps/AboutPopUp.js` - Complete redesign with inline styles
+- `src/Plots/Plots.js` - Slider outline removal
+- `src/styles/tailwind.css` - Added fadeInScale keyframes (unused after redesign)
+
+---
+
 ## Template for Future Sessions
 
 ```
