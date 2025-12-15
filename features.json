@@ -347,6 +347,45 @@
         "Verify component selection still updates displayed PNG"
       ],
       "passes": true
+    },
+    {
+      "id": "display_component_table",
+      "category": "visualization",
+      "description": "Display interactive component metrics table with full data from metrics TSV file",
+      "steps": [
+        "Load a tedana folder",
+        "Navigate to the 'ICA' tab",
+        "Verify component metrics table appears below the charts",
+        "Verify table shows columns: Component, Kappa, Rho, Variance, Ranks, Dice scores, S/N, Classification, Tags",
+        "Verify table is scrollable for large datasets"
+      ],
+      "passes": true
+    },
+    {
+      "id": "table_chart_sync",
+      "category": "interactivity",
+      "description": "Synchronize selection between component table and charts",
+      "steps": [
+        "Load a tedana folder",
+        "Click on a row in the component table",
+        "Verify all charts update to highlight the selected component",
+        "Click on a point in a scatter plot or pie chart",
+        "Verify the table auto-scrolls to and highlights the selected row"
+      ],
+      "passes": true
+    },
+    {
+      "id": "table_classification_update",
+      "category": "interactivity",
+      "description": "Update table classification when reclassifying components",
+      "steps": [
+        "Load a tedana folder",
+        "Select a component from the table or charts",
+        "Use A/R keys or toggle switch to change classification",
+        "Verify the table row highlight color changes (green for accepted, red for rejected)",
+        "Verify the classification badge in the table updates"
+      ],
+      "passes": true
     }
   ]
 }

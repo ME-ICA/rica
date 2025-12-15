@@ -7,6 +7,7 @@ import PieChart from "./PieChart";
 import TimeSeries from "./TimeSeries";
 import FFTSpectrum from "./FFTSpectrum";
 import BrainViewer from "./BrainViewer";
+import ComponentTable from "./ComponentTable";
 import { assignColor } from "./PlotUtils";
 
 // Chart dimensions - sized to fit 2x2 in half screen width
@@ -412,6 +413,14 @@ function Plots({ componentData, componentFigures, originalData, mixingMatrix, ni
           )}
         </div>
       </div>
+
+      {/* Component table - full width below charts */}
+      <ComponentTable
+        data={componentData?.[0] || []}
+        selectedIndex={selectedIndex}
+        onRowClick={handlePointClick}
+        classifications={processedData.map((d) => d.classification)}
+      />
     </div>
   );
 }

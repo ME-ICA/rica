@@ -537,6 +537,44 @@ const blue2white = {
 
 ---
 
+## Session 3.3 - Component Table (2025-12-14)
+
+### Goals
+- Add interactive component metrics table below the charts
+- Synchronize table selection with chart selection
+- Display original metrics data from TSV file
+
+### Changes Made
+
+#### New Component: ComponentTable.js
+- Displays full metrics data from the original TSV file
+- Columns: Component, Kappa, Rho, Variance %, κ Rank, ρ Rank, Dice FT2, Dice FS0, S/N t, Classification, Tags
+- Interactive row selection synced with charts
+- Auto-scrolls to selected row when component is selected from charts
+- Selected row highlighted with classification color (green/red)
+- Rounded corners on row highlight and classification badges
+- Fixed-width classification badges for consistent appearance
+- Sticky header row with scrollable body (max 350px height)
+
+#### ToggleSwitch.js Fix
+- Changed selected text color from white to dark gray (#1f2937) for readability
+
+### Features
+- Click table row to select component (updates all charts)
+- Click chart point/slice to select component (table scrolls to row)
+- Classification updates reflect in table in real-time
+- Hover effects on rows
+- Responsive scrolling for large datasets
+
+### Files Created
+- `src/Plots/ComponentTable.js`
+
+### Files Modified
+- `src/Plots/Plots.js` - Import and render ComponentTable
+- `src/Plots/ToggleSwitch.js` - Fix text color contrast
+
+---
+
 ## Template for Future Sessions
 
 ```

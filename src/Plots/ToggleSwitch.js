@@ -29,7 +29,7 @@ function ToggleSwitch({ values, selected, colors, handleNewSelection }) {
           <label
             onClick={() => handleNewSelection(val)}
             className="relative z-10 h-8 flex items-center justify-center transition-colors duration-200"
-            style={{ width: 90, color: selected === val ? "#fff" : "rgba(0,0,0,0.6)", cursor: "pointer" }}
+            style={{ width: 90, color: selected === val ? "#1f2937" : "rgba(0,0,0,0.6)", cursor: "pointer" }}
           >
             {titleCase(val)}
           </label>
