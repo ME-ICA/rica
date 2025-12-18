@@ -138,6 +138,12 @@ if [ -f "scripts/rica_server.py" ]; then
     echo -e "${GREEN}rica_server.py copied to build/${NC}"
 fi
 
+# Copy favicon for local server usage (needed by index.html)
+if [ -f "public/favicon.ico" ]; then
+    cp public/favicon.ico build/favicon.ico
+    echo -e "${GREEN}favicon.ico copied to build/${NC}"
+fi
+
 # Verify build integrity if requested
 if [ "$CHECK" = true ]; then
     echo ""
@@ -180,7 +186,10 @@ echo "To preview the build locally:"
 echo "  npx serve -s build"
 echo ""
 echo "To use with tedana output:"
-echo "  1. Copy build/index.html and build/rica_server.py to your tedana output folder"
+echo "  1. Copy these files to your tedana output folder:"
+echo "       - build/index.html"
+echo "       - build/rica_server.py"
+echo "       - build/favicon.ico"
 echo "  2. Run: python rica_server.py"
 echo "  3. Data will load automatically in your browser"
 echo ""

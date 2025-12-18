@@ -92,13 +92,19 @@ class RicaHandler(http.server.SimpleHTTPRequestHandler):
         self.wfile.write(json.dumps(response_data, indent=2).encode("utf-8"))
 
     def log_message(self, format, *args):
-        """Custom log format."""
-        if "/api/files" in args[0]:
-            print(f"[Rica] File list requested")
-        elif args[0].startswith("GET"):
-            # Only log non-200 responses or important files
-            if len(args) > 1 and args[1] != "200":
-                print(f"[Rica] {args[0]} - {args[1]}")
+        """Custom log format - suppress noisy output."""
+        # Safely convert args to strings
+        try:
+            msg = str(args[0]) if args else ""
+            if "/api/files" in msg:
+                print(f"[Rica] File list requested")
+            elif "GET" in msg and len(args) > 1:
+                status = str(args[1])
+                # Only log errors (non-2xx responses)
+                if not status.startswith("2"):
+                    print(f"[Rica] {msg} - {status}")
+        except Exception:
+            pass  # Silently ignore logging errors
 
 
 def main():
