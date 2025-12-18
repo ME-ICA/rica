@@ -33,7 +33,7 @@ function Plots({ componentData, componentFigures, originalData, mixingMatrix, ni
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedClassification, setSelectedClassification] = useState("accepted");
   const [clickedElement, setClickedElement] = useState("");
-  const [colormapSaturation, setColormapSaturation] = useState(0.1); // Default 10%
+  const [colormapSaturation, setColormapSaturation] = useState(0.25); // Default 25%
 
   // Check if we have the new interactive visualization data
   const hasInteractiveViews = mixingMatrix?.data && niftiBuffer;

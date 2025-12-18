@@ -873,6 +873,9 @@ const niivueBgColor = useMemo(() =>
 - `src/Info/Info.js`, `src/Carpets/Carpets.js`, `src/Mobile.js`
 - `src/LoadingSpinner.js`, `src/TabFunctions.js`
 
+### Additional Updates
+- **BrainViewer saturation default**: Changed from 10% to 25% for better initial visibility
+
 ---
 
 ## Template for Future Sessions
