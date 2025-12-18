@@ -960,13 +960,40 @@ useEffect(() => {
 ./scripts/build.sh --inline
 
 # Copy to tedana output folder
-cp build/index.html build/rica_server.py /path/to/tedana/output/
+cp build/index.html build/rica_server.py build/favicon.ico /path/to/tedana/output/
 
 # Run server
 cd /path/to/tedana/output/
 python rica_server.py
 # Browser opens automatically, data loads automatically
 ```
+
+### Bug Fixes During Implementation
+
+1. **React error #299 (DOM not ready)**: Inline scripts in `<head>` ignore `defer` attribute. Fixed by wrapping React mount in `DOMContentLoaded` check.
+
+2. **Chunk loading errors**: React's lazy loading creates separate chunk files that don't exist in tedana folder. Fixed by removing lazy loading - all code now in single bundle.
+
+3. **Server logging crash**: `log_message` method crashed on Python 3.13 when handling HTTPStatus objects. Fixed with safe string conversion.
+
+4. **Missing favicon**: Added favicon.ico to build output for local server usage.
+
+5. **"New" button loop**: Clicking "New" on local server caused infinite reload loop. Fixed by hiding "New" button when running from local server (`isLocalServer` state).
+
+### Key Code Changes
+
+**src/index.js**:
+- Removed lazy loading (`React.lazy`) for single-file distribution
+- Added `DOMContentLoaded` check for inline script compatibility
+- Added `isLocalServer` state to detect local server mode
+- Hide "New" button when `isLocalServer` is true
+
+**scripts/rica_server.py**:
+- Fixed `log_message` to safely handle HTTPStatus objects
+- Improved error handling for robustness
+
+**scripts/build.sh**:
+- Copies `favicon.ico` alongside `index.html` and `rica_server.py`
 
 ---
 

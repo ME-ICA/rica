@@ -73,6 +73,7 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
   // Load files from local server via HTTP
   const loadFromServer = useCallback(
     async (files, basePath) => {
+      console.log("[Rica] Starting server load with", files.length, "files");
       onLoadingStart();
 
       // Filter to relevant files
@@ -225,18 +226,21 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
     if (window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") return;
 
     hasTriedServerLoad.current = true;
+    console.log("[Rica] Checking for local server files...");
 
     // Try to fetch file list from server
     fetch("/api/files")
       .then((r) => r.json())
       .then((data) => {
+        console.log("[Rica] Server response:", data.files?.length, "files found");
         if (data.files?.length > 0) {
           setServerFiles(data);
           // Auto-load immediately
           loadFromServer(data.files, data.path);
         }
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log("[Rica] No local server detected:", err.message);
         // Not running with Rica server, use manual folder selection
       });
   }, [loadFromServer]);

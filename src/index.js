@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useCallback, lazy, Suspense } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { createRoot } from "react-dom/client";
 import { HelmetProvider, Helmet } from "react-helmet-async";
 
 import IntroPopup from "./PopUps/IntroPopUp";
 import AboutPopup from "./PopUps/AboutPopUp";
 import MobileMain from "./Mobile";
-import LoadingSpinner from "./LoadingSpinner";
 
 import "./styles/output.css";
 import "./styles.css";
@@ -24,10 +23,10 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { library } from "@fortawesome/fontawesome-svg-core";
 
-// Lazy load heavy components for better initial load
-const Plots = lazy(() => import("./Plots/Plots"));
-const Carpets = lazy(() => import("./Carpets/Carpets"));
-const Info = lazy(() => import("./Info/Info"));
+// Import components directly (no lazy loading for single-file distribution)
+import Plots from "./Plots/Plots";
+import Carpets from "./Carpets/Carpets";
+import Info from "./Info/Info";
 
 library.add(faInfoCircle, faLayerGroup, faChartPie, faPlus, faQuestion, faSun, faMoon);
 
@@ -59,6 +58,22 @@ function App() {
     return saved || 'light';
   });
   const [isTransitioning, setIsTransitioning] = useState(false);
+  // Detect if running from local server (hide "New" button)
+  const [isLocalServer, setIsLocalServer] = useState(false);
+
+  // Check for local server on mount
+  useEffect(() => {
+    if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+      fetch("/api/files")
+        .then((r) => r.json())
+        .then((data) => {
+          if (data.files?.length > 0) {
+            setIsLocalServer(true);
+          }
+        })
+        .catch(() => {});
+    }
+  }, []);
 
   // Apply theme to document
   useEffect(() => {
@@ -252,34 +267,37 @@ function App() {
                     <FontAwesomeIcon icon={isDark ? faSun : faMoon} />
                   </button>
 
-                  <button
-                    onClick={toggleIntroPopup}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "6px",
-                      padding: "8px 14px",
-                      fontSize: "13px",
-                      fontWeight: "500",
-                      color: "var(--text-secondary)",
-                      backgroundColor: "transparent",
-                      border: "1px solid var(--border-default)",
-                      borderRadius: "8px",
-                      cursor: "pointer",
-                      transition: "all 0.15s ease",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = "var(--bg-tertiary)";
-                      e.currentTarget.style.color = "var(--text-primary)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = "transparent";
-                      e.currentTarget.style.color = "var(--text-secondary)";
-                    }}
-                  >
-                    <FontAwesomeIcon icon={["fas", "plus"]} style={{ fontSize: "11px" }} />
-                    <span>New</span>
-                  </button>
+                  {/* Hide "New" button when running from local server */}
+                  {!isLocalServer && (
+                    <button
+                      onClick={toggleIntroPopup}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "6px",
+                        padding: "8px 14px",
+                        fontSize: "13px",
+                        fontWeight: "500",
+                        color: "var(--text-secondary)",
+                        backgroundColor: "transparent",
+                        border: "1px solid var(--border-default)",
+                        borderRadius: "8px",
+                        cursor: "pointer",
+                        transition: "all 0.15s ease",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = "var(--bg-tertiary)";
+                        e.currentTarget.style.color = "var(--text-primary)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = "transparent";
+                        e.currentTarget.style.color = "var(--text-secondary)";
+                      }}
+                    >
+                      <FontAwesomeIcon icon={["fas", "plus"]} style={{ fontSize: "11px" }} />
+                      <span>New</span>
+                    </button>
+                  )}
                   <button
                     onClick={toggleAboutPopup}
                     style={{
@@ -312,27 +330,21 @@ function App() {
               </nav>
               <TabPanels>
                 <TabPanel index={0}>
-                  <Suspense fallback={<LoadingSpinner />}>
-                    <Info info={info} isDark={isDark} />
-                  </Suspense>
+                  <Info info={info} isDark={isDark} />
                 </TabPanel>
                 <TabPanel index={1}>
-                  <Suspense fallback={<LoadingSpinner />}>
-                    <Plots
-                      componentData={componentData}
-                      componentFigures={componentFigures}
-                      originalData={originalData}
-                      mixingMatrix={mixingMatrix}
-                      niftiBuffer={niftiBuffer}
-                      maskBuffer={maskBuffer}
-                      isDark={isDark}
-                    />
-                  </Suspense>
+                  <Plots
+                    componentData={componentData}
+                    componentFigures={componentFigures}
+                    originalData={originalData}
+                    mixingMatrix={mixingMatrix}
+                    niftiBuffer={niftiBuffer}
+                    maskBuffer={maskBuffer}
+                    isDark={isDark}
+                  />
                 </TabPanel>
                 <TabPanel index={2}>
-                  <Suspense fallback={<LoadingSpinner />}>
-                    <Carpets images={carpetFigures} isDark={isDark} />
-                  </Suspense>
+                  <Carpets images={carpetFigures} isDark={isDark} />
                 </TabPanel>
               </TabPanels>
             </AnimatedTabs>
@@ -345,6 +357,17 @@ function App() {
 
 export default App;
 
-const container = document.getElementById("root");
-const root = createRoot(container);
-root.render(<App />);
+// Wait for DOM to be ready (needed for inline scripts in <head>)
+function mount() {
+  const container = document.getElementById("root");
+  if (container) {
+    const root = createRoot(container);
+    root.render(<App />);
+  }
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", mount);
+} else {
+  mount();
+}
