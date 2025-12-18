@@ -1,0 +1,59 @@
+name: Build Rica
+
+on:
+  push:
+    branches: [master, main]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [master, main]
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build production bundle
+        run: npm run build
+
+      - name: Inline assets (single-file HTML)
+        run: npx gulp
+
+      - name: Copy server files
+        run: |
+          cp scripts/rica_server.py build/
+          cp public/favicon.ico build/
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: rica-dist
+          path: |
+            build/index.html
+            build/rica_server.py
+            build/favicon.ico
+          retention-days: 90
+
+      # Create release assets when a tag is pushed
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            build/index.html
+            build/rica_server.py
+            build/favicon.ico
+          generate_release_notes: true
