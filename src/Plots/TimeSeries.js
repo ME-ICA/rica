@@ -11,7 +11,20 @@ import { curveLinear } from "d3-shape";
 
 const margin = { top: 40, right: 20, bottom: 50, left: 60 };
 
-function TimeSeries({ data, width, height, title, componentLabel, lineColor = "#3b82f6" }) {
+function TimeSeries({ data, width, height, title, componentLabel, lineColor = "#3b82f6", isDark = false }) {
+  // Theme colors
+  const colors = {
+    bg: isDark ? '#18181b' : '#ffffff',
+    title: isDark ? '#fafafa' : '#374151',
+    axis: isDark ? '#71717a' : '#9ca3af',
+    axisLabel: isDark ? '#a1a1aa' : '#374151',
+    tickLabel: isDark ? '#a1a1aa' : '#6b7280',
+    grid: isDark ? '#27272a' : '#e5e7eb',
+    hoverLine: isDark ? '#71717a' : '#9ca3af',
+    pointStroke: isDark ? '#18181b' : '#ffffff',
+    noData: isDark ? '#71717a' : '#9ca3af',
+  };
+
   const [hoverIndex, setHoverIndex] = useState(null);
 
   const {
@@ -106,12 +119,12 @@ function TimeSeries({ data, width, height, title, componentLabel, lineColor = "#
         style={{
           width: width || "100%",
           height: height || 200,
-          background: "#ffffff",
+          background: colors.bg,
           borderRadius: 8,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          color: "#9ca3af",
+          color: colors.noData,
           fontSize: 12,
         }}
       >
@@ -138,7 +151,7 @@ function TimeSeries({ data, width, height, title, componentLabel, lineColor = "#
             style={{ cursor: zoom.isDragging ? "grabbing" : "crosshair" }}
           >
             {/* Background */}
-            <rect width={width} height={height} fill="#ffffff" rx={8} />
+            <rect width={width} height={height} fill={colors.bg} rx={8} />
 
             {/* Title */}
             <text
@@ -147,7 +160,7 @@ function TimeSeries({ data, width, height, title, componentLabel, lineColor = "#
               textAnchor="middle"
               fontSize={14}
               fontWeight="bold"
-              fill="#374151"
+              fill={colors.title}
             >
               {title} {componentLabel && `- ${componentLabel}`}
             </text>
@@ -164,13 +177,13 @@ function TimeSeries({ data, width, height, title, componentLabel, lineColor = "#
               <GridRows
                 scale={yScale}
                 width={innerWidth}
-                stroke="#e5e7eb"
+                stroke={colors.grid}
                 strokeOpacity={0.5}
               />
               <GridColumns
                 scale={xScale}
                 height={innerHeight}
-                stroke="#e5e7eb"
+                stroke={colors.grid}
                 strokeOpacity={0.5}
               />
 
@@ -179,16 +192,16 @@ function TimeSeries({ data, width, height, title, componentLabel, lineColor = "#
                 top={innerHeight}
                 scale={xScale}
                 numTicks={Math.min(10, points.length)}
-                stroke="#9ca3af"
-                tickStroke="#9ca3af"
+                stroke={colors.axis}
+                tickStroke={colors.axis}
                 tickLabelProps={() => ({
-                  fill: "#6b7280",
+                  fill: colors.tickLabel,
                   fontSize: 10,
                   textAnchor: "middle",
                 })}
                 label="TR"
                 labelProps={{
-                  fill: "#374151",
+                  fill: colors.axisLabel,
                   fontSize: 11,
                   textAnchor: "middle",
                 }}
@@ -196,17 +209,17 @@ function TimeSeries({ data, width, height, title, componentLabel, lineColor = "#
               <AxisLeft
                 scale={yScale}
                 numTicks={5}
-                stroke="#9ca3af"
-                tickStroke="#9ca3af"
+                stroke={colors.axis}
+                tickStroke={colors.axis}
                 tickLabelProps={() => ({
-                  fill: "#6b7280",
+                  fill: colors.tickLabel,
                   fontSize: 10,
                   textAnchor: "end",
                   dy: "0.33em",
                 })}
                 label="Signal"
                 labelProps={{
-                  fill: "#374151",
+                  fill: colors.axisLabel,
                   fontSize: 11,
                   textAnchor: "middle",
                   angle: -90,
@@ -260,7 +273,7 @@ function TimeSeries({ data, width, height, title, componentLabel, lineColor = "#
                       <Line
                         from={{ x: xScale(hoverIndex), y: 0 }}
                         to={{ x: xScale(hoverIndex), y: innerHeight }}
-                        stroke="#9ca3af"
+                        stroke={colors.hoverLine}
                         strokeWidth={1}
                         strokeDasharray="4,4"
                         pointerEvents="none"
@@ -270,7 +283,7 @@ function TimeSeries({ data, width, height, title, componentLabel, lineColor = "#
                         cy={yScale(points[hoverIndex].y)}
                         r={4}
                         fill={lineColor}
-                        stroke="#ffffff"
+                        stroke={colors.pointStroke}
                         strokeWidth={2}
                         pointerEvents="none"
                       />

@@ -5,14 +5,15 @@ import { useTooltip, useTooltipInPortal, defaultStyles } from "@visx/tooltip";
 import { localPoint } from "@visx/event";
 import { formatComponentName } from "./PlotUtils";
 
-const COLORS = {
-  accepted: "#86EFAC",
-  acceptedHover: "#22C55E",
-  rejected: "#FCA5A5",
-  rejectedHover: "#EF4444",
-  ignored: "#7DD3FC",
-  ignoredHover: "#0EA5E9",
-};
+// Theme-aware colors
+const getDataColors = (isDark) => ({
+  accepted: isDark ? "#4ade80" : "#86EFAC",
+  acceptedHover: isDark ? "#22c55e" : "#22C55E",
+  rejected: isDark ? "#f87171" : "#FCA5A5",
+  rejectedHover: isDark ? "#ef4444" : "#EF4444",
+  ignored: isDark ? "#38bdf8" : "#7DD3FC",
+  ignoredHover: isDark ? "#0ea5e9" : "#0EA5E9",
+});
 
 function PieChart({
   data,
@@ -21,7 +22,18 @@ function PieChart({
   title,
   selectedIndex,
   onSliceClick,
+  isDark = false,
 }) {
+  // Theme colors
+  const colors = {
+    bg: isDark ? '#18181b' : '#ffffff',
+    title: isDark ? '#fafafa' : '#374151',
+    centerText: isDark ? '#a1a1aa' : '#6b7280',
+    stroke: isDark ? '#27272a' : '#ffffff',
+    hoverStroke: isDark ? '#a1a1aa' : '#6b7280',
+    selectedStroke: isDark ? '#fafafa' : '#1f2937',
+  };
+
   const [hoveredIndex, setHoveredIndex] = useState(null);
 
   const {
@@ -52,6 +64,8 @@ function PieChart({
     }));
   }, [data]);
 
+  const COLORS = getDataColors(isDark);
+
   const getColor = useCallback((d) => {
     const isSelected = d.index === selectedIndex;
     const isHovered = d.index === hoveredIndex;
@@ -64,7 +78,7 @@ function PieChart({
     } else {
       return (isSelected || isHovered) ? COLORS.ignoredHover : COLORS.ignored;
     }
-  }, [selectedIndex, hoveredIndex]);
+  }, [selectedIndex, hoveredIndex, COLORS]);
 
   const handleMouseOver = useCallback((event, arc) => {
     const coords = localPoint(event);
@@ -83,14 +97,14 @@ function PieChart({
 
   // Guard against invalid dimensions - after all hooks
   if (!width || !height || width < 10 || height < 10 || radius <= 0) {
-    return <div style={{ width: "100%", height: "100%", background: "#ffffff", borderRadius: 8 }} />;
+    return <div style={{ width: "100%", height: "100%", background: colors.bg, borderRadius: 8 }} />;
   }
 
   return (
     <div ref={containerRef} style={{ position: "relative", width: "100%", height: "100%" }}>
       <svg width={width} height={height}>
         {/* Background */}
-        <rect width={width} height={height} fill="#ffffff" rx={8} />
+        <rect width={width} height={height} fill={colors.bg} rx={8} />
 
         {/* Title */}
         <text
@@ -99,7 +113,7 @@ function PieChart({
           textAnchor="middle"
           fontSize={16}
           fontWeight="bold"
-          fill="#374151"
+          fill={colors.title}
         >
           {title}
         </text>
@@ -133,7 +147,7 @@ function PieChart({
                     <path
                       d={pie.path(arc)}
                       fill={getColor(arc.data)}
-                      stroke={isSelected ? "#1f2937" : (isHovered ? "#6b7280" : "#ffffff")}
+                      stroke={isSelected ? colors.selectedStroke : (isHovered ? colors.hoverStroke : colors.stroke)}
                       strokeWidth={isSelected ? 3 : (isHovered ? 2 : 1)}
                       style={{
                         filter: isSelected
@@ -164,7 +178,7 @@ function PieChart({
             textAnchor="middle"
             dy=".33em"
             fontSize={14}
-            fill="#6b7280"
+            fill={colors.centerText}
           >
             Variance
           </text>

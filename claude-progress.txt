@@ -789,6 +789,92 @@ const blue2white = {
 
 ---
 
+## Session 6 - Theme System and UI Refinements (2025-12-18)
+
+### Goals
+- Implement light/dark mode toggle with localStorage persistence
+- Update all components to support theming
+- Polish UI with Inter font and consistent styling
+- Fix various visual inconsistencies
+
+### Changes Made
+
+#### Theme System Implementation
+1. **src/styles.css** - Added CSS custom properties for theming:
+   - Light mode (default): White backgrounds, dark text
+   - Dark mode: Near-black backgrounds (#0a0a0b), light text
+   - Theme-aware accent colors for accepted/rejected states
+   - Smooth transition class for theme switching (0.35s cubic-bezier)
+
+2. **src/index.js** - Theme state management:
+   - `theme` state with localStorage persistence ('rica-theme')
+   - `toggleTheme()` callback with transition class handling
+   - `isTransitioning` state for smooth CSS transitions
+   - `ThemeContext` provider for child components
+
+3. **public/index.html** - Font updates:
+   - Changed from DM Sans to Inter font
+   - Kept JetBrains Mono for monospace elements
+
+#### Component Updates for Theme Support
+- **src/Plots/Plots.js** - Theme-aware color function `getColors(isDark)`
+- **src/Plots/ScatterPlot.js** - Dark chart backgrounds in dark mode
+- **src/Plots/PieChart.js** - Theme-aware colors
+- **src/Plots/TimeSeries.js** - Theme-aware line colors
+- **src/Plots/FFTSpectrum.js** - Theme-aware line colors
+- **src/Plots/BrainViewer.js** - Niivue background changes with theme (RGBA 0-1)
+- **src/Plots/ComponentTable.js** - Theme-aware table styling
+- **src/Plots/ToggleSwitch.js** - Theme-aware toggle
+- **src/Plots/ResetAndSave.js** - Theme-aware buttons
+- **src/PopUps/IntroPopUp.js** - Theme support, matching branding with AboutPopUp
+- **src/PopUps/AboutPopUp.js** - Theme support
+- **src/Info/Info.js** - Theme support
+- **src/Carpets/Carpets.js** - Theme support
+- **src/Mobile.js** - Theme support
+- **src/LoadingSpinner.js** - Theme support
+- **src/TabFunctions.js** - Theme support
+
+#### UI Polish
+1. **ComponentTable.js**:
+   - Limited width to 80% and centered on wide screens
+   - Fixed text color consistency across all columns
+   - Fixed text contrast on selected rows (dark text on colored background)
+
+2. **IntroPopUp.js**:
+   - Updated branding to match AboutPopUp exactly (shows "v2.0.0")
+   - Fixed alignment of logo, name, and version
+
+3. **Theme Toggle Button**:
+   - Sun/moon icon in navbar
+   - Smooth icon transition between modes
+
+### Technical Details
+```javascript
+// Theme-aware colors pattern used throughout
+const getColors = (isDark) => ({
+  accepted: isDark ? "#4ade80" : "#86EFAC",
+  rejected: isDark ? "#f87171" : "#FCA5A5",
+  // ...
+});
+
+// Niivue background (RGBA 0-1 scale)
+const niivueBgColor = useMemo(() =>
+  isDark ? [0.09, 0.09, 0.11, 1] : [1, 1, 1, 1],
+  [isDark]
+);
+```
+
+### Files Modified
+- `src/styles.css` - Theme variables and transitions
+- `src/index.js` - Theme state and toggle
+- `public/index.html` - Inter font
+- `src/Plots/*.js` - All plot components updated for theming
+- `src/PopUps/*.js` - Both popups updated
+- `src/Info/Info.js`, `src/Carpets/Carpets.js`, `src/Mobile.js`
+- `src/LoadingSpinner.js`, `src/TabFunctions.js`
+
+---
+
 ## Template for Future Sessions
 
 ```

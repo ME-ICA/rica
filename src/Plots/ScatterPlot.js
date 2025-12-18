@@ -9,14 +9,15 @@ import { localPoint } from "@visx/event";
 import { Zoom } from "@visx/zoom";
 import { formatComponentName } from "./PlotUtils";
 
-const COLORS = {
-  accepted: "#86EFAC",
-  acceptedHover: "#22C55E",
-  rejected: "#FCA5A5",
-  rejectedHover: "#EF4444",
-  ignored: "#7DD3FC",
-  ignoredHover: "#0EA5E9",
-};
+// Theme-aware colors
+const getColors = (isDark) => ({
+  accepted: isDark ? "#4ade80" : "#86EFAC",
+  acceptedHover: isDark ? "#22c55e" : "#22C55E",
+  rejected: isDark ? "#f87171" : "#FCA5A5",
+  rejectedHover: isDark ? "#ef4444" : "#EF4444",
+  ignored: isDark ? "#38bdf8" : "#7DD3FC",
+  ignoredHover: isDark ? "#0ea5e9" : "#0EA5E9",
+});
 
 const margin = { top: 40, right: 30, bottom: 50, left: 60 };
 
@@ -31,7 +32,19 @@ function ScatterPlot({
   onPointClick,
   getX,
   getY,
+  isDark = false,
 }) {
+  // Theme colors
+  const colors = {
+    bg: isDark ? '#18181b' : '#ffffff',
+    title: isDark ? '#fafafa' : '#374151',
+    axis: isDark ? '#71717a' : '#9ca3af',
+    axisLabel: isDark ? '#a1a1aa' : '#374151',
+    tickLabel: isDark ? '#a1a1aa' : '#6b7280',
+    grid: isDark ? '#27272a' : '#e5e7eb',
+    stroke: isDark ? '#27272a' : '#ffffff',
+    selectedStroke: isDark ? '#fafafa' : '#1f2937',
+  };
   const {
     tooltipData,
     tooltipLeft,
@@ -76,6 +89,8 @@ function ScatterPlot({
     });
   }, [data, getY, innerHeight]);
 
+  const COLORS = getColors(isDark);
+
   const getColor = useCallback((d, index) => {
     const isSelected = index === selectedIndex;
     const classification = d.classification;
@@ -86,7 +101,7 @@ function ScatterPlot({
     } else {
       return isSelected ? COLORS.ignoredHover : COLORS.ignored;
     }
-  }, [selectedIndex]);
+  }, [selectedIndex, COLORS]);
 
   const handleMouseOver = useCallback((event, d, index) => {
     const coords = localPoint(event);
@@ -108,7 +123,7 @@ function ScatterPlot({
 
   // Guard against invalid dimensions - after all hooks
   if (!width || !height || width < 10 || height < 10 || !xScale || !yScale) {
-    return <div style={{ width: "100%", height: "100%", background: "#ffffff", borderRadius: 8 }} />;
+    return <div style={{ width: "100%", height: "100%", background: colors.bg, borderRadius: 8 }} />;
   }
 
   return (
@@ -132,7 +147,7 @@ function ScatterPlot({
             <rect
               width={width}
               height={height}
-              fill="#ffffff"
+              fill={colors.bg}
               rx={8}
             />
 
@@ -143,7 +158,7 @@ function ScatterPlot({
               textAnchor="middle"
               fontSize={16}
               fontWeight="bold"
-              fill="#374151"
+              fill={colors.title}
             >
               {title}
             </text>
@@ -160,13 +175,13 @@ function ScatterPlot({
               <GridRows
                 scale={yScale}
                 width={innerWidth}
-                stroke="#e5e7eb"
+                stroke={colors.grid}
                 strokeOpacity={0.5}
               />
               <GridColumns
                 scale={xScale}
                 height={innerHeight}
-                stroke="#e5e7eb"
+                stroke={colors.grid}
                 strokeOpacity={0.5}
               />
 
@@ -175,16 +190,16 @@ function ScatterPlot({
                 top={innerHeight}
                 scale={xScale}
                 numTicks={5}
-                stroke="#9ca3af"
-                tickStroke="#9ca3af"
+                stroke={colors.axis}
+                tickStroke={colors.axis}
                 tickLabelProps={() => ({
-                  fill: "#6b7280",
+                  fill: colors.tickLabel,
                   fontSize: 11,
                   textAnchor: "middle",
                 })}
                 label={xLabel}
                 labelProps={{
-                  fill: "#374151",
+                  fill: colors.axisLabel,
                   fontSize: 12,
                   textAnchor: "middle",
                 }}
@@ -192,17 +207,17 @@ function ScatterPlot({
               <AxisLeft
                 scale={yScale}
                 numTicks={5}
-                stroke="#9ca3af"
-                tickStroke="#9ca3af"
+                stroke={colors.axis}
+                tickStroke={colors.axis}
                 tickLabelProps={() => ({
-                  fill: "#6b7280",
+                  fill: colors.tickLabel,
                   fontSize: 11,
                   textAnchor: "end",
                   dy: "0.33em",
                 })}
                 label={yLabel}
                 labelProps={{
-                  fill: "#374151",
+                  fill: colors.axisLabel,
                   fontSize: 12,
                   textAnchor: "middle",
                   angle: -90,
@@ -249,7 +264,7 @@ function ScatterPlot({
                         cy={cy}
                         r={6}
                         fill={getColor(d, i)}
-                        stroke="#ffffff"
+                        stroke={colors.stroke}
                         strokeWidth={1}
                         style={{
                           cursor: "pointer",
@@ -269,7 +284,7 @@ function ScatterPlot({
                       cy={yScale(getY(data[selectedIndex]))}
                       r={8}
                       fill={getColor(data[selectedIndex], selectedIndex)}
-                      stroke="#1f2937"
+                      stroke={colors.selectedStroke}
                       strokeWidth={2}
                       style={{
                         cursor: "pointer",

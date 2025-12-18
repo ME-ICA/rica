@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 
-function Carpets({ images }) {
+function Carpets({ images, isDark }) {
   const [carpetPlot, setCarpetPlot] = useState(images?.[0]?.img || "");
 
   const handleChange = useCallback((e) => {
@@ -9,18 +9,39 @@ function Carpets({ images }) {
 
   if (!images?.length) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <p className="text-gray-500">No carpet plots available</p>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '256px',
+        color: 'var(--text-tertiary)',
+      }}>
+        <p>No carpet plots available</p>
       </div>
     );
   }
 
   return (
-    <center>
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      padding: '24px',
+    }}>
       <select
-        className="dd-menu text-gray-700 text-base p-2.5 rounded-md border border-gray-300 mt-4 ml-4 focus:ring-sky-500 focus:border-sky-500"
         onChange={handleChange}
         value={carpetPlot}
+        style={{
+          padding: '10px 16px',
+          fontSize: '14px',
+          color: 'var(--text-primary)',
+          backgroundColor: 'var(--bg-secondary)',
+          border: '1px solid var(--border-default)',
+          borderRadius: '8px',
+          cursor: 'pointer',
+          outline: 'none',
+          marginBottom: '20px',
+        }}
       >
         {images.map((carpet) => (
           <option key={carpet.name} value={carpet.img}>
@@ -28,15 +49,26 @@ function Carpets({ images }) {
           </option>
         ))}
       </select>
-      <div className="carpet-plots-image mt-4">
+
+      <div style={{
+        backgroundColor: 'var(--bg-secondary)',
+        borderRadius: '12px',
+        border: '1px solid var(--border-default)',
+        padding: '16px',
+        maxWidth: '100%',
+      }}>
         <img
           id="imgCarpetPlot"
           alt="Carpet plot"
           src={carpetPlot}
-          className="max-w-full transition-opacity duration-300"
+          style={{
+            maxWidth: '100%',
+            height: 'auto',
+            borderRadius: '8px',
+          }}
         />
       </div>
-    </center>
+    </div>
   );
 }
 

@@ -1,12 +1,25 @@
-import React, { useRef, useEffect, useState, useCallback } from "react";
+import React, { useRef, useEffect, useState, useCallback, useMemo } from "react";
 import { Niivue } from "@niivue/niivue";
 
-function BrainViewer({ niftiBuffer, maskBuffer, componentIndex, width, height, componentLabel, saturation = 0.1 }) {
+function BrainViewer({ niftiBuffer, maskBuffer, componentIndex, width, height, componentLabel, saturation = 0.1, isDark = false }) {
   const canvasRef = useRef(null);
   const nvRef = useRef(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState(null);
   const maxAbsRef = useRef(null); // Store max absolute value for saturation adjustments
+
+  // Theme colors
+  const bgColor = isDark ? '#18181b' : '#ffffff';
+  const titleColor = isDark ? '#fafafa' : '#374151';
+  const loadingBg = isDark ? '#27272a' : '#f3f4f6';
+  const loadingText = isDark ? '#a1a1aa' : '#6b7280';
+  const errorBg = isDark ? '#451a1a' : '#fef2f2';
+  const errorText = isDark ? '#fca5a5' : '#dc2626';
+  const placeholderBg = isDark ? '#18181b' : '#f3f4f6';
+  const placeholderText = isDark ? '#71717a' : '#9ca3af';
+
+  // Niivue background color (RGBA 0-1) - memoized to prevent re-renders
+  const niivueBgColor = useMemo(() => isDark ? [0.09, 0.09, 0.11, 1] : [1, 1, 1, 1], [isDark]);
 
   // Initialize Niivue instance
   useEffect(() => {
@@ -20,7 +33,7 @@ function BrainViewer({ niftiBuffer, maskBuffer, componentIndex, width, height, c
       try {
         // Create Niivue instance
         const nv = new Niivue({
-          backColor: [1, 1, 1, 1], // White background
+          backColor: niivueBgColor,
           show3Dcrosshair: false,
           crosshairColor: [0.5, 0.5, 0.5, 0.5],
           multiplanarForceRender: false, // Disable 3D render in multiplanar
@@ -93,8 +106,8 @@ function BrainViewer({ niftiBuffer, maskBuffer, componentIndex, width, height, c
           vol.cal_minNeg = -range;
           vol.cal_maxNeg = 0;
 
-          // Set white background and redraw
-          nv.opts.backColor = [1, 1, 1, 1];
+          // Set background and redraw
+          nv.opts.backColor = niivueBgColor;
           nv.updateGLVolume();
           nv.drawScene();
         }
@@ -131,6 +144,19 @@ function BrainViewer({ niftiBuffer, maskBuffer, componentIndex, width, height, c
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [niftiBuffer, maskBuffer]); // Reinit when buffer or mask changes
 
+  // Update background color when theme changes
+  useEffect(() => {
+    if (nvRef.current && isLoaded) {
+      try {
+        const nv = nvRef.current;
+        nv.opts.backColor = niivueBgColor;
+        nv.drawScene();
+      } catch (err) {
+        console.error("Error updating background:", err);
+      }
+    }
+  }, [isDark, isLoaded, niivueBgColor]);
+
   // Update frame when componentIndex changes
   useEffect(() => {
     if (nvRef.current && isLoaded && componentIndex >= 0) {
@@ -164,8 +190,8 @@ function BrainViewer({ niftiBuffer, maskBuffer, componentIndex, width, height, c
           vol.cal_minNeg = -range;
           vol.cal_maxNeg = 0;
 
-          // Set white background before redraw
-          nv.opts.backColor = [1, 1, 1, 1];
+          // Set background before redraw
+          nv.opts.backColor = niivueBgColor;
 
           // Redraw the scene
           nv.updateGLVolume();
@@ -175,7 +201,7 @@ function BrainViewer({ niftiBuffer, maskBuffer, componentIndex, width, height, c
         console.error("Error updating saturation:", err);
       }
     }
-  }, [saturation, isLoaded]);
+  }, [saturation, isLoaded, niivueBgColor]);
 
   // Handle resize
   const handleResize = useCallback(() => {
@@ -196,12 +222,12 @@ function BrainViewer({ niftiBuffer, maskBuffer, componentIndex, width, height, c
         style={{
           width: width || "100%",
           height: height || 350,
-          background: "#f3f4f6",
+          background: placeholderBg,
           borderRadius: 8,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          color: "#9ca3af",
+          color: placeholderText,
           fontSize: 14,
         }}
       >
@@ -218,7 +244,7 @@ function BrainViewer({ niftiBuffer, maskBuffer, componentIndex, width, height, c
         position: "relative",
         borderRadius: 8,
         overflow: "hidden",
-        background: "#ffffff",
+        background: bgColor,
       }}
     >
       {/* Title */}
@@ -231,7 +257,7 @@ function BrainViewer({ niftiBuffer, maskBuffer, componentIndex, width, height, c
           textAlign: "center",
           fontSize: 14,
           fontWeight: "bold",
-          color: "#374151",
+          color: titleColor,
           zIndex: 10,
           pointerEvents: "none",
         }}
@@ -251,8 +277,8 @@ function BrainViewer({ niftiBuffer, maskBuffer, componentIndex, width, height, c
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            background: "#f3f4f6",
-            color: "#6b7280",
+            background: loadingBg,
+            color: loadingText,
             fontSize: 14,
           }}
         >
@@ -271,8 +297,8 @@ function BrainViewer({ niftiBuffer, maskBuffer, componentIndex, width, height, c
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            background: "#fef2f2",
-            color: "#dc2626",
+            background: errorBg,
+            color: errorText,
             fontSize: 14,
             padding: 20,
             textAlign: "center",

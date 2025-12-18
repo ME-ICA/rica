@@ -6,7 +6,7 @@ const titleCase = (str) =>
     .map((w) => w[0].toUpperCase() + w.slice(1))
     .join(" ");
 
-function ToggleSwitch({ values, selected, colors, handleNewSelection }) {
+function ToggleSwitch({ values, selected, colors, handleNewSelection, isDark = false }) {
   const selectionStyle = useCallback(() => {
     const index = values.indexOf(selected);
     return {
@@ -16,11 +16,18 @@ function ToggleSwitch({ values, selected, colors, handleNewSelection }) {
   }, [values, selected, colors]);
 
   return (
-    <div className="relative h-8 font-semibold bg-gray-200 rounded-md flex">
+    <div style={{
+      position: 'relative',
+      height: '36px',
+      fontWeight: 600,
+      backgroundColor: isDark ? '#27272a' : '#e5e7eb',
+      borderRadius: '8px',
+      display: 'flex',
+    }}>
       {values.map((val) => (
         <span key={val}>
           <input
-            className="hidden"
+            style={{ display: 'none' }}
             type="radio"
             name="switch"
             checked={selected === val}
@@ -28,16 +35,36 @@ function ToggleSwitch({ values, selected, colors, handleNewSelection }) {
           />
           <label
             onClick={() => handleNewSelection(val)}
-            className="relative z-10 h-8 flex items-center justify-center transition-colors duration-200"
-            style={{ width: 90, color: selected === val ? "#1f2937" : "rgba(0,0,0,0.6)", cursor: "pointer" }}
+            style={{
+              position: 'relative',
+              zIndex: 10,
+              height: '36px',
+              width: '90px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              transition: 'color 0.2s ease',
+              color: selected === val ? '#1f2937' : (isDark ? '#a1a1aa' : 'rgba(0,0,0,0.6)'),
+              fontSize: '13px',
+            }}
           >
             {titleCase(val)}
           </label>
         </span>
       ))}
       <span
-        className="absolute top-0 z-0 block h-8 rounded-md transition-all duration-200"
-        style={{ ...selectionStyle(), width: 90 }}
+        style={{
+          ...selectionStyle(),
+          position: 'absolute',
+          top: 0,
+          zIndex: 0,
+          display: 'block',
+          height: '36px',
+          width: '90px',
+          borderRadius: '8px',
+          transition: 'all 0.2s ease',
+        }}
       />
     </div>
   );

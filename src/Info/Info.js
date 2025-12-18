@@ -2,28 +2,78 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFolder } from "@fortawesome/free-solid-svg-icons";
 
-function Info({ info }) {
+function Info({ info, isDark }) {
   if (!info?.length) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <p className="text-gray-500">No information available</p>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '256px',
+        color: 'var(--text-tertiary)',
+      }}>
+        <p>No information available</p>
       </div>
     );
   }
 
   return (
-    <div className="mt-16 text-base text-justify whitespace-pre-wrap mx-80">
-      <div className="flex justify-center mb-8">
-        <div className="rounded-xl bg-sky-500 flex items-center transition-all duration-300 hover:bg-sky-600">
-          <div className="px-4 py-4 flex items-center text-white">
-            <FontAwesomeIcon icon={faFolder} size="lg" className="mx-2" />
-            <h1 className="text-xl font-semibold italic text-center">
-              {info[1]}
-            </h1>
-          </div>
+    <div style={{
+      maxWidth: '800px',
+      margin: '0 auto',
+      padding: '48px 24px',
+    }}>
+      {/* Path badge */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        marginBottom: '32px',
+      }}>
+        <div style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '10px',
+          padding: '12px 20px',
+          backgroundColor: 'var(--bg-tertiary)',
+          borderRadius: '12px',
+          border: '1px solid var(--border-default)',
+        }}>
+          <FontAwesomeIcon
+            icon={faFolder}
+            style={{
+              fontSize: '16px',
+              color: 'var(--accent-accepted)',
+            }}
+          />
+          <span style={{
+            fontSize: '14px',
+            fontWeight: 500,
+            color: 'var(--text-primary)',
+            fontFamily: 'monospace',
+          }}>
+            {info[1]}
+          </span>
         </div>
       </div>
-      <p className="leading-relaxed">{info[0]}</p>
+
+      {/* Report content */}
+      <div style={{
+        backgroundColor: 'var(--bg-secondary)',
+        borderRadius: '12px',
+        border: '1px solid var(--border-default)',
+        padding: '24px',
+      }}>
+        <p style={{
+          fontSize: '14px',
+          lineHeight: 1.8,
+          color: 'var(--text-secondary)',
+          whiteSpace: 'pre-wrap',
+          textAlign: 'left',
+          margin: 0,
+        }}>
+          {info[0]}
+        </p>
+      </div>
     </div>
   );
 }

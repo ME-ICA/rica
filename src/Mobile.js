@@ -2,28 +2,79 @@ import React from "react";
 
 function MobileMain() {
   return (
-    <div className="h-screen bg-gradient-to-tr from-indigo-200 via-red-200 to-yellow-100">
-      <div className="fixed z-10 flex items-center justify-center w-full h-full">
-        <div className="px-6 m-auto">
-          <h1 className="mb-8 text-3xl font-extrabold">Hi, this is Rica</h1>
-          <div className="my-8">
-            <p className="text-base">
-              It looks like you're visiting from a small screen. Bookmark me and
-              visit me again from your computer.
-            </p>
-          </div>
-          <div className="my-8">
-            <a
-              href="https://www.github.com/ME-ICA/rica"
-              target="_blank"
-              rel="noreferrer noopener"
-            >
-              <button className="inline-block w-auto px-4 py-2 font-bold text-white bg-indigo-400 rounded hover:bg-indigo-700 transition-colors duration-200">
-                Learn more
-              </button>
-            </a>
-          </div>
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: 'var(--bg-primary)',
+      padding: '24px',
+    }}>
+      <div style={{
+        maxWidth: '360px',
+        textAlign: 'center',
+      }}>
+        {/* Logo */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '12px',
+          marginBottom: '32px',
+        }}>
+          <img
+            src="/favicon.ico"
+            alt="Rica"
+            style={{ width: '40px', height: '40px' }}
+          />
+          <span style={{
+            fontSize: '28px',
+            fontWeight: 600,
+            color: 'var(--text-primary)',
+            letterSpacing: '-0.02em',
+          }}>
+            Rica
+          </span>
         </div>
+
+        <h1 style={{
+          fontSize: '20px',
+          fontWeight: 600,
+          color: 'var(--text-primary)',
+          marginBottom: '16px',
+        }}>
+          Desktop Required
+        </h1>
+
+        <p style={{
+          fontSize: '14px',
+          color: 'var(--text-secondary)',
+          lineHeight: 1.6,
+          marginBottom: '32px',
+        }}>
+          Rica requires a larger screen to visualize ICA components effectively. Please visit on a desktop or laptop computer.
+        </p>
+
+        <a
+          href="https://github.com/ME-ICA/rica"
+          target="_blank"
+          rel="noreferrer noopener"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '12px 24px',
+            fontSize: '14px',
+            fontWeight: 500,
+            color: '#ffffff',
+            backgroundColor: '#111827',
+            borderRadius: '10px',
+            textDecoration: 'none',
+            transition: 'opacity 0.15s ease',
+          }}
+        >
+          Learn more
+        </a>
       </div>
     </div>
   );

@@ -1,12 +1,13 @@
 import React, { useRef, useEffect, useMemo } from "react";
 import { formatComponentName } from "./PlotUtils";
 
-const COLORS = {
-  accepted: "#86EFAC",
-  acceptedHover: "#22C55E",
-  rejected: "#FCA5A5",
-  rejectedHover: "#EF4444",
-};
+// Theme-aware colors
+const getColors = (isDark) => ({
+  accepted: isDark ? "#4ade80" : "#86EFAC",
+  acceptedHover: isDark ? "#22c55e" : "#22C55E",
+  rejected: isDark ? "#f87171" : "#FCA5A5",
+  rejectedHover: isDark ? "#ef4444" : "#EF4444",
+});
 
 // Format cell value based on type
 function formatValue(value, key) {
@@ -65,7 +66,7 @@ const DISPLAY_COLUMNS = [
   "classification_tags",
 ];
 
-function ComponentTable({ data, selectedIndex, onRowClick, classifications }) {
+function ComponentTable({ data, selectedIndex, onRowClick, classifications, isDark = false }) {
   const selectedRowRef = useRef(null);
   const tableContainerRef = useRef(null);
 
@@ -114,6 +115,8 @@ function ComponentTable({ data, selectedIndex, onRowClick, classifications }) {
     };
   };
 
+  const COLORS = getColors(isDark);
+
   const getCellStyle = (index, colIndex, totalCols) => {
     const isSelected = index === selectedIndex;
     const classification = getClassification(index);
@@ -132,37 +135,51 @@ function ComponentTable({ data, selectedIndex, onRowClick, classifications }) {
     };
   };
 
+  const hoverBg = isDark ? '#27272a' : '#f3f4f6';
+  const headerBg = isDark ? '#18181b' : '#f3f4f6';
+  const headerColor = isDark ? '#fafafa' : '#374151';
+  const textPrimary = isDark ? '#fafafa' : '#111827';
+  const textSecondary = isDark ? '#a1a1aa' : '#6b7280';
+  const borderColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
+
   return (
-    <div style={{ width: "100%", padding: "16px 24px 24px 24px" }}>
-      <h3 className="text-center text-lg font-semibold text-gray-700 mb-3">
+    <div style={{ width: "80%", margin: "0 auto", padding: "16px 24px 24px 24px" }}>
+      <h3 style={{
+        textAlign: 'center',
+        fontSize: '18px',
+        fontWeight: 600,
+        color: 'var(--text-primary)',
+        marginBottom: '12px',
+      }}>
         Component Metrics
       </h3>
       <div
         ref={tableContainerRef}
-        className="rounded-lg border border-gray-200 shadow-sm"
         style={{
           maxHeight: "350px",
           overflowY: "auto",
           overflowX: "auto",
           margin: "0 8px",
+          borderRadius: '12px',
+          border: `1px solid ${borderColor}`,
+          backgroundColor: 'var(--bg-secondary)',
         }}
       >
-        <table className="w-full text-sm" style={{ borderCollapse: "separate", borderSpacing: "0" }}>
+        <table style={{ width: '100%', fontSize: '13px', borderCollapse: "separate", borderSpacing: "0" }}>
           <thead>
             <tr>
               {columns.map((col) => (
                 <th
                   key={col}
-                  className={`px-3 py-2 font-semibold whitespace-nowrap ${
-                    col === "Component" || col === "classification" || col === "classification_tags"
-                      ? "text-left"
-                      : "text-right"
-                  }`}
                   style={{
+                    padding: '12px',
+                    fontWeight: 600,
+                    whiteSpace: 'nowrap',
+                    textAlign: col === "Component" || col === "classification" || col === "classification_tags" ? 'left' : 'right',
                     position: "sticky",
                     top: 0,
-                    backgroundColor: "#f3f4f6",
-                    color: "#374151",
+                    backgroundColor: headerBg,
+                    color: headerColor,
                     zIndex: 10,
                   }}
                 >
@@ -180,12 +197,11 @@ function ComponentTable({ data, selectedIndex, onRowClick, classifications }) {
                   ref={index === selectedIndex ? selectedRowRef : null}
                   onClick={() => onRowClick(index)}
                   style={getRowStyle(index)}
-                  className="border-t border-gray-100 group"
                   onMouseEnter={(e) => {
                     if (index !== selectedIndex) {
                       const cells = e.currentTarget.querySelectorAll("td");
                       cells.forEach((cell) => {
-                        cell.style.backgroundColor = "#f3f4f6";
+                        cell.style.backgroundColor = hoverBg;
                       });
                     }
                   }}
@@ -202,10 +218,11 @@ function ComponentTable({ data, selectedIndex, onRowClick, classifications }) {
                     const cellStyle = getCellStyle(index, colIndex, columns.length);
                     if (col === "classification") {
                       return (
-                        <td key={col} className="px-3 py-2" style={cellStyle}>
+                        <td key={col} style={{ ...cellStyle, padding: '12px' }}>
                           <span
-                            className="text-xs font-medium"
                             style={{
+                              fontSize: '12px',
+                              fontWeight: 500,
                               backgroundColor:
                                 classification === "accepted"
                                   ? COLORS.accepted
@@ -224,15 +241,18 @@ function ComponentTable({ data, selectedIndex, onRowClick, classifications }) {
                         </td>
                       );
                     }
+                    const isSelected = index === selectedIndex;
                     return (
                       <td
                         key={col}
-                        style={cellStyle}
-                        className={`px-3 py-2 ${
-                          col === "Component" || col === "classification_tags"
-                            ? "font-medium text-gray-900"
-                            : "text-right text-gray-600"
-                        }`}
+                        style={{
+                          ...cellStyle,
+                          padding: '12px',
+                          textAlign: col === "Component" || col === "classification_tags" ? 'left' : 'right',
+                          fontWeight: col === "Component" || col === "classification_tags" ? 500 : 400,
+                          // Use dark text on selected rows for contrast
+                          color: isSelected ? '#1f2937' : textPrimary,
+                        }}
                       >
                         {formatValue(row[col], col)}
                       </td>

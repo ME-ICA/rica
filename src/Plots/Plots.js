@@ -15,16 +15,20 @@ import { assignColor, formatComponentName } from "./PlotUtils";
 const CHART_WIDTH = 420;
 const CHART_HEIGHT = 380;
 
-const COLORS = {
-  accepted: "#86EFAC",
-  acceptedHover: "#22C55E",
-  rejected: "#FCA5A5",
-  rejectedHover: "#EF4444",
-  ignored: "#7DD3FC",
-  ignoredHover: "#0EA5E9",
-};
+// Theme-aware colors
+const getColors = (isDark) => ({
+  // Light mode: softer pastel colors
+  // Dark mode: more saturated colors that pop on dark backgrounds
+  accepted: isDark ? "#4ade80" : "#86EFAC",
+  acceptedHover: isDark ? "#22c55e" : "#22C55E",
+  rejected: isDark ? "#f87171" : "#FCA5A5",
+  rejectedHover: isDark ? "#ef4444" : "#EF4444",
+  ignored: isDark ? "#38bdf8" : "#7DD3FC",
+  ignoredHover: isDark ? "#0ea5e9" : "#0EA5E9",
+});
 
-function Plots({ componentData, componentFigures, originalData, mixingMatrix, niftiBuffer, maskBuffer }) {
+
+function Plots({ componentData, componentFigures, originalData, mixingMatrix, niftiBuffer, maskBuffer, isDark = false }) {
   const [processedData, setProcessedData] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedClassification, setSelectedClassification] = useState("accepted");
@@ -270,8 +274,14 @@ function Plots({ componentData, componentFigures, originalData, mixingMatrix, ni
 
   if (!processedData.length) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <p className="text-gray-500">Loading chart data...</p>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '256px',
+        color: 'var(--text-tertiary)',
+      }}>
+        <p>Loading chart data...</p>
       </div>
     );
   }
@@ -279,20 +289,34 @@ function Plots({ componentData, componentFigures, originalData, mixingMatrix, ni
   return (
     <div tabIndex={0} className="outline-none focus:outline-none focus:ring-0 w-full" style={{ outline: "none", boxShadow: "none" }}>
       {/* Top controls */}
-      <div className="flex flex-row items-center justify-center gap-6 mt-6">
+      <div style={{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '24px',
+        marginTop: '24px',
+      }}>
         <ToggleSwitch
           values={["accepted", "rejected"]}
           selected={selectedClassification}
-          colors={[COLORS.accepted, COLORS.rejected]}
+          colors={[getColors(isDark).accepted, getColors(isDark).rejected]}
           handleNewSelection={handleNewSelection}
+          isDark={isDark}
         />
         <ResetAndSave
           handleReset={initializeData}
           handleSave={saveManualClassification}
+          isDark={isDark}
         />
       </div>
 
-      <div className="text-center mt-2 text-sm text-gray-500">
+      <div style={{
+        textAlign: 'center',
+        marginTop: '8px',
+        fontSize: '13px',
+        color: 'var(--text-tertiary)',
+      }}>
         Click to select. Scroll to zoom. Double-click to zoom in. Use A/R keys to classify.
       </div>
 
@@ -313,6 +337,7 @@ function Plots({ componentData, componentFigures, originalData, mixingMatrix, ni
                   onPointClick={handlePointClick}
                   getX={(d) => d.kappa}
                   getY={(d) => d.rho}
+                  isDark={isDark}
                 />
 
                 {/* Variance Pie Chart */}
@@ -323,6 +348,7 @@ function Plots({ componentData, componentFigures, originalData, mixingMatrix, ni
                   title="Variance Explained"
                   selectedIndex={selectedPieIndex}
                   onSliceClick={handlePieClick}
+                  isDark={isDark}
                 />
 
                 {/* Rho vs Rank scatter plot */}
@@ -337,6 +363,7 @@ function Plots({ componentData, componentFigures, originalData, mixingMatrix, ni
                   onPointClick={handlePointClick}
                   getX={(d) => d.rhoRank}
                   getY={(d) => d.rho}
+                  isDark={isDark}
                 />
 
                 {/* Kappa vs Rank scatter plot */}
@@ -351,6 +378,7 @@ function Plots({ componentData, componentFigures, originalData, mixingMatrix, ni
                   onPointClick={handlePointClick}
                   getX={(d) => d.kappaRank}
                   getY={(d) => d.kappa}
+                  isDark={isDark}
                 />
               </div>
             </div>
@@ -375,7 +403,8 @@ function Plots({ componentData, componentFigures, originalData, mixingMatrix, ni
                   height={180}
                   title="Time Series"
                   componentLabel={currentComponentLabel}
-                  lineColor={selectedClassification === 'accepted' ? '#22C55E' : '#EF4444'}
+                  lineColor={selectedClassification === 'accepted' ? getColors(isDark).acceptedHover : getColors(isDark).rejectedHover}
+                  isDark={isDark}
                 />
               </div>
 
@@ -389,6 +418,7 @@ function Plots({ componentData, componentFigures, originalData, mixingMatrix, ni
                   height={350}
                   componentLabel={currentComponentLabel}
                   saturation={colormapSaturation}
+                  isDark={isDark}
                 />
               </div>
 
@@ -401,7 +431,7 @@ function Plots({ componentData, componentFigures, originalData, mixingMatrix, ni
                 gap: '12px',
                 padding: '8px 0',
               }}>
-                <span style={{ fontSize: '12px', color: '#6b7280' }}>Saturation:</span>
+                <span style={{ fontSize: '12px', color: 'var(--text-tertiary)' }}>Saturation:</span>
                 <input
                   type="range"
                   min="1"
@@ -416,7 +446,7 @@ function Plots({ componentData, componentFigures, originalData, mixingMatrix, ni
                     outline: 'none',
                   }}
                 />
-                <span style={{ fontSize: '12px', color: '#374151', minWidth: '40px', textAlign: 'right' }}>
+                <span style={{ fontSize: '12px', color: 'var(--text-secondary)', minWidth: '40px', textAlign: 'right' }}>
                   {Math.round(colormapSaturation * 100)}%
                 </span>
               </div>
@@ -429,7 +459,8 @@ function Plots({ componentData, componentFigures, originalData, mixingMatrix, ni
                   height={180}
                   title="Power Spectrum"
                   sampleRate={1}
-                  lineColor={selectedClassification === 'accepted' ? '#22C55E' : '#EF4444'}
+                  lineColor={selectedClassification === 'accepted' ? getColors(isDark).acceptedHover : getColors(isDark).rejectedHover}
+                  isDark={isDark}
                 />
               </div>
             </>
@@ -452,6 +483,7 @@ function Plots({ componentData, componentFigures, originalData, mixingMatrix, ni
         selectedIndex={selectedIndex}
         onRowClick={handlePointClick}
         classifications={processedData.map((d) => d.classification)}
+        isDark={isDark}
       />
     </div>
   );

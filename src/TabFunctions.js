@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from "react";
+import React, { useCallback } from "react";
 import { TabsProvider, useTabsContext } from "./TabComponents";
 
 function AnimatedTabs({ children, defaultIndex = 0, ...rest }) {
@@ -11,10 +11,9 @@ function AnimatedTabs({ children, defaultIndex = 0, ...rest }) {
   );
 }
 
-function AnimatedTab({ index, children, style, ...props }) {
+function AnimatedTab({ index, children, isDark, style, ...props }) {
   const { selectedIndex, selectTab } = useTabsContext();
   const isSelected = selectedIndex === index;
-  const tabRef = useRef(null);
 
   const handleClick = useCallback(() => {
     selectTab(index);
@@ -22,34 +21,32 @@ function AnimatedTab({ index, children, style, ...props }) {
 
   return (
     <button
-      ref={tabRef}
       role="tab"
       aria-selected={isSelected}
       onClick={handleClick}
       style={{
         display: "flex",
         alignItems: "center",
-        padding: "6px 12px",
+        padding: "8px 14px",
         fontSize: "13px",
-        fontWeight: isSelected ? "600" : "500",
-        color: isSelected ? "#1f2937" : "#6b7280",
-        backgroundColor: isSelected ? "#ffffff" : "transparent",
+        fontWeight: isSelected ? "500" : "400",
+        color: isSelected ? "var(--text-primary)" : "var(--text-tertiary)",
+        backgroundColor: isSelected ? "var(--bg-tertiary)" : "transparent",
         border: "none",
         borderRadius: "6px",
         cursor: "pointer",
         transition: "all 0.15s ease",
-        boxShadow: isSelected ? "0 1px 2px rgba(0, 0, 0, 0.05)" : "none",
         ...style,
       }}
       onMouseEnter={(e) => {
         if (!isSelected) {
-          e.currentTarget.style.color = "#374151";
-          e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.5)";
+          e.currentTarget.style.color = "var(--text-secondary)";
+          e.currentTarget.style.backgroundColor = "var(--bg-secondary)";
         }
       }}
       onMouseLeave={(e) => {
         if (!isSelected) {
-          e.currentTarget.style.color = "#6b7280";
+          e.currentTarget.style.color = "var(--text-tertiary)";
           e.currentTarget.style.backgroundColor = "transparent";
         }
       }}

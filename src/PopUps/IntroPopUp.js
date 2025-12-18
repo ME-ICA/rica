@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import Papa from "papaparse";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFolder, faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { faFolder } from "@fortawesome/free-solid-svg-icons";
 import { parseMixingMatrix } from "../utils/tsvParser";
 
 // Rank array helper
@@ -55,7 +55,7 @@ function readFileAsArrayBuffer(file) {
   });
 }
 
-function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading }) {
+function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark }) {
   const [loadingProgress, setLoadingProgress] = useState({ current: 0, total: 0 });
 
   const processFiles = useCallback(
@@ -205,15 +205,13 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading }) {
     <div
       style={{
         position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
+        inset: 0,
         zIndex: 50,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.4)',
+        backgroundColor: isDark ? 'rgba(0, 0, 0, 0.8)' : 'rgba(0, 0, 0, 0.4)',
+        backdropFilter: 'blur(4px)',
       }}
       onClick={closePopup}
     >
@@ -221,11 +219,12 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading }) {
         style={{
           position: 'relative',
           width: '100%',
-          maxWidth: '480px',
-          margin: '0 16px',
-          backgroundColor: 'white',
-          borderRadius: '8px',
-          boxShadow: '0 0 0 1px rgba(0,0,0,0.05), 0 20px 50px rgba(0,0,0,0.2)',
+          maxWidth: '420px',
+          margin: '0 24px',
+          backgroundColor: 'var(--bg-elevated)',
+          borderRadius: '16px',
+          border: '1px solid var(--border-default)',
+          boxShadow: 'var(--shadow-lg)',
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -235,21 +234,28 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading }) {
           type="button"
           style={{
             position: 'absolute',
-            top: '12px',
-            right: '12px',
-            width: '28px',
-            height: '28px',
+            top: '16px',
+            right: '16px',
+            width: '32px',
+            height: '32px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            borderRadius: '4px',
+            borderRadius: '8px',
             border: 'none',
             backgroundColor: 'transparent',
-            color: '#9ca3af',
+            color: 'var(--text-tertiary)',
             cursor: 'pointer',
+            transition: 'all 0.15s ease',
           }}
-          onMouseEnter={(e) => { e.target.style.backgroundColor = '#f3f4f6'; e.target.style.color = '#374151'; }}
-          onMouseLeave={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#9ca3af'; }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)';
+            e.currentTarget.style.color = 'var(--text-primary)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'transparent';
+            e.currentTarget.style.color = 'var(--text-tertiary)';
+          }}
         >
           <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
             <path d="M13.7 0.3c-0.4-0.4-1-0.4-1.4 0L7 5.6 1.7 0.3c-0.4-0.4-1-0.4-1.4 0s-0.4 1 0 1.4L5.6 7l-5.3 5.3c-0.4 0.4-0.4 1 0 1.4 0.2 0.2 0.4 0.3 0.7 0.3s0.5-0.1 0.7-0.3L7 8.4l5.3 5.3c0.2 0.2 0.5 0.3 0.7 0.3s0.5-0.1 0.7-0.3c0.4-0.4 0.4-1 0-1.4L8.4 7l5.3-5.3c0.4-0.4 0.4-1 0-1.4z"/>
@@ -259,55 +265,122 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading }) {
         <div style={{ padding: '32px' }}>
           {isLoading ? (
             <div style={{ textAlign: 'center', padding: '24px 0' }}>
-              <FontAwesomeIcon
-                icon={faSpinner}
-                style={{ fontSize: '32px', color: '#3b82f6', marginBottom: '16px' }}
-                spin
-              />
-              <h2 style={{ fontSize: '16px', fontWeight: 600, color: '#111827', marginBottom: '8px' }}>
-                Processing files...
-              </h2>
+              {/* Loading spinner */}
+              <div style={{
+                width: '48px',
+                height: '48px',
+                margin: '0 auto 20px',
+                border: '3px solid var(--border-default)',
+                borderTopColor: 'var(--accent-accepted)',
+                borderRadius: '50%',
+                animation: 'spin 0.8s linear infinite',
+              }} />
+              <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+
+              <p style={{
+                fontSize: '15px',
+                fontWeight: 500,
+                color: 'var(--text-primary)',
+                marginBottom: '8px'
+              }}>
+                Processing files
+              </p>
+
               {loadingProgress.total > 0 && (
                 <div style={{ marginTop: '20px' }}>
-                  <div style={{ width: '100%', height: '4px', backgroundColor: '#e5e7eb', borderRadius: '2px', overflow: 'hidden' }}>
+                  <div style={{
+                    width: '100%',
+                    height: '4px',
+                    backgroundColor: 'var(--border-default)',
+                    borderRadius: '2px',
+                    overflow: 'hidden'
+                  }}>
                     <div
                       style={{
                         width: `${(loadingProgress.current / loadingProgress.total) * 100}%`,
                         height: '100%',
-                        backgroundColor: '#3b82f6',
+                        backgroundColor: 'var(--accent-accepted)',
                         borderRadius: '2px',
-                        transition: 'width 0.3s ease',
+                        transition: 'width 0.2s ease',
                       }}
                     />
                   </div>
-                  <p style={{ fontSize: '13px', color: '#6b7280', marginTop: '12px' }}>
-                    {loadingProgress.current} of {loadingProgress.total} files
+                  <p style={{
+                    fontSize: '13px',
+                    color: 'var(--text-tertiary)',
+                    marginTop: '12px',
+                    fontFamily: "monospace",
+                  }}>
+                    {loadingProgress.current} / {loadingProgress.total}
                   </p>
                 </div>
               )}
             </div>
           ) : (
             <>
-              <h1 style={{ fontSize: '20px', fontWeight: 600, color: '#111827', marginBottom: '12px' }}>
-                Welcome to Rica
-              </h1>
+              {/* Logo */}
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                marginBottom: '20px'
+              }}>
+                <img
+                  src="/favicon.ico"
+                  alt="Rica"
+                  style={{ width: '36px', height: '36px' }}
+                />
+                <div>
+                  <h1 style={{
+                    fontSize: '20px',
+                    fontWeight: 600,
+                    color: 'var(--text-primary)',
+                    margin: 0,
+                    letterSpacing: '-0.02em',
+                  }}>
+                    Rica
+                  </h1>
+                  <p style={{
+                    fontSize: '12px',
+                    color: 'var(--text-tertiary)',
+                    margin: 0,
+                    marginTop: '2px',
+                  }}>
+                    v2.0.0
+                  </p>
+                </div>
+              </div>
 
-              <p style={{ fontSize: '14px', color: '#6b7280', lineHeight: 1.6, marginBottom: '16px' }}>
-                Rica is a visualization tool for ICA decompositions from <strong style={{ color: '#374151' }}>tedana</strong>.
+              <p style={{
+                fontSize: '14px',
+                color: 'var(--text-secondary)',
+                lineHeight: 1.6,
+                marginBottom: '20px'
+              }}>
+                Load a <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>tedana</span> output folder to visualize and classify ICA components interactively.
               </p>
 
               <div style={{
-                backgroundColor: '#f9fafb',
-                borderRadius: '6px',
+                backgroundColor: 'var(--bg-tertiary)',
+                borderRadius: '10px',
                 padding: '12px 14px',
                 marginBottom: '24px',
                 display: 'flex',
-                alignItems: 'flex-start',
-                gap: '10px'
+                alignItems: 'center',
+                gap: '10px',
+                border: '1px solid var(--border-subtle)',
               }}>
-                <span style={{ fontSize: '14px' }}>🔒</span>
-                <p style={{ fontSize: '13px', color: '#6b7280', lineHeight: 1.5, margin: 0 }}>
-                  Your files are processed locally and never uploaded to any server.
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" strokeWidth="2">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                <p style={{
+                  fontSize: '13px',
+                  color: 'var(--text-tertiary)',
+                  lineHeight: 1.5,
+                  margin: 0
+                }}>
+                  Files are processed locally in your browser
                 </p>
               </div>
 
@@ -317,20 +390,20 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading }) {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '8px',
+                  gap: '10px',
                   width: '100%',
-                  height: '36px',
+                  height: '44px',
                   fontSize: '14px',
                   fontWeight: 500,
-                  color: 'white',
-                  backgroundColor: '#0ea5e9',
-                  borderRadius: '6px',
+                  color: isDark ? '#0a0a0b' : '#ffffff',
+                  backgroundColor: isDark ? '#fafafa' : '#111827',
+                  borderRadius: '10px',
                   cursor: 'pointer',
                   border: 'none',
-                  transition: 'background-color 0.15s ease',
+                  transition: 'all 0.15s ease',
                 }}
-                onMouseEnter={(e) => e.target.style.backgroundColor = '#0284c7'}
-                onMouseLeave={(e) => e.target.style.backgroundColor = '#0ea5e9'}
+                onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
+                onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
               >
                 <FontAwesomeIcon icon={faFolder} />
                 Select folder
