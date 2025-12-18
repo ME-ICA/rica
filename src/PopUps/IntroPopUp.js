@@ -1,8 +1,18 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import Papa from "papaparse";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFolder } from "@fortawesome/free-solid-svg-icons";
 import { parseMixingMatrix } from "../utils/tsvParser";
+
+// Convert blob to data URL
+function blobToDataURL(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
 
 // Rank array helper
 function rankArray(data) {
@@ -57,6 +67,179 @@ function readFileAsArrayBuffer(file) {
 
 function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark }) {
   const [loadingProgress, setLoadingProgress] = useState({ current: 0, total: 0 });
+  const [serverFiles, setServerFiles] = useState(null);
+  const hasTriedServerLoad = useRef(false);
+
+  // Load files from local server via HTTP
+  const loadFromServer = useCallback(
+    async (files, basePath) => {
+      onLoadingStart();
+
+      // Filter to relevant files
+      const relevantFiles = files.filter(
+        (f) =>
+          f.includes("comp_") ||
+          f.includes(".svg") ||
+          f === "report.txt" ||
+          (f.includes("_metrics.tsv") && !f.includes("PCA")) ||
+          (f.startsWith("tedana_20") && f.endsWith(".tsv")) ||
+          (f.includes("_mixing.tsv") && !f.includes("PCA")) ||
+          (f.includes("stat-z_components.nii.gz") && f.includes("ICA")) ||
+          f.includes("_mask.nii")
+      );
+
+      setLoadingProgress({ current: 0, total: relevantFiles.length });
+
+      const compFigures = [];
+      const carpetFigures = [];
+      let info = "";
+      let components = [];
+      let originalData = [];
+      let dirPath = basePath || "";
+      let mixingMatrix = null;
+      let niftiBuffer = null;
+      let maskBuffer = null;
+
+      let processed = 0;
+
+      // Process files via HTTP fetch
+      for (const filepath of relevantFiles) {
+        const filename = filepath.split("/").pop();
+
+        try {
+          // Component figures (PNG)
+          if (filename.includes("comp_") && filename.endsWith(".png")) {
+            const response = await fetch(`/${filepath}`);
+            const blob = await response.blob();
+            const dataUrl = await blobToDataURL(blob);
+            compFigures.push({ name: filename, img: dataUrl });
+            processed++;
+            setLoadingProgress((prev) => ({ ...prev, current: processed }));
+          }
+
+          // Carpet plots (SVG)
+          if (filename.endsWith(".svg")) {
+            const response = await fetch(`/${filepath}`);
+            const blob = await response.blob();
+            const dataUrl = await blobToDataURL(blob);
+            carpetFigures.push({ name: filename, img: dataUrl });
+            processed++;
+            setLoadingProgress((prev) => ({ ...prev, current: processed }));
+          }
+
+          // Report info
+          if (filename === "report.txt") {
+            const response = await fetch(`/${filepath}`);
+            info = await response.text();
+            processed++;
+            setLoadingProgress((prev) => ({ ...prev, current: processed }));
+          }
+
+          // Component metrics table
+          if (filename.includes("_metrics.tsv") && !filename.includes("PCA")) {
+            const response = await fetch(`/${filepath}`);
+            const text = await response.text();
+            const parsed = Papa.parse(text, {
+              header: true,
+              skipEmptyLines: true,
+              dynamicTyping: true,
+            });
+            originalData = JSON.parse(JSON.stringify(parsed.data));
+            rankComponents(parsed.data);
+            components = parsed.data;
+            processed++;
+            setLoadingProgress((prev) => ({ ...prev, current: processed }));
+          }
+
+          // Dataset path
+          if (filename.startsWith("tedana_20") && filename.endsWith(".tsv")) {
+            const response = await fetch(`/${filepath}`);
+            const text = await response.text();
+            const lines = text.split("\n");
+            for (const line of lines) {
+              if (line.includes("Using output directory:")) {
+                const match = line.match(/Using output directory:\s*(.+)/);
+                if (match) {
+                  dirPath = match[1].trim();
+                  break;
+                }
+              }
+            }
+            processed++;
+            setLoadingProgress((prev) => ({ ...prev, current: processed }));
+          }
+
+          // ICA Mixing matrix
+          if (filename.includes("_mixing.tsv") && !filename.includes("PCA")) {
+            const response = await fetch(`/${filepath}`);
+            const text = await response.text();
+            mixingMatrix = parseMixingMatrix(text);
+            processed++;
+            setLoadingProgress((prev) => ({ ...prev, current: processed }));
+          }
+
+          // ICA stat-z components NIfTI
+          if (filename.includes("stat-z_components.nii.gz") && filename.includes("ICA")) {
+            const response = await fetch(`/${filepath}`);
+            niftiBuffer = await response.arrayBuffer();
+            processed++;
+            setLoadingProgress((prev) => ({ ...prev, current: processed }));
+          }
+
+          // Brain mask NIfTI
+          if (filename.includes("_mask.nii") && !maskBuffer) {
+            const response = await fetch(`/${filepath}`);
+            maskBuffer = await response.arrayBuffer();
+            processed++;
+            setLoadingProgress((prev) => ({ ...prev, current: processed }));
+          }
+        } catch (error) {
+          console.error(`Error fetching file ${filepath}:`, error);
+        }
+      }
+
+      // Sort component figures by name
+      compFigures.sort((a, b) => a.name.localeCompare(b.name));
+      carpetFigures.sort((a, b) => a.name.localeCompare(b.name));
+
+      // Pass all data to parent
+      onDataLoad({
+        componentFigures: compFigures,
+        carpetFigures,
+        components: [components],
+        info,
+        originalData: [originalData],
+        dirPath,
+        mixingMatrix,
+        niftiBuffer,
+        maskBuffer,
+      });
+    },
+    [onDataLoad, onLoadingStart]
+  );
+
+  // Check for local server on mount and auto-load if files found
+  useEffect(() => {
+    // Only try once and only on localhost
+    if (hasTriedServerLoad.current) return;
+    if (window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") return;
+
+    hasTriedServerLoad.current = true;
+
+    // Try to fetch file list from server
+    fetch("/api/files")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.files?.length > 0) {
+          setServerFiles(data);
+          // Auto-load immediately
+          loadFromServer(data.files, data.path);
+        }
+      })
+      .catch(() => {
+        // Not running with Rica server, use manual folder selection
+      });
+  }, [loadFromServer]);
 
   const processFiles = useCallback(
     async (e) => {

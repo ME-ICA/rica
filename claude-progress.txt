@@ -878,6 +878,98 @@ const niivueBgColor = useMemo(() =>
 
 ---
 
+## Session 7 - Local Server for Automatic Data Loading (2025-12-18)
+
+### Goals
+- Enable automatic data loading when running locally via Python server
+- Eliminate need for manual folder selection when serving tedana output
+- Create portable server script for distribution with builds
+
+### Architecture
+
+**User Flow:**
+1. User copies `index.html` and `rica_server.py` to tedana output folder
+2. User runs `python rica_server.py`
+3. Server starts on port 8000 and opens browser
+4. React app detects localhost, fetches file list from `/api/files`
+5. Data auto-loads without any user interaction
+
+### Files Created
+
+**scripts/rica_server.py** - Python HTTP server with:
+- CORS headers for cross-origin requests
+- `/api/files` endpoint returning JSON list of Rica-relevant files
+- Recursive file scanning for files in subdirectories (e.g., `figures/`)
+- Auto-opens browser on start
+- No external dependencies (Python stdlib only)
+- Command-line options: `--port`, `--no-open`
+
+### Files Modified
+
+**src/PopUps/IntroPopUp.js**:
+- Added `loadFromServer()` function for HTTP-based file loading
+- Added `useEffect` hook to detect localhost and auto-load
+- Uses `fetch()` API instead of `FileReader` for HTTP loading
+- Reuses existing parsing logic (Papa Parse, ArrayBuffer handling)
+- Added `blobToDataURL()` helper for image files
+
+**scripts/build.sh**:
+- Copies `rica_server.py` to `build/` directory after build
+- Added usage instructions for tedana integration
+
+### API Endpoint
+
+```
+GET /api/files
+Response: {
+  "files": ["figures/comp_001.png", "desc-ICA_metrics.tsv", ...],
+  "path": "/absolute/path/to/folder",
+  "count": 47
+}
+```
+
+### Technical Details
+
+```python
+# Server file patterns
+RICA_FILE_PATTERNS = [
+    "_metrics.tsv", "_mixing.tsv", "stat-z_components.nii.gz",
+    "_mask.nii", "report.txt", "comp_", ".svg", "tedana_"
+]
+```
+
+```javascript
+// Auto-detection in React
+useEffect(() => {
+  if (window.location.hostname === "localhost") {
+    fetch("/api/files")
+      .then(r => r.json())
+      .then(data => {
+        if (data.files?.length > 0) {
+          loadFromServer(data.files, data.path);
+        }
+      });
+  }
+}, []);
+```
+
+### Usage
+
+```bash
+# Build with inline assets
+./scripts/build.sh --inline
+
+# Copy to tedana output folder
+cp build/index.html build/rica_server.py /path/to/tedana/output/
+
+# Run server
+cd /path/to/tedana/output/
+python rica_server.py
+# Browser opens automatically, data loads automatically
+```
+
+---
+
 ## Template for Future Sessions
 
 ```
