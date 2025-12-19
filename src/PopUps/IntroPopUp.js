@@ -67,7 +67,6 @@ function readFileAsArrayBuffer(file) {
 
 function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark }) {
   const [loadingProgress, setLoadingProgress] = useState({ current: 0, total: 0 });
-  const [serverFiles, setServerFiles] = useState(null);
   const hasTriedServerLoad = useRef(false);
 
   // Load files from local server via HTTP
@@ -101,8 +100,6 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
       let niftiBuffer = null;
       let maskBuffer = null;
 
-      let processed = 0;
-
       // Process files via HTTP fetch
       for (const filepath of relevantFiles) {
         const filename = filepath.split("/").pop();
@@ -114,8 +111,7 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
             const blob = await response.blob();
             const dataUrl = await blobToDataURL(blob);
             compFigures.push({ name: filename, img: dataUrl });
-            processed++;
-            setLoadingProgress((prev) => ({ ...prev, current: processed }));
+            setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
 
           // Carpet plots (SVG)
@@ -124,16 +120,14 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
             const blob = await response.blob();
             const dataUrl = await blobToDataURL(blob);
             carpetFigures.push({ name: filename, img: dataUrl });
-            processed++;
-            setLoadingProgress((prev) => ({ ...prev, current: processed }));
+            setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
 
           // Report info
           if (filename === "report.txt") {
             const response = await fetch(`/${filepath}`);
             info = await response.text();
-            processed++;
-            setLoadingProgress((prev) => ({ ...prev, current: processed }));
+            setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
 
           // Component metrics table
@@ -148,8 +142,7 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
             originalData = JSON.parse(JSON.stringify(parsed.data));
             rankComponents(parsed.data);
             components = parsed.data;
-            processed++;
-            setLoadingProgress((prev) => ({ ...prev, current: processed }));
+            setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
 
           // Dataset path
@@ -166,8 +159,7 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
                 }
               }
             }
-            processed++;
-            setLoadingProgress((prev) => ({ ...prev, current: processed }));
+            setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
 
           // ICA Mixing matrix
@@ -175,24 +167,21 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
             const response = await fetch(`/${filepath}`);
             const text = await response.text();
             mixingMatrix = parseMixingMatrix(text);
-            processed++;
-            setLoadingProgress((prev) => ({ ...prev, current: processed }));
+            setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
 
           // ICA stat-z components NIfTI
           if (filename.includes("stat-z_components.nii.gz") && filename.includes("ICA")) {
             const response = await fetch(`/${filepath}`);
             niftiBuffer = await response.arrayBuffer();
-            processed++;
-            setLoadingProgress((prev) => ({ ...prev, current: processed }));
+            setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
 
           // Brain mask NIfTI
           if (filename.includes("_mask.nii") && !maskBuffer) {
             const response = await fetch(`/${filepath}`);
             maskBuffer = await response.arrayBuffer();
-            processed++;
-            setLoadingProgress((prev) => ({ ...prev, current: processed }));
+            setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
         } catch (error) {
           console.error(`Error fetching file ${filepath}:`, error);
@@ -234,7 +223,6 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
       .then((data) => {
         console.log("[Rica] Server response:", data.files?.length, "files found");
         if (data.files?.length > 0) {
-          setServerFiles(data);
           // Auto-load immediately
           loadFromServer(data.files, data.path);
         }
@@ -275,8 +263,6 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
       let niftiBuffer = null;
       let maskBuffer = null;
 
-      let processed = 0;
-
       // Process all files in parallel using Promise.all
       const filePromises = files.map(async (file) => {
         const filename = file.name;
@@ -286,23 +272,20 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
           if (filename.includes("comp_") && filename.endsWith(".png")) {
             const dataUrl = await readFileAsDataURL(file);
             compFigures.push({ name: filename, img: dataUrl });
-            processed++;
-            setLoadingProgress((prev) => ({ ...prev, current: processed }));
+            setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
 
           // Carpet plots (SVG)
           if (filename.endsWith(".svg")) {
             const dataUrl = await readFileAsDataURL(file);
             carpetFigures.push({ name: filename, img: dataUrl });
-            processed++;
-            setLoadingProgress((prev) => ({ ...prev, current: processed }));
+            setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
 
           // Report info
           if (filename === "report.txt") {
             info = await readFileAsText(file);
-            processed++;
-            setLoadingProgress((prev) => ({ ...prev, current: processed }));
+            setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
 
           // Component metrics table
@@ -316,8 +299,7 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
             originalData = JSON.parse(JSON.stringify(parsed.data));
             rankComponents(parsed.data);
             components = parsed.data;
-            processed++;
-            setLoadingProgress((prev) => ({ ...prev, current: processed }));
+            setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
 
           // Dataset path
@@ -334,30 +316,26 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
                 }
               }
             }
-            processed++;
-            setLoadingProgress((prev) => ({ ...prev, current: processed }));
+            setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
 
           // ICA Mixing matrix (time series data for Niivue)
           if (filename.includes("_mixing.tsv") && !filename.includes("PCA")) {
             const text = await readFileAsText(file);
             mixingMatrix = parseMixingMatrix(text);
-            processed++;
-            setLoadingProgress((prev) => ({ ...prev, current: processed }));
+            setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
 
           // ICA stat-z components NIfTI (4D brain maps for Niivue)
           if (filename.includes("stat-z_components.nii.gz") && filename.includes("ICA")) {
             niftiBuffer = await readFileAsArrayBuffer(file);
-            processed++;
-            setLoadingProgress((prev) => ({ ...prev, current: processed }));
+            setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
 
           // Brain mask NIfTI (for masking stat maps in Niivue)
           if (filename.includes("_mask.nii") && !maskBuffer) {
             maskBuffer = await readFileAsArrayBuffer(file);
-            processed++;
-            setLoadingProgress((prev) => ({ ...prev, current: processed }));
+            setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
         } catch (error) {
           console.error(`Error reading file ${filename}:`, error);

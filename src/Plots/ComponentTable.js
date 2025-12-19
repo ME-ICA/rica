@@ -139,7 +139,6 @@ function ComponentTable({ data, selectedIndex, onRowClick, classifications, isDa
   const headerBg = isDark ? '#18181b' : '#f3f4f6';
   const headerColor = isDark ? '#fafafa' : '#374151';
   const textPrimary = isDark ? '#fafafa' : '#111827';
-  const textSecondary = isDark ? '#a1a1aa' : '#6b7280';
   const borderColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
 
   return (
