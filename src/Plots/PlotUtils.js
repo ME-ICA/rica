@@ -5,6 +5,12 @@ const rejedtecColorHover = "#DC2626";
 const ignoredColor = "#7DD3FC";
 const ignoredColorHover = "#0284C7";
 
+// Format component name for display (ICA_01 → ICA 01)
+export function formatComponentName(name) {
+  if (!name || typeof name !== "string") return name;
+  return name.replace(/_/g, " ");
+}
+
 // This functions converts the data into 4 objects corresponding to the 4 plots.
 // The objects have the necessary structure to feed the chartjs plots.
 export function parseData(data) {

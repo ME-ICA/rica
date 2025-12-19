@@ -1,6 +1,62 @@
+/* Rica - Minimal Modern Theme */
+
 :root {
+  /* Light mode (default) */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f9fafb;
+  --bg-tertiary: #f3f4f6;
+  --bg-elevated: #ffffff;
+
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --text-tertiary: #9ca3af;
+
+  --accent-accepted: #10b981;
+  --accent-accepted-dim: rgba(16, 185, 129, 0.1);
+  --accent-rejected: #ef4444;
+  --accent-rejected-dim: rgba(239, 68, 68, 0.1);
+  --accent-blue: #3b82f6;
+
+  --border-subtle: rgba(0, 0, 0, 0.04);
+  --border-default: rgba(0, 0, 0, 0.08);
+  --border-strong: rgba(0, 0, 0, 0.12);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.12);
+
+  --chart-bg: #ffffff;
+
   min-height: 100% !important;
   height: 100%;
+}
+
+/* Dark mode */
+[data-theme="dark"] {
+  --bg-primary: #0a0a0b;
+  --bg-secondary: #111113;
+  --bg-tertiary: #18181b;
+  --bg-elevated: #1f1f23;
+
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-tertiary: #71717a;
+
+  --accent-accepted: #10b981;
+  --accent-accepted-dim: rgba(16, 185, 129, 0.15);
+  --accent-rejected: #f87171;
+  --accent-rejected-dim: rgba(248, 113, 113, 0.15);
+  --accent-blue: #3b82f6;
+
+  --border-subtle: rgba(255, 255, 255, 0.04);
+  --border-default: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.12);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.5);
+
+  --chart-bg: #18181b;
 }
 
 html,
@@ -10,135 +66,104 @@ body {
 }
 
 body {
-  background-color: var(--bg0);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
   margin: 0 !important;
   padding: 0 !important;
-  /* System Fonts as used by GitHub */
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
-    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-  font-size: 15px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-#app {
-  border-radius: 3px;
-  border: 1px solid var(--c6);
-  margin: 15px;
-  background-color: var(--bg0);
+/* Theme transition class - add to root element */
+.theme-transition,
+.theme-transition *,
+.theme-transition *::before,
+.theme-transition *::after {
+  transition:
+    background-color 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important,
+    border-color 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important,
+    color 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important,
+    fill 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important,
+    stroke 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important,
+    box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-.title {
-  font-weight: 700;
-  color: var(--c1);
+/* Exclude canvas from transitions */
+.theme-transition canvas {
+  transition: none !important;
 }
 
-ul {
-  display: flex;
-  justify-content: center;
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
-ul.inline {
-  list-style: none;
-  padding: 0;
-  margin-bottom: 0;
-  -webkit-margin-before: 0;
-  -webkit-margin-after: 0;
-  -webkit-margin-start: 0px;
-  -webkit-margin-end: 0px;
-  -webkit-padding-start: 0px;
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
 }
 
-.carpet-plots-image {
-  margin-top: 2%;
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 4px;
 }
 
-.dd-menu {
-  color: var(--c1);
-  font-size: 16px;
-  padding: 10px;
-  border-radius: 5px;
-  margin-left: 2%;
-  margin-top: 2%;
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
 }
 
-.dd-option {
-  color: var(--c3);
-}
-
-.plot-container-in {
-  grid-template-columns: 40% 40%;
-  grid-row: auto auto;
-}
-
-/* .plot-box {
-  background-color: white;
-  padding: 5px 30px;
-  border-radius: 10px;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 40px;
-  font-family: sans-serif;
-  width: 100%;
-  height: 99%;
-  position: relative;
-} */
-
-.component-plots-image {
-  display: flex;
-  width: 45%;
-  float: right;
-}
-
-.kappa_rho {
-  padding-top: 10px;
-}
-
+/* Hidden file input */
 input[type="file"] {
   display: none;
 }
 
-.close {
-  position: absolute;
-  opacity: 0.3;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  margin: 0;
-  padding: 2px;
-  top: 5px;
-  right: 26px;
-}
-/* .close:hover {
-  opacity: 1;
-} */
-.close:before,
-.close:after {
-  position: absolute;
-  left: 15px;
-  content: " ";
-  height: 15px;
-  width: 2px;
-  background-color: #000;
-}
-.close:before {
-  transform: rotate(45deg);
-}
-.close:after {
-  transform: rotate(-45deg);
-}
-
-.about-link {
+/* Links */
+a {
+  color: var(--accent-blue);
   text-decoration: none;
-  color: white;
 }
 
-.about-link:hover {
-  text-decoration: none;
-  color: white;
+a:hover {
+  text-decoration: underline;
 }
 
-/* Selected tab */
-[data-selected] {
-  color: black;
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* Focus states */
+*:focus {
+  outline: none;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 2px;
+}
+
+/* Selection */
+::selection {
+  background: rgba(59, 130, 246, 0.3);
+  color: var(--text-primary);
 }

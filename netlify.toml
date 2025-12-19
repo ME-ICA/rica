@@ -1,0 +1,7 @@
+[build]
+  command = "npm run build && npx gulp"
+  publish = "build"
+
+[build.environment]
+  NODE_VERSION = "20"
+  PYTHON_VERSION = "none"

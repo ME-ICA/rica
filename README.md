@@ -2,57 +2,112 @@
 
 [![DOI](https://zenodo.org/badge/391155862.svg)](https://zenodo.org/badge/latestdoi/391155862)
 
-As part of the ME-ICA pipeline, `Rica` (Reports for ICA) provides a reporting tool for ICA decompositions performed with [tedana](https://github.com/ME-ICA/tedana) and [aroma](https://github.com/ME-ICA/aroma).
+**Rica** (Reports for ICA) is an interactive visualization tool for reviewing and classifying ICA components from [tedana](https://github.com/ME-ICA/tedana) multi-echo fMRI analysis.
 
-**Pronunciation:** [ˈrika]. For an audio recording on how to pronounce Rica [see here](https://easypronunciation.com/en/spanish/word/rica).
+**Pronunciation:** [ˈrika]. [Hear it here](https://easypronunciation.com/en/spanish/word/rica).
 
-## About
+## Features
 
-`Rica` originally came out as an alternative to the reports provided by [tedana](https://github.com/ME-ICA/tedana), with the aim of making manual classification of ICA components possible. At the same time, the tool aspires to be of value for ICA decompositions made with tools other than `tedana`. `Rica` assumes you're working with files that mimic the outputs of `tedana`.
+- **Interactive scatter plots** - Kappa vs Rho, Kappa vs Variance with zoom/pan
+- **Pie chart** - Component variance distribution, click to select
+- **3D brain viewer** - Interactive stat-z maps using Niivue
+- **Time series & FFT** - Component time courses and power spectra
+- **Component table** - Full metrics with sorting and selection
+- **Classification toggle** - Accept/reject components with keyboard shortcuts
+- **Light/dark theme** - Toggle with the sun/moon button
+- **Export** - Save modified classifications as TSV
 
-## How to use Rica
+## How to Use
 
-Even if Rica is designed to be simple to use, you might want to see how you can use the app by watching this [tutorial video](https://www.loom.com/share/ad37cf6f3c2d41e48721f62168a8284e).
+For a video tutorial, see [this walkthrough](https://www.loom.com/share/ad37cf6f3c2d41e48721f62168a8284e).
 
-Rica also supports keyboard shortcuts on the ICA components page. You can use the following shortcuts:
+### Keyboard Shortcuts
 
-- `a`: Accept component.
-- `r`: Reject component.
-- `i`: Ignore component.
-- `left arrow`: Go to previous component.
-- `right arrow`: Go to next component.
+| Key | Action |
+|-----|--------|
+| `A` | Accept component |
+| `R` | Reject component |
+| `←` | Previous component |
+| `→` | Next component |
 
-## Using Rica online
+## Using Rica
 
-Just head over to https://rica-fmri.netlify.app and have fun!
+### Option 1: Online (Easiest)
 
-## Using Rica locally
+Visit **https://rica-fmri.netlify.app** and select your tedana output folder.
 
-### Installation
+### Option 2: Local Server (Recommended for Local Use)
 
-`Rica` can be installed by cloning this repository and executing the following command in the cloned repository:
+Run Rica directly from your tedana output folder with automatic data loading:
 
-```npm install```
+1. Download the latest release files:
+   - `index.html`
+   - `rica_server.py`
+   - `favicon.ico`
 
-In order to run the tool locally, two options exist:
+2. Copy these files to your tedana output folder:
+   ```bash
+   cp index.html rica_server.py favicon.ico /path/to/tedana/output/
+   ```
 
-#### 1. Using a localhost
+3. Run the server:
+   ```bash
+   cd /path/to/tedana/output/
+   python rica_server.py
+   ```
 
-By executing the `npm start` command in the cloned repository, `Rica` will open in a new browser tab at [http://localhost:3000](http://localhost:3000) and you will be able to use the tool.
+4. Your browser opens automatically and data loads instantly!
 
-#### 2. Compiling the tool
+> **Note:** The "New" button is hidden in local server mode since data is loaded automatically.
 
-You could also compile the project so that you can use the tool just by opening an HTML file. For that, it is necessary to execute the following commands in the cloned repository.
+### Option 3: Development Server
+
+For development or if you want to load different folders:
 
 ```bash
-npm run build
-npx gulp
-mv build/index.html build/rica.html
-open build/rica.html
+# Clone and install
+git clone https://github.com/ME-ICA/rica.git
+cd rica
+npm install
+
+# Start development server
+npm start
 ```
 
-> Pro tip: when you open rica.html for the first time, BOOKMARK IT 😉
+Then open http://localhost:3000 and select your tedana output folder.
 
-## Getting involved
+### Option 4: Build from Source
 
-Want to learn more about our plans for developing `Rica`? Have a question, comment, or suggestion? Open or comment on one of our issues!
+Build a single-file HTML distribution:
+
+```bash
+# Install dependencies
+npm install
+
+# Build with inlined assets
+npm run build
+npx gulp
+
+# Output files in build/
+# - index.html (single-file app)
+# - rica_server.py (local server)
+# - favicon.ico
+```
+
+## Required Files
+
+Rica expects these files from tedana output:
+
+| File Pattern | Description |
+|--------------|-------------|
+| `*_metrics.tsv` | Component metrics table |
+| `*_mixing.tsv` | ICA mixing matrix (time series) |
+| `*stat-z_components.nii.gz` | 4D component stat maps |
+| `*_mask.nii.gz` | Brain mask |
+| `figures/comp_*.png` | Component figures |
+| `*.svg` | Carpet plots |
+| `report.txt` | Tedana report |
+
+## Contributing
+
+Questions, suggestions, or contributions? Open an issue on [GitHub](https://github.com/ME-ICA/rica/issues)!
