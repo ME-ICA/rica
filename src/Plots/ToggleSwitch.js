@@ -1,5 +1,4 @@
-import React, { Component } from "react";
-import { Switch, SwitchLabel, SwitchSelection } from "./ToggleStyles.js";
+import React, { useCallback } from "react";
 
 const titleCase = (str) =>
   str
@@ -7,63 +6,68 @@ const titleCase = (str) =>
     .map((w) => w[0].toUpperCase() + w.slice(1))
     .join(" ");
 
-const ClickableLabel = ({ title, onChange, id }) => (
-  <SwitchLabel onClick={() => onChange(title)} className={id}>
-    {titleCase(title)}
-  </SwitchLabel>
-);
-
-const ConcealedRadio = ({ value, selected }) => (
-  <input
-    className="hidden"
-    type="radio"
-    name="switch"
-    checked={selected === value}
-    readOnly
-  />
-);
-
-class ToggleSwitch extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      selected: this.props.selected,
-    };
-  }
-
-  componentDidUpdate() {
-    if (this.state.selected !== this.props.selected) {
-      this.setState({ selected: this.props.selected });
-    }
-  }
-
-  selectionStyle = () => {
+function ToggleSwitch({ values, selected, colors, handleNewSelection, isDark = false }) {
+  const selectionStyle = useCallback(() => {
+    const index = values.indexOf(selected);
     return {
-      left: `${(this.props.values.indexOf(this.state.selected) / 3) * 100}%`,
-      background: `${
-        this.props.colors[this.props.values.indexOf(this.state.selected)]
-      }`,
+      left: `${index * 90}px`,
+      background: colors[index],
     };
-  };
+  }, [values, selected, colors]);
 
-  render() {
-    return (
-      <div className="relative h-8 -mt-1 font-semibold bg-gray-200 rounded-md w-fit">
-        {this.props.values.map((val) => {
-          return (
-            <span>
-              <ConcealedRadio value={val} selected={this.state.selected} />
-              <ClickableLabel
-                title={val}
-                onChange={this.props.handleNewSelection}
-              />
-            </span>
-          );
-        })}
-        <SwitchSelection style={this.selectionStyle()} />
-      </div>
-    );
-  }
+  return (
+    <div style={{
+      position: 'relative',
+      height: '36px',
+      fontWeight: 600,
+      backgroundColor: isDark ? '#27272a' : '#e5e7eb',
+      borderRadius: '8px',
+      display: 'flex',
+    }}>
+      {values.map((val) => (
+        <span key={val}>
+          <input
+            style={{ display: 'none' }}
+            type="radio"
+            name="switch"
+            checked={selected === val}
+            readOnly
+          />
+          <label
+            onClick={() => handleNewSelection(val)}
+            style={{
+              position: 'relative',
+              zIndex: 10,
+              height: '36px',
+              width: '90px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              transition: 'color 0.2s ease',
+              color: selected === val ? '#1f2937' : (isDark ? '#a1a1aa' : 'rgba(0,0,0,0.6)'),
+              fontSize: '13px',
+            }}
+          >
+            {titleCase(val)}
+          </label>
+        </span>
+      ))}
+      <span
+        style={{
+          ...selectionStyle(),
+          position: 'absolute',
+          top: 0,
+          zIndex: 0,
+          display: 'block',
+          height: '36px',
+          width: '90px',
+          borderRadius: '8px',
+          transition: 'all 0.2s ease',
+        }}
+      />
+    </div>
+  );
 }
 
 export default ToggleSwitch;

@@ -1,10 +1,9 @@
-const gulp = require("gulp");
+const { src, dest, series } = require("gulp");
 const inlinesource = require("gulp-inline-source");
 const replace = require("gulp-replace");
 
-gulp.task("default", () => {
-  return gulp
-    .src("./build/*.html")
+function inlineAssets() {
+  return src("./build/*.html")
     .pipe(replace('.js"></script>', '.js" inline></script>'))
     .pipe(replace('rel="stylesheet">', 'rel="stylesheet" inline>'))
     .pipe(
@@ -13,5 +12,7 @@ gulp.task("default", () => {
         ignore: ["png"],
       })
     )
-    .pipe(gulp.dest("./build"));
-});
+    .pipe(dest("./build"));
+}
+
+exports.default = series(inlineAssets);

@@ -1,72 +1,150 @@
-import React, { Component } from "react";
+import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
 
-class AboutPopup extends Component {
-  render() {
-    return (
-      <div className="fixed z-10 flex items-center justify-center w-full h-full bg-gray-500 bg-opacity-50 backdrop-blur-sm">
-        <div className="absolute z-20 w-1/3 px-16 py-10 m-auto bg-white h-fit rounded-xl drop-shadow-2xl">
-          <button
-            onClick={this.props.closePopup}
-            type="button"
-            className="absolute top-0 right-0 inline-flex items-center p-2 ml-auto text-base text-gray-400 bg-transparent rounded-xl hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white"
-          >
-            <svg
-              class="w-5 h-5"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                clip-rule="evenodd"
-              ></path>
-            </svg>
-          </button>
-          <h1 className="mb-8 text-3xl font-extrabold">
-            About us{" "}
-            <span role="img" aria-label="brain">
-              🧠
-            </span>
-          </h1>
-          <p className="my-4 text-base">Thank you so much for using Rica!</p>
-          <p className="my-4 text-base">
-            Our aim is to make analayzing and revising ICA components of fMRI
-            data a little bit less painful. Hopefully, we can make this process
-            as easy and joyful as possible.
+function AboutPopup({ closePopup, isDark }) {
+  return (
+    <div
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 50,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: isDark ? 'rgba(0, 0, 0, 0.8)' : 'rgba(0, 0, 0, 0.4)',
+        backdropFilter: 'blur(4px)',
+      }}
+      onClick={closePopup}
+    >
+      <div
+        style={{
+          position: 'relative',
+          width: '100%',
+          maxWidth: '400px',
+          margin: '0 24px',
+          backgroundColor: 'var(--bg-elevated)',
+          borderRadius: '16px',
+          border: '1px solid var(--border-default)',
+          boxShadow: 'var(--shadow-lg)',
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Close button */}
+        <button
+          onClick={closePopup}
+          type="button"
+          style={{
+            position: 'absolute',
+            top: '16px',
+            right: '16px',
+            width: '32px',
+            height: '32px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: '8px',
+            border: 'none',
+            backgroundColor: 'transparent',
+            color: 'var(--text-tertiary)',
+            cursor: 'pointer',
+            transition: 'all 0.15s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)';
+            e.currentTarget.style.color = 'var(--text-primary)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'transparent';
+            e.currentTarget.style.color = 'var(--text-tertiary)';
+          }}
+        >
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
+            <path d="M13.7 0.3c-0.4-0.4-1-0.4-1.4 0L7 5.6 1.7 0.3c-0.4-0.4-1-0.4-1.4 0s-0.4 1 0 1.4L5.6 7l-5.3 5.3c-0.4 0.4-0.4 1 0 1.4 0.2 0.2 0.4 0.3 0.7 0.3s0.5-0.1 0.7-0.3L7 8.4l5.3 5.3c0.2 0.2 0.5 0.3 0.7 0.3s0.5-0.1 0.7-0.3c0.4-0.4 0.4-1 0-1.4L8.4 7l5.3-5.3c0.4-0.4 0.4-1 0-1.4z"/>
+          </svg>
+        </button>
+
+        <div style={{ padding: '32px' }}>
+          {/* Logo */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            marginBottom: '20px'
+          }}>
+            <img
+              src="/favicon.ico"
+              alt="Rica"
+              style={{ width: '36px', height: '36px' }}
+            />
+            <div>
+              <h1 style={{
+                fontSize: '20px',
+                fontWeight: 600,
+                color: 'var(--text-primary)',
+                margin: 0,
+                letterSpacing: '-0.02em',
+              }}>
+                Rica
+              </h1>
+              <p style={{
+                fontSize: '12px',
+                color: 'var(--text-tertiary)',
+                margin: 0,
+                marginTop: '2px',
+              }}>
+                v2.0.0
+              </p>
+            </div>
+          </div>
+
+          <p style={{
+            fontSize: '14px',
+            color: 'var(--text-secondary)',
+            lineHeight: 1.6,
+            marginBottom: '12px'
+          }}>
+            An interactive visualization tool for reviewing and classifying ICA components from tedana analysis.
           </p>
-          <p className="my-4 text-base">
-            If you want to learn more about us, have questions or suggestions,
-            or want to help us make this tool even better, click on the button
-            below. <span> </span>
-            <span role="img" aria-label="point-down">
-              👇
-            </span>
+
+          <p style={{
+            fontSize: '14px',
+            color: 'var(--text-secondary)',
+            lineHeight: 1.6,
+            marginBottom: '24px'
+          }}>
+            Questions or contributions welcome.
           </p>
+
           <a
             href="https://github.com/ME-ICA/rica"
             target="_blank"
-            className="about-link"
             rel="noreferrer noopener"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              width: '100%',
+              height: '44px',
+              fontSize: '14px',
+              fontWeight: 500,
+              color: isDark ? '#0a0a0b' : '#ffffff',
+              backgroundColor: isDark ? '#fafafa' : '#111827',
+              borderRadius: '10px',
+              textDecoration: 'none',
+              transition: 'all 0.15s ease',
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
+            onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
           >
-            <label className="relative inline-flex items-center content-center justify-center w-fit h-10 px-5 pt-0.5 mt-4 text-base font-semibold text-center text-white bg-sky-500 rounded-xl hover:cursor-pointer hover:bg-sky-600">
-              <FontAwesomeIcon
-                icon={faGithub}
-                size="lg"
-                className="mx-2 -mt-0.5"
-              />{" "}
-              Contribute
-            </label>
+            <FontAwesomeIcon icon={faGithub} />
+            View on GitHub
           </a>
-          <div className="absolute right-0 mr-5 text-gray-400">
-            <span>v{process.env.REACT_APP_VERSION}</span>
-          </div>
         </div>
       </div>
-    );
-  }
+    </div>
+  );
 }
 
 export default AboutPopup;

@@ -1,10 +1,7 @@
-import ReactDOM from "react-dom";
-import React, { Component } from "react";
-import { Helmet } from 'react-helmet';
+import React, { useState, useEffect, useCallback } from "react";
+import { createRoot } from "react-dom/client";
+import { HelmetProvider, Helmet } from "react-helmet-async";
 
-import Carpets from "./Carpets/Carpets";
-import Info from "./Info/Info";
-import Plots from "./Plots/Plots";
 import IntroPopup from "./PopUps/IntroPopUp";
 import AboutPopup from "./PopUps/AboutPopUp";
 import MobileMain from "./Mobile";
@@ -12,7 +9,7 @@ import MobileMain from "./Mobile";
 import "./styles/output.css";
 import "./styles.css";
 
-import { TabList, TabPanels, TabPanel } from "@reach/tabs";
+import { TabList, TabPanels, TabPanel } from "./TabComponents";
 import { AnimatedTab, AnimatedTabs } from "./TabFunctions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -21,202 +18,356 @@ import {
   faChartPie,
   faPlus,
   faQuestion,
+  faSun,
+  faMoon,
 } from "@fortawesome/free-solid-svg-icons";
+import { library } from "@fortawesome/fontawesome-svg-core";
 
-import { library } from "@fortawesome/fontawesome-svg-core"; //allows later to just use icon name to render-them
+// Import components directly (no lazy loading for single-file distribution)
+import Plots from "./Plots/Plots";
+import Carpets from "./Carpets/Carpets";
+import Info from "./Info/Info";
 
-library.add(faInfoCircle, faLayerGroup, faChartPie, faPlus, faQuestion);
+library.add(faInfoCircle, faLayerGroup, faChartPie, faPlus, faQuestion, faSun, faMoon);
 
-class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      componentData: [],
-      componentFigures: [],
-      carpetFigures: [],
-      info: [],
-      showIntroPopup: true,
-      showAboutPopup: false,
-      showTabs: false,
-      originalData: [],
-      dataRead: [],
-      width: window.innerWidth,
-    };
-  }
+// Theme context
+const ThemeContext = React.createContext();
 
-  setToasterRef = (ref) => {
-    this.toaster = ref;
-  };
+export function useTheme() {
+  return React.useContext(ThemeContext);
+}
 
-  toggleIntroPopup() {
-    this.setState({
-      showIntroPopup: !this.state.showIntroPopup,
-      showTabs: true,
-    });
-  }
+function App() {
+  const [componentData, setComponentData] = useState([]);
+  const [componentFigures, setComponentFigures] = useState([]);
+  const [carpetFigures, setCarpetFigures] = useState([]);
+  const [info, setInfo] = useState([]);
+  const [showIntroPopup, setShowIntroPopup] = useState(true);
+  const [showAboutPopup, setShowAboutPopup] = useState(false);
+  const [showTabs, setShowTabs] = useState(false);
+  const [originalData, setOriginalData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [width, setWidth] = useState(window.innerWidth);
+  // New state for Niivue integration
+  const [mixingMatrix, setMixingMatrix] = useState(null);
+  const [niftiBuffer, setNiftiBuffer] = useState(null);
+  const [maskBuffer, setMaskBuffer] = useState(null);
+  // Theme state
+  const [theme, setTheme] = useState(() => {
+    const saved = localStorage.getItem('rica-theme');
+    return saved || 'light';
+  });
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  // Detect if running from local server (hide "New" button)
+  const [isLocalServer, setIsLocalServer] = useState(false);
 
-  toggleAboutPopup() {
-    this.setState({
-      showAboutPopup: !this.state.showAboutPopup,
-    });
-  }
+  // Check for local server on mount
+  useEffect(() => {
+    if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+      fetch("/api/files")
+        .then((r) => r.json())
+        .then((data) => {
+          if (data.files?.length > 0) {
+            setIsLocalServer(true);
+          }
+        })
+        .catch(() => {});
+    }
+  }, []);
 
-  toggleTabsVisibility() {
-    this.setState({
-      showTabs: !this.state.showTabs,
-    });
-  }
+  // Apply theme to document
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('rica-theme', theme);
+  }, [theme]);
 
-  onDataLoad = (childData) => {
-    this.setState({ dataRead: childData }, () => {
-      console.log(this.state.dataRead);
+  const toggleTheme = useCallback(() => {
+    // Add transition class before changing theme
+    setIsTransitioning(true);
+
+    // Small delay to ensure class is applied before theme change
+    requestAnimationFrame(() => {
+      setTheme(prev => prev === 'light' ? 'dark' : 'light');
+
+      // Remove transition class after animation completes
       setTimeout(() => {
-        this.setState({ componentData: this.state.dataRead[2] }, () => {
-          console.log(this.state.componentData);
-          this.setState({ componentFigures: this.state.dataRead[0] }, () => {
-            console.log(this.state.componentFigures);
-            this.setState({ carpetFigures: this.state.dataRead[1] }, () => {
-              console.log(this.state.carpetFigures);
-              // Append to the end of the info array
-              this.setState({ info: [this.state.dataRead[3], this.state.dataRead[5]] }, () => {
-                console.log(this.state.info);
-                this.setState({ originalData: this.state.dataRead[4] }, () => {
-                  console.log(this.state.originalData);
-                  this.toggleIntroPopup();
-                });
-              });
-            });
-          });
-        });
-      }, 5000);
+        setIsTransitioning(false);
+      }, 400);
     });
-  };
+  }, []);
 
-  componentWillMount() {
-    window.addEventListener("resize", this.handleWindowSizeChange);
+  // Handle window resize
+  useEffect(() => {
+    const handleWindowSizeChange = () => {
+      setWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleWindowSizeChange);
+    return () => {
+      window.removeEventListener("resize", handleWindowSizeChange);
+    };
+  }, []);
+
+  const toggleIntroPopup = useCallback(() => {
+    setShowIntroPopup((prev) => !prev);
+    setShowTabs(true);
+  }, []);
+
+  const toggleAboutPopup = useCallback(() => {
+    setShowAboutPopup((prev) => !prev);
+  }, []);
+
+  // Called when data loading starts
+  const onLoadingStart = useCallback(() => {
+    setIsLoading(true);
+  }, []);
+
+  // Called when data is fully loaded - no more delays!
+  const onDataLoad = useCallback(
+    (data) => {
+      // Set all state at once - no nested callbacks or delays
+      setComponentFigures(data.componentFigures);
+      setCarpetFigures(data.carpetFigures);
+      setComponentData(data.components);
+      setInfo([data.info, data.dirPath]);
+      setOriginalData(data.originalData);
+      // New data for Niivue integration
+      setMixingMatrix(data.mixingMatrix);
+      setNiftiBuffer(data.niftiBuffer);
+      setMaskBuffer(data.maskBuffer);
+      setIsLoading(false);
+      toggleIntroPopup();
+    },
+    [toggleIntroPopup]
+  );
+
+  const isMobile = width <= 1024;
+
+  if (isMobile) {
+    return <MobileMain />;
   }
 
-  // make sure to remove the listener
-  // when the component is not mounted anymore
-  componentWillUnmount() {
-    window.removeEventListener("resize", this.handleWindowSizeChange);
-  }
+  const isDark = theme === 'dark';
 
-  handleWindowSizeChange = () => {
-    this.setState({ width: window.innerWidth });
-  };
+  return (
+    <ThemeContext.Provider value={{ theme, toggleTheme, isDark }}>
+      <HelmetProvider>
+        <Helmet>
+          <title>{info[1] || "Rica - ICA Component Viewer"}</title>
+        </Helmet>
+        <div className={`h-full min-h-full overflow-hidden text-center ${isTransitioning ? 'theme-transition' : ''}`}>
+          {showIntroPopup && (
+            <IntroPopup
+              onDataLoad={onDataLoad}
+              onLoadingStart={onLoadingStart}
+              closePopup={toggleIntroPopup}
+              isLoading={isLoading}
+              isDark={isDark}
+            />
+          )}
+          {showAboutPopup && <AboutPopup closePopup={toggleAboutPopup} isDark={isDark} />}
+          {showTabs && (
+            <AnimatedTabs defaultIndex={0}>
+              {/* Minimal Modern Navbar */}
+              <nav
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "12px 24px",
+                  backgroundColor: "var(--bg-primary)",
+                  borderBottom: "1px solid var(--border-default)",
+                  position: "sticky",
+                  top: 0,
+                  zIndex: 40,
+                }}
+              >
+                {/* Left: Logo/Brand */}
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <img
+                    src="/favicon.ico"
+                    alt="Rica logo"
+                    style={{
+                      width: "26px",
+                      height: "26px",
+                    }}
+                  />
+                  <span
+                    style={{
+                      fontSize: "18px",
+                      fontWeight: "600",
+                      color: "var(--text-primary)",
+                      letterSpacing: "-0.02em",
+                    }}
+                  >
+                    Rica
+                  </span>
+                </div>
 
-  render() {
-    const { width } = this.state;
-    const isMobile = width <= 1024;
-
-    if (isMobile) {
-      return (
-        <div>
-          <MobileMain />
-        </div>
-      );
-    } else {
-      return (
-        <>
-          <Helmet>
-            <title>{this.state.info[1]}</title>
-          </Helmet>
-          <div className="h-full min-h-full overflow-hidden text-center ">
-            {this.state.showIntroPopup ? (
-              <IntroPopup
-                onDataLoad={this.onDataLoad}
-                closePopup={this.toggleIntroPopup.bind(this)}
-              />
-            ) : null}
-            {this.state.showAboutPopup ? (
-              <AboutPopup
-                callBack={this.onDataLoad}
-                closePopup={this.toggleAboutPopup.bind(this)}
-              />
-            ) : null}
-            {this.state.showTabs ? (
-              <AnimatedTabs>
+                {/* Center: Navigation Tabs */}
                 <TabList
-                  className="text-base border-b z-5 border-b-gray-300"
-                  style={{ justifyContent: "space-around" }}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "2px",
+                  }}
                 >
-                  <AnimatedTab index={0} style={{ flex: 1 }}>
+                  <AnimatedTab index={0} isDark={isDark}>
                     <FontAwesomeIcon
                       icon={["fas", "info-circle"]}
-                      size="lg"
-                      className="mx-2"
+                      style={{ marginRight: "6px", fontSize: "13px", opacity: 0.7 }}
                     />
                     <span>Info</span>
                   </AnimatedTab>
-                  <AnimatedTab index={1} style={{ flex: 2 }}>
+                  <AnimatedTab index={1} isDark={isDark}>
                     <FontAwesomeIcon
                       icon={["fas", "chart-pie"]}
-                      size="lg"
-                      className="mx-2"
+                      style={{ marginRight: "6px", fontSize: "13px", opacity: 0.7 }}
                     />
                     <span>ICA</span>
                   </AnimatedTab>
-                  <AnimatedTab index={2} style={{ flex: 1 }}>
+                  <AnimatedTab index={2} isDark={isDark}>
                     <FontAwesomeIcon
                       icon={["fas", "layer-group"]}
-                      size="lg"
-                      className="mx-2"
+                      style={{ marginRight: "6px", fontSize: "13px", opacity: 0.7 }}
                     />
                     <span>Carpets</span>
                   </AnimatedTab>
-                  <ul className="absolute top-0 right-0 mr-40">
-                    <div
-                      className="absolute top-0 right-0 flex mr-24 text-base text-gray-500 rounded-lg hover:text-gray-900 hover:cursor-pointer"
-                      onClick={this.toggleIntroPopup.bind(this)}
-                      style={{ padding: "8px 16px" }}
-                    >
-                      <FontAwesomeIcon
-                        icon={["fas", "plus"]}
-                        size="lg"
-                        className="mx-2"
-                      />
-                      <span>New</span>
-                    </div>
-                    <div
-                      className="absolute right-0 flex text-base text-gray-500 rounded-lg hover:text-gray-900 hover:cursor-pointer"
-                      onClick={this.toggleAboutPopup.bind(this)}
-                      style={{ padding: "8px 16px" }}
-                    >
-                      <FontAwesomeIcon
-                        icon={["fas", "question"]}
-                        size="lg"
-                        className="mx-2"
-                      />
-                      <span>About</span>
-                    </div>
-                  </ul>
                 </TabList>
-                <TabPanels>
-                  <TabPanel>
-                    <Info info={this.state.info} />
-                  </TabPanel>
-                  <TabPanel>
-                    <Plots
-                      componentData={this.state.componentData}
-                      componentFigures={this.state.componentFigures}
-                      originalData={this.state.originalData}
-                    />
-                  </TabPanel>
-                  <TabPanel>
-                    <Carpets images={this.state.carpetFigures} />
-                  </TabPanel>
-                </TabPanels>
-              </AnimatedTabs>
-            ) : null}
-          </div>
-        </>
-      );
-    }
-  }
+
+                {/* Right: Action Buttons */}
+                <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                  {/* Theme toggle */}
+                  <button
+                    onClick={toggleTheme}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: "36px",
+                      height: "36px",
+                      fontSize: "14px",
+                      color: "var(--text-secondary)",
+                      backgroundColor: "transparent",
+                      border: "1px solid var(--border-default)",
+                      borderRadius: "8px",
+                      cursor: "pointer",
+                      transition: "all 0.15s ease",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = "var(--bg-tertiary)";
+                      e.currentTarget.style.color = "var(--text-primary)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "transparent";
+                      e.currentTarget.style.color = "var(--text-secondary)";
+                    }}
+                    title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+                  >
+                    <FontAwesomeIcon icon={isDark ? faSun : faMoon} />
+                  </button>
+
+                  {/* Hide "New" button when running from local server */}
+                  {!isLocalServer && (
+                    <button
+                      onClick={toggleIntroPopup}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "6px",
+                        padding: "8px 14px",
+                        fontSize: "13px",
+                        fontWeight: "500",
+                        color: "var(--text-secondary)",
+                        backgroundColor: "transparent",
+                        border: "1px solid var(--border-default)",
+                        borderRadius: "8px",
+                        cursor: "pointer",
+                        transition: "all 0.15s ease",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = "var(--bg-tertiary)";
+                        e.currentTarget.style.color = "var(--text-primary)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = "transparent";
+                        e.currentTarget.style.color = "var(--text-secondary)";
+                      }}
+                    >
+                      <FontAwesomeIcon icon={["fas", "plus"]} style={{ fontSize: "11px" }} />
+                      <span>New</span>
+                    </button>
+                  )}
+                  <button
+                    onClick={toggleAboutPopup}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: "36px",
+                      height: "36px",
+                      fontSize: "13px",
+                      color: "var(--text-secondary)",
+                      backgroundColor: "transparent",
+                      border: "1px solid var(--border-default)",
+                      borderRadius: "8px",
+                      cursor: "pointer",
+                      transition: "all 0.15s ease",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = "var(--bg-tertiary)";
+                      e.currentTarget.style.color = "var(--text-primary)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "transparent";
+                      e.currentTarget.style.color = "var(--text-secondary)";
+                    }}
+                    title="About"
+                  >
+                    <FontAwesomeIcon icon={["fas", "question"]} />
+                  </button>
+                </div>
+              </nav>
+              <TabPanels>
+                <TabPanel index={0}>
+                  <Info info={info} isDark={isDark} />
+                </TabPanel>
+                <TabPanel index={1}>
+                  <Plots
+                    componentData={componentData}
+                    componentFigures={componentFigures}
+                    originalData={originalData}
+                    mixingMatrix={mixingMatrix}
+                    niftiBuffer={niftiBuffer}
+                    maskBuffer={maskBuffer}
+                    isDark={isDark}
+                  />
+                </TabPanel>
+                <TabPanel index={2}>
+                  <Carpets images={carpetFigures} isDark={isDark} />
+                </TabPanel>
+              </TabPanels>
+            </AnimatedTabs>
+          )}
+        </div>
+      </HelmetProvider>
+    </ThemeContext.Provider>
+  );
 }
 
 export default App;
 
-const rootElement = document.getElementById("root");
-ReactDOM.render(<App />, rootElement);
+// Wait for DOM to be ready (needed for inline scripts in <head>)
+function mount() {
+  const container = document.getElementById("root");
+  if (container) {
+    const root = createRoot(container);
+    root.render(<App />);
+  }
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", mount);
+} else {
+  mount();
+}

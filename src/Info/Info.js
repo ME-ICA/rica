@@ -1,43 +1,81 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faFolder,
-} from "@fortawesome/free-solid-svg-icons";
-import { library } from "@fortawesome/fontawesome-svg-core"; //allows later to just use icon name to render-them
+import { faFolder } from "@fortawesome/free-solid-svg-icons";
 
-library.add(faFolder);
-
-class Info extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      info: this.props.info,
-    };
-  }
-
-  render() {
+function Info({ info, isDark }) {
+  if (!info?.length) {
     return (
-      <div className="mt-16 text-base text-justify whitespace-pre-wrap mx-80 ">
-        {/* Make a rounded square for the path. The background color should be red. */}
-        <div className="flex justify-center mb-8">
-          {/* Show folder icon on the left and text on the right */}
-          <div className="rounded-xl bg-sky-500 flex items-center">
-            <div className="px-4 py-4 flex items-center">
-              <FontAwesomeIcon
-                icon={["fas", "folder"]}
-                size="lg"
-                className="mx-2"
-              />
-              <h1 className="text-xl font-semibold italic text-center">
-                {this.state.info[1]}
-              </h1>
-            </div>
-          </div>
-        </div>
-        <p>{this.state.info[0]}</p>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '256px',
+        color: 'var(--text-tertiary)',
+      }}>
+        <p>No information available</p>
       </div>
     );
   }
+
+  return (
+    <div style={{
+      maxWidth: '800px',
+      margin: '0 auto',
+      padding: '48px 24px',
+    }}>
+      {/* Path badge */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        marginBottom: '32px',
+      }}>
+        <div style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '10px',
+          padding: '12px 20px',
+          backgroundColor: 'var(--bg-tertiary)',
+          borderRadius: '12px',
+          border: '1px solid var(--border-default)',
+        }}>
+          <FontAwesomeIcon
+            icon={faFolder}
+            style={{
+              fontSize: '16px',
+              color: 'var(--accent-accepted)',
+            }}
+          />
+          <span style={{
+            fontSize: '14px',
+            fontWeight: 500,
+            color: 'var(--text-primary)',
+            fontFamily: 'monospace',
+          }}>
+            {info[1]}
+          </span>
+        </div>
+      </div>
+
+      {/* Report content */}
+      <div style={{
+        backgroundColor: 'var(--bg-secondary)',
+        borderRadius: '12px',
+        border: '1px solid var(--border-default)',
+        padding: '24px',
+      }}>
+        <p style={{
+          fontSize: '14px',
+          lineHeight: 1.8,
+          color: 'var(--text-secondary)',
+          whiteSpace: 'pre-wrap',
+          textAlign: 'left',
+          margin: 0,
+        }}>
+          {info[0]}
+        </p>
+      </div>
+    </div>
+  );
 }
 
 export default Info;

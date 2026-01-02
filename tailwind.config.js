@@ -1,8 +1,8 @@
 const colors = require("tailwindcss/colors");
 
+/** @type {import('tailwindcss').Config} */
 module.exports = {
-  mode: "jit",
-  purge: ["./public/**/*.html", "./src/**/*.{js,jsx,ts,tsx,vue}"],
+  content: ["./public/**/*.html", "./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     screens: {
       sm: "640px",
@@ -16,22 +16,12 @@ module.exports = {
       mxl: { max: "1280px" },
       m2xl: { max: "1536px" },
     },
-    colors: {
-      transparent: "transparent",
-      current: "currentColor",
-      black: colors.black,
-      white: colors.white,
-      gray: colors.gray,
-      emerald: colors.emerald,
-      indigo: colors.indigo,
-      yellow: colors.yellow,
-      sky: colors.sky,
-      blue: colors.blue,
-      purple: colors.purple,
-      pink: colors.pink,
-      violet: colors.violet,
-      orange: colors.orange,
-      red: colors.red,
+    extend: {
+      colors: {
+        transparent: "transparent",
+        current: "currentColor",
+      },
     },
   },
+  plugins: [],
 };
