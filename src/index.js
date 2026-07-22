@@ -16,6 +16,7 @@ import { AnimatedTab, AnimatedTabs } from "./TabFunctions";
 import { LOGO_DATA_URL } from "./constants/logo";
 import { VERSION } from "./constants/version";
 import { getFolderName } from "./utils/pathUtils";
+import { ThemeContext } from "./contexts/theme";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faInfoCircle,
@@ -40,13 +41,6 @@ import Diagnostics from "./Diagnostics/Diagnostics";
 import DecisionTreeTab from "./Tree/DecisionTreeTab";
 
 library.add(faInfoCircle, faLayerGroup, faChartPie, faPlus, faQuestion, faSun, faMoon, faEyeLowVision, faHeartPulse, faBell, faProjectDiagram);
-
-// Theme context
-const ThemeContext = React.createContext();
-
-export function useTheme() {
-  return React.useContext(ThemeContext);
-}
 
 function App() {
   const [componentData, setComponentData] = useState([]);
@@ -370,8 +364,10 @@ function App() {
 
                   {/* Colourblind palette toggle */}
                   <button
+                    type="button"
                     onClick={toggleColorblind}
                     aria-pressed={colorblind}
+                    aria-label={colorblind ? "Disable colourblind palette" : "Enable colourblind palette"}
                     style={{
                       display: "flex",
                       alignItems: "center",

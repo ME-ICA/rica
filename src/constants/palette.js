@@ -14,13 +14,15 @@ const DEFAULT_PALETTE = {
   other: { light: "#d1d5db", dark: "#52525b", hoverLight: "#9ca3af", hoverDark: "#71717a" },
 };
 
-// Okabe-Ito colourblind-safe palette. Colours are fixed across light/dark;
-// hover is a hand-picked darker (light theme) / brighter (dark theme) shade.
+// Okabe-Ito colourblind-safe palette. Light mode uses the canonical Okabe-Ito
+// values; dark mode uses lightened variants so they keep the same visual punch
+// on the dark background (all >= 3:1 contrast). Hover is a darker (light) /
+// brighter (dark) shade of the mode's base colour.
 const COLORBLIND_PALETTE = {
-  accepted: { light: "#009E73", dark: "#009E73", hoverLight: "#007A59", hoverDark: "#00C08B" },
-  rejected: { light: "#D55E00", dark: "#D55E00", hoverLight: "#A64A00", hoverDark: "#FF7A1A" },
-  ignored: { light: "#0072B2", dark: "#0072B2", hoverLight: "#005A8C", hoverDark: "#3399D6" },
-  other: { light: "#999999", dark: "#999999", hoverLight: "#767676", hoverDark: "#B3B3B3" },
+  accepted: { light: "#009E73", dark: "#2CC4A0", hoverLight: "#007A59", hoverDark: "#4DD9B8" },
+  rejected: { light: "#D55E00", dark: "#F07E36", hoverLight: "#A64A00", hoverDark: "#FF9855" },
+  ignored: { light: "#0072B2", dark: "#3D9AD6", hoverLight: "#005A8C", hoverDark: "#5AB0E6" },
+  other: { light: "#999999", dark: "#B0B0B0", hoverLight: "#767676", hoverDark: "#CACACA" },
 };
 
 // Marker shape per classification (redundant, non-colour encoding).

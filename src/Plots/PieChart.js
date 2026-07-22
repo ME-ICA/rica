@@ -5,7 +5,7 @@ import { useTooltip, useTooltipInPortal, defaultStyles } from "@visx/tooltip";
 import { localPoint } from "@visx/event";
 import { formatComponentName } from "./PlotUtils";
 import { getClassStyle } from "../constants/palette";
-import { useTheme } from "../index";
+import { useTheme } from "../contexts/theme";
 
 function PieChart({
   data,

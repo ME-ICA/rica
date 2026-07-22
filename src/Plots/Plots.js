@@ -12,7 +12,7 @@ import CorrelationHeatmap from "./CorrelationHeatmap";
 import CitationPopUp from "../PopUps/CitationPopUp";
 import { assignColor, formatComponentName } from "./PlotUtils";
 import { colorFor } from "../constants/palette";
-import { useTheme } from "../index";
+import { useTheme } from "../contexts/theme";
 
 // Chart dimensions - sized to fit 2x2 in half screen width
 // Reduced for better screen fit (was 420x380)

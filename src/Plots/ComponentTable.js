@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useMemo } from "react";
 import { formatComponentName } from "./PlotUtils";
 import { colorFor } from "../constants/palette";
-import { useTheme } from "../index";
+import { useTheme } from "../contexts/theme";
 
 // Format cell value based on type
 function formatValue(value, key) {

@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import { isDecisionNode, getAffectingNodes } from "../utils/decisionTreeUtils";
 import { colorFor } from "../constants/palette";
-import { useTheme } from "../index";
+import { useTheme } from "../contexts/theme";
 import TimeSeries from "../Plots/TimeSeries";
 import BrainViewer from "../Plots/BrainViewer";
 import { formatComponentName } from "../Plots/PlotUtils";
@@ -194,6 +194,9 @@ function DecisionTree({ treeData, componentPaths, componentData, mixingMatrix, n
       textSecondary: isDark ? "#a1a1aa" : "#6b7280",
       border: isDark ? "#3f3f46" : "#d1d5db",
       borderHover: isDark ? "#52525b" : "#9ca3af",
+      // Unlike the scatter/pie (which use these as fills), the tree renders the
+      // classification word as coloured *text*, so it needs the saturated
+      // (selected) shade to stay legible in both themes rather than the pale base.
       accepted: colorFor("accepted", { isDark, colorblind, selected: true }),
       rejected: colorFor("rejected", { isDark, colorblind, selected: true }),
       calc: isDark ? "#60a5fa" : "#3b82f6",

@@ -11,7 +11,7 @@ import { formatComponentName } from "./PlotUtils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRotateLeft } from "@fortawesome/free-solid-svg-icons";
 import { getClassStyle } from "../constants/palette";
-import { useTheme } from "../index";
+import { useTheme } from "../contexts/theme";
 
 const margin = { top: 40, right: 30, bottom: 50, left: 60 };
 

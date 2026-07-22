@@ -20,6 +20,14 @@ test("unknown class falls back to other", () => {
   expect(colorFor("brand-new-label")).toBe(colorFor("other"));
 });
 
+test("colourblind uses lightened variants in dark mode", () => {
+  expect(colorFor("accepted", { colorblind: true, isDark: true })).toBe("#2CC4A0");
+  expect(colorFor("rejected", { colorblind: true, isDark: true })).toBe("#F07E36");
+  expect(colorFor("ignored", { colorblind: true, isDark: true })).toBe("#3D9AD6");
+  // Light mode keeps the canonical Okabe-Ito values.
+  expect(colorFor("ignored", { colorblind: true, isDark: false })).toBe("#0072B2");
+});
+
 test("selected returns the hover variant", () => {
   const base = getClassStyle("accepted", { colorblind: true });
   const selected = getClassStyle("accepted", { colorblind: true, selected: true });
