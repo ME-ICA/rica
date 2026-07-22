@@ -1,5 +1,7 @@
 import React, { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import { isDecisionNode, getAffectingNodes } from "../utils/decisionTreeUtils";
+import { colorFor } from "../constants/palette";
+import { useTheme } from "../index";
 import TimeSeries from "../Plots/TimeSeries";
 import BrainViewer from "../Plots/BrainViewer";
 import { formatComponentName } from "../Plots/PlotUtils";
@@ -169,6 +171,7 @@ function useContainerWidth(ref, isActive) {
  * Shows nodes, conditions, and component counts with click interactions.
  */
 function DecisionTree({ treeData, componentPaths, componentData, mixingMatrix, niftiBuffer, niftiUrl, maskBuffer, isDark }) {
+  const { colorblind = false } = useTheme() || {};
   const [selectedNode, setSelectedNode] = useState(null);
   const [selectedComponent, setSelectedComponent] = useState(null);
   const selectedComponentRef = useRef(null);
@@ -191,13 +194,13 @@ function DecisionTree({ treeData, componentPaths, componentData, mixingMatrix, n
       textSecondary: isDark ? "#a1a1aa" : "#6b7280",
       border: isDark ? "#3f3f46" : "#d1d5db",
       borderHover: isDark ? "#52525b" : "#9ca3af",
-      accepted: isDark ? "#4ade80" : "#22c55e",
-      rejected: isDark ? "#f87171" : "#ef4444",
+      accepted: colorFor("accepted", { isDark, colorblind, selected: true }),
+      rejected: colorFor("rejected", { isDark, colorblind, selected: true }),
       calc: isDark ? "#60a5fa" : "#3b82f6",
       decision: isDark ? "#c084fc" : "#a855f7",
       selected: isDark ? "#3b82f6" : "#2563eb",
     }),
-    [isDark]
+    [isDark, colorblind]
   );
 
   // Get components affected by a node
@@ -291,14 +294,6 @@ function DecisionTree({ treeData, componentPaths, componentData, mixingMatrix, n
     const finalClass = path.nodes[path.nodes.length - 1]?.classification || path.initial;
     return finalClass === "accepted" ? "accepted" : "rejected";
   }, [selectedComponent, componentPaths]);
-
-  // Theme-aware colors for visualizations
-  const getColors = useCallback((isDark) => ({
-    accepted: isDark ? "#4ade80" : "#86EFAC",
-    acceptedHover: isDark ? "#22c55e" : "#22C55E",
-    rejected: isDark ? "#f87171" : "#FCA5A5",
-    rejectedHover: isDark ? "#ef4444" : "#EF4444",
-  }), []);
 
   // Scroll to selected component
   useEffect(() => {
@@ -713,7 +708,7 @@ function DecisionTree({ treeData, componentPaths, componentData, mixingMatrix, n
                 height={180}
                 title="Time Series"
                 componentLabel={currentComponentLabel}
-                lineColor={selectedClassification === 'accepted' ? getColors(isDark).acceptedHover : getColors(isDark).rejectedHover}
+                lineColor={colorFor(selectedClassification, { isDark, colorblind, selected: true })}
                 isDark={isDark}
               />
             </div>

@@ -25,6 +25,7 @@ import {
   faQuestion,
   faSun,
   faMoon,
+  faEyeLowVision,
   faHeartPulse,
   faBell,
   faProjectDiagram,
@@ -38,7 +39,7 @@ import Info from "./Info/Info";
 import Diagnostics from "./Diagnostics/Diagnostics";
 import DecisionTreeTab from "./Tree/DecisionTreeTab";
 
-library.add(faInfoCircle, faLayerGroup, faChartPie, faPlus, faQuestion, faSun, faMoon, faHeartPulse, faBell, faProjectDiagram);
+library.add(faInfoCircle, faLayerGroup, faChartPie, faPlus, faQuestion, faSun, faMoon, faEyeLowVision, faHeartPulse, faBell, faProjectDiagram);
 
 // Theme context
 const ThemeContext = React.createContext();
@@ -79,6 +80,9 @@ function App() {
     const saved = localStorage.getItem('rica-theme');
     return saved || 'light';
   });
+  const [colorblind, setColorblind] = useState(() => {
+    return localStorage.getItem('rica-colorblind') === 'true';
+  });
   const [isTransitioning, setIsTransitioning] = useState(false);
   // Detect if running from local server (hide "New" button)
   const [isLocalServer, setIsLocalServer] = useState(false);
@@ -102,6 +106,14 @@ function App() {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('rica-theme', theme);
   }, [theme]);
+
+  useEffect(() => {
+    localStorage.setItem('rica-colorblind', String(colorblind));
+  }, [colorblind]);
+
+  const toggleColorblind = useCallback(() => {
+    setColorblind((prev) => !prev);
+  }, []);
 
   const toggleTheme = useCallback(() => {
     // Add transition class before changing theme
@@ -210,7 +222,7 @@ function App() {
   const isDark = theme === 'dark';
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, isDark }}>
+    <ThemeContext.Provider value={{ theme, toggleTheme, isDark, colorblind, toggleColorblind }}>
       <HelmetProvider>
         <Helmet>
           <title>{getFolderName(info[1]) || "Rica - ICA Component Viewer"}</title>
@@ -354,6 +366,37 @@ function App() {
                     title={isDark ? "Switch to light mode" : "Switch to dark mode"}
                   >
                     <FontAwesomeIcon icon={isDark ? faSun : faMoon} />
+                  </button>
+
+                  {/* Colourblind palette toggle */}
+                  <button
+                    onClick={toggleColorblind}
+                    aria-pressed={colorblind}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: "36px",
+                      height: "36px",
+                      fontSize: "14px",
+                      color: colorblind ? "var(--text-primary)" : "var(--text-secondary)",
+                      backgroundColor: colorblind ? "var(--bg-tertiary)" : "transparent",
+                      border: "1px solid var(--border-default)",
+                      borderRadius: "8px",
+                      cursor: "pointer",
+                      transition: "all 0.15s ease",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = "var(--bg-tertiary)";
+                      e.currentTarget.style.color = "var(--text-primary)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = colorblind ? "var(--bg-tertiary)" : "transparent";
+                      e.currentTarget.style.color = colorblind ? "var(--text-primary)" : "var(--text-secondary)";
+                    }}
+                    title={colorblind ? "Disable colourblind palette" : "Enable colourblind palette"}
+                  >
+                    <FontAwesomeIcon icon={faEyeLowVision} />
                   </button>
 
                   {/* Hide "New" button when running from local server */}

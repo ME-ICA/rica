@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback, useRef, useEffect } from "react";
 import { Group } from "@visx/group";
-import { Circle, Line, LinePath } from "@visx/shape";
+import { Line, LinePath } from "@visx/shape";
 import { scaleLinear } from "@visx/scale";
 import { AxisLeft, AxisBottom } from "@visx/axis";
 import { GridRows, GridColumns } from "@visx/grid";
@@ -10,18 +10,31 @@ import { Zoom } from "@visx/zoom";
 import { formatComponentName } from "./PlotUtils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRotateLeft } from "@fortawesome/free-solid-svg-icons";
-
-// Theme-aware colors
-const getColors = (isDark) => ({
-  accepted: isDark ? "#4ade80" : "#86EFAC",
-  acceptedHover: isDark ? "#22c55e" : "#22C55E",
-  rejected: isDark ? "#f87171" : "#FCA5A5",
-  rejectedHover: isDark ? "#ef4444" : "#EF4444",
-  ignored: isDark ? "#38bdf8" : "#7DD3FC",
-  ignoredHover: isDark ? "#0ea5e9" : "#0EA5E9",
-});
+import { getClassStyle } from "../constants/palette";
+import { useTheme } from "../index";
 
 const margin = { top: 40, right: 30, bottom: 50, left: 60 };
+
+// Marker matching the classification shape (redundant, non-colour cue).
+// Sizes are tuned so each shape reads at roughly the same visual weight as a
+// circle of radius r.
+function Marker({ shape, cx, cy, r, ...rest }) {
+  if (shape === "square") {
+    const s = r * 1.8;
+    return <rect x={cx - s / 2} y={cy - s / 2} width={s} height={s} {...rest} />;
+  }
+  if (shape === "triangle") {
+    const R = r * 1.6;
+    const points = `${cx},${cy - R} ${cx - R * 0.866},${cy + R * 0.5} ${cx + R * 0.866},${cy + R * 0.5}`;
+    return <polygon points={points} {...rest} />;
+  }
+  if (shape === "diamond") {
+    const R = r * 1.3;
+    const points = `${cx},${cy - R} ${cx + R},${cy} ${cx},${cy + R} ${cx - R},${cy}`;
+    return <polygon points={points} {...rest} />;
+  }
+  return <circle cx={cx} cy={cy} r={r} {...rest} />;
+}
 
 function ScatterPlot({
   data,
@@ -40,6 +53,7 @@ function ScatterPlot({
   showDiagonal, // Show x=y diagonal reference line
   connectingLine, // Array of {x, y} points for connecting line
 }) {
+  const { colorblind = false } = useTheme() || {};
   // Theme colors
   const colors = {
     bg: isDark ? "#18181b" : "#ffffff",
@@ -98,21 +112,14 @@ function ScatterPlot({
     });
   }, [data, getY, innerHeight]);
 
-  const COLORS = getColors(isDark);
-
-  const getColor = useCallback(
-    (d, index) => {
-      const isSelected = index === selectedIndex;
-      const classification = d.classification;
-      if (classification === "accepted") {
-        return isSelected ? COLORS.acceptedHover : COLORS.accepted;
-      } else if (classification === "rejected") {
-        return isSelected ? COLORS.rejectedHover : COLORS.rejected;
-      } else {
-        return isSelected ? COLORS.ignoredHover : COLORS.ignored;
-      }
-    },
-    [selectedIndex, COLORS],
+  const getStyle = useCallback(
+    (d, index) =>
+      getClassStyle(d.classification, {
+        isDark,
+        colorblind,
+        selected: index === selectedIndex,
+      }),
+    [selectedIndex, isDark, colorblind],
   );
 
   const handleMouseOver = useCallback(
@@ -364,13 +371,15 @@ function ScatterPlot({
                       if (i === selectedIndex) return null;
                       const cx = xScale(getX(d));
                       const cy = yScale(getY(d));
+                      const { color, shape } = getStyle(d, i);
                       return (
-                        <Circle
+                        <Marker
                           key={d.label || i}
+                          shape={shape}
                           cx={cx}
                           cy={cy}
                           r={6}
-                          fill={getColor(d, i)}
+                          fill={color}
                           stroke={colors.stroke}
                           strokeWidth={1}
                           style={{
@@ -385,12 +394,13 @@ function ScatterPlot({
                     })}
                     {/* Selected point last (on top) */}
                     {data[selectedIndex] && (
-                      <Circle
+                      <Marker
                         key={data[selectedIndex].label || selectedIndex}
+                        shape={getStyle(data[selectedIndex], selectedIndex).shape}
                         cx={xScale(getX(data[selectedIndex]))}
                         cy={yScale(getY(data[selectedIndex]))}
                         r={8}
-                        fill={getColor(data[selectedIndex], selectedIndex)}
+                        fill={getStyle(data[selectedIndex], selectedIndex).color}
                         stroke={colors.selectedStroke}
                         strokeWidth={2}
                         style={{

@@ -11,26 +11,17 @@ import ComponentTable from "./ComponentTable";
 import CorrelationHeatmap from "./CorrelationHeatmap";
 import CitationPopUp from "../PopUps/CitationPopUp";
 import { assignColor, formatComponentName } from "./PlotUtils";
+import { colorFor } from "../constants/palette";
+import { useTheme } from "../index";
 
 // Chart dimensions - sized to fit 2x2 in half screen width
 // Reduced for better screen fit (was 420x380)
 const CHART_WIDTH = 360;
 const CHART_HEIGHT = 320;
 
-// Theme-aware colors
-const getColors = (isDark) => ({
-  // Light mode: softer pastel colors
-  // Dark mode: more saturated colors that pop on dark backgrounds
-  accepted: isDark ? "#4ade80" : "#86EFAC",
-  acceptedHover: isDark ? "#22c55e" : "#22C55E",
-  rejected: isDark ? "#f87171" : "#FCA5A5",
-  rejectedHover: isDark ? "#ef4444" : "#EF4444",
-  ignored: isDark ? "#38bdf8" : "#7DD3FC",
-  ignoredHover: isDark ? "#0ea5e9" : "#0EA5E9",
-});
-
 
 function Plots({ componentData, componentFigures, originalData, mixingMatrix, niftiBuffer, niftiUrl, maskBuffer, crossComponentMetrics, externalRegressorsFigure, repetitionTime, isDark = false }) {
+  const { colorblind = false } = useTheme() || {};
   const [processedData, setProcessedData] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedClassification, setSelectedClassification] = useState("accepted");
@@ -452,7 +443,7 @@ function Plots({ componentData, componentFigures, originalData, mixingMatrix, ni
         <ToggleSwitch
           values={["accepted", "rejected"]}
           selected={selectedClassification}
-          colors={[getColors(isDark).accepted, getColors(isDark).rejected]}
+          colors={[colorFor("accepted", { isDark, colorblind }), colorFor("rejected", { isDark, colorblind })]}
           handleNewSelection={handleNewSelection}
           isDark={isDark}
           counts={componentCounts}
@@ -612,7 +603,7 @@ function Plots({ componentData, componentFigures, originalData, mixingMatrix, ni
                   height={150}
                   title="Time Series"
                   componentLabel={currentComponentLabel}
-                  lineColor={selectedClassification === 'accepted' ? getColors(isDark).acceptedHover : getColors(isDark).rejectedHover}
+                  lineColor={colorFor(selectedClassification, { isDark, colorblind, selected: true })}
                   isDark={isDark}
                 />
               </div>
@@ -642,7 +633,7 @@ function Plots({ componentData, componentFigures, originalData, mixingMatrix, ni
                   title="Power Spectrum"
                   tr={repetitionTime != null && repetitionTime > 0 ? repetitionTime : 1}
                   showHz={repetitionTime != null && repetitionTime > 0}
-                  lineColor={selectedClassification === 'accepted' ? getColors(isDark).acceptedHover : getColors(isDark).rejectedHover}
+                  lineColor={colorFor(selectedClassification, { isDark, colorblind, selected: true })}
                   isDark={isDark}
                 />
               </div>
