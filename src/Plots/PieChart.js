@@ -4,16 +4,8 @@ import { Pie } from "@visx/shape";
 import { useTooltip, useTooltipInPortal, defaultStyles } from "@visx/tooltip";
 import { localPoint } from "@visx/event";
 import { formatComponentName } from "./PlotUtils";
-
-// Theme-aware colors
-const getDataColors = (isDark) => ({
-  accepted: isDark ? "#4ade80" : "#86EFAC",
-  acceptedHover: isDark ? "#22c55e" : "#22C55E",
-  rejected: isDark ? "#f87171" : "#FCA5A5",
-  rejectedHover: isDark ? "#ef4444" : "#EF4444",
-  ignored: isDark ? "#38bdf8" : "#7DD3FC",
-  ignoredHover: isDark ? "#0ea5e9" : "#0EA5E9",
-});
+import { getClassStyle } from "../constants/palette";
+import { useTheme } from "../contexts/theme";
 
 function PieChart({
   data,
@@ -24,6 +16,7 @@ function PieChart({
   onSliceClick,
   isDark = false,
 }) {
+  const { colorblind = false } = useTheme() || {};
   // Theme colors
   const colors = {
     bg: isDark ? '#18181b' : '#ffffff',
@@ -64,21 +57,10 @@ function PieChart({
     }));
   }, [data]);
 
-  const COLORS = getDataColors(isDark);
-
   const getColor = useCallback((d) => {
-    const isSelected = d.index === selectedIndex;
-    const isHovered = d.index === hoveredIndex;
-    const classification = d.classification;
-
-    if (classification === "accepted") {
-      return (isSelected || isHovered) ? COLORS.acceptedHover : COLORS.accepted;
-    } else if (classification === "rejected") {
-      return (isSelected || isHovered) ? COLORS.rejectedHover : COLORS.rejected;
-    } else {
-      return (isSelected || isHovered) ? COLORS.ignoredHover : COLORS.ignored;
-    }
-  }, [selectedIndex, hoveredIndex, COLORS]);
+    const selected = d.index === selectedIndex || d.index === hoveredIndex;
+    return getClassStyle(d.classification, { isDark, colorblind, selected }).color;
+  }, [selectedIndex, hoveredIndex, isDark, colorblind]);
 
   const handleMouseOver = useCallback((event, arc) => {
     const coords = localPoint(event);

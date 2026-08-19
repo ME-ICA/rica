@@ -1,13 +1,7 @@
 import React, { useRef, useEffect, useMemo } from "react";
 import { formatComponentName } from "./PlotUtils";
-
-// Theme-aware colors
-const getColors = (isDark) => ({
-  accepted: isDark ? "#4ade80" : "#86EFAC",
-  acceptedHover: isDark ? "#22c55e" : "#22C55E",
-  rejected: isDark ? "#f87171" : "#FCA5A5",
-  rejectedHover: isDark ? "#ef4444" : "#EF4444",
-});
+import { colorFor } from "../constants/palette";
+import { useTheme } from "../contexts/theme";
 
 // Format cell value based on type
 function formatValue(value, key) {
@@ -75,6 +69,7 @@ const PRIORITY_COLUMNS = [
 ];
 
 function ComponentTable({ data, selectedIndex, onRowClick, classifications, isDark = false, isCollapsed = false, onToggleCollapse, sortColumn = '', sortDirection = 'desc', onSort, sortedIndices }) {
+  const { colorblind = false } = useTheme() || {};
   const selectedRowRef = useRef(null);
   const tableContainerRef = useRef(null);
 
@@ -122,12 +117,10 @@ function ComponentTable({ data, selectedIndex, onRowClick, classifications, isDa
     };
   };
 
-  const COLORS = getColors(isDark);
-
   const getCellStyle = (index, colIndex, totalCols) => {
     const isSelected = index === selectedIndex;
     const classification = getClassification(index);
-    const baseColor = classification === "accepted" ? COLORS.accepted : COLORS.rejected;
+    const baseColor = colorFor(classification, { isDark, colorblind });
 
     const isFirst = colIndex === 0;
     const isLast = colIndex === totalCols - 1;
@@ -324,10 +317,7 @@ function ComponentTable({ data, selectedIndex, onRowClick, classifications, isDa
                             style={{
                               fontSize: '12px',
                               fontWeight: 500,
-                              backgroundColor:
-                                classification === "accepted"
-                                  ? COLORS.accepted
-                                  : COLORS.rejected,
+                              backgroundColor: colorFor(classification, { isDark, colorblind }),
                               color: "#1f2937",
                               borderRadius: "6px",
                               display: "inline-block",
