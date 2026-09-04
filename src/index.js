@@ -43,11 +43,14 @@ import DecisionTreeTab from "./Tree/DecisionTreeTab";
 library.add(faInfoCircle, faLayerGroup, faChartPie, faPlus, faQuestion, faSun, faMoon, faEyeLowVision, faHeartPulse, faBell, faProjectDiagram);
 
 function App() {
+  const [runs, setRuns] = useState([]);
+  const [selectedRunIndex, setSelectedRunIndex] = useState(0);
   const [componentData, setComponentData] = useState([]);
   const [componentFigures, setComponentFigures] = useState([]);
   const [carpetFigures, setCarpetFigures] = useState([]);
   const [diagnosticFigures, setDiagnosticFigures] = useState([]);
-  const [info, setInfo] = useState([]);
+  const [reportText, setReportText] = useState([]);
+  const [dirPath, setDirPath] = useState([]);
   const [showIntroPopup, setShowIntroPopup] = useState(true);
   const [showAboutPopup, setShowAboutPopup] = useState(false);
   const [showChangelogPopup, setShowChangelogPopup] = useState(false);
@@ -178,11 +181,14 @@ function App() {
   const onDataLoad = useCallback(
     (data) => {
       // Set all state at once - no nested callbacks or delays
+      setRuns(data.runs || []);
+      setSelectedRunIndex(0);
       setComponentFigures(data.componentFigures);
       setCarpetFigures(data.carpetFigures);
       setDiagnosticFigures(data.diagnosticFigures || []);
       setComponentData(data.components);
-      setInfo([data.info, data.dirPath]);
+      setReportText(data.info);
+      setDirPath(data.dirPath);
       setOriginalData(data.originalData);
       // New data for Niivue integration
       setMixingMatrix(data.mixingMatrix);
@@ -190,7 +196,7 @@ function App() {
       setNiftiUrl(data.niftiUrl || null);
       setMaskBuffer(data.maskBuffer);
       setCrossComponentMetrics(data.crossComponentMetrics);
-      setQcNiftiBuffers(data.qcNiftiBuffers || {});
+      setQcNiftiBuffers(data.qcNiftiBuffers || []);
       setExternalRegressorsFigure(data.externalRegressorsFigure);
       // Decision tree data
       setDecisionTreeData(data.decisionTreeData);
@@ -219,7 +225,7 @@ function App() {
     <ThemeContext.Provider value={{ theme, toggleTheme, isDark, colorblind, toggleColorblind }}>
       <HelmetProvider>
         <Helmet>
-          <title>{getFolderName(info[1]) || "Rica - ICA Component Viewer"}</title>
+          <title>{getFolderName(dirPath[selectedRunIndex]) || "Rica - ICA Component Viewer"}</title>
         </Helmet>
         <div className={`h-full min-h-full overflow-hidden text-center ${isTransitioning ? 'theme-transition' : ''}`}>
           {showIntroPopup && (
@@ -319,7 +325,7 @@ function App() {
                     />
                     <span>QC</span>
                   </AnimatedTab>
-                  {decisionTreeData && statusTableData && (
+                  {decisionTreeData?.[selectedRunIndex] && statusTableData?.[selectedRunIndex] && (
                     <AnimatedTab index={4} isDark={isDark}>
                       <FontAwesomeIcon
                         icon={["fas", "project-diagram"]}
@@ -484,50 +490,96 @@ function App() {
                   </button>
                 </div>
               </nav>
+              {runs.length > 1 && (
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: "8px",
+                    padding: "8px 24px",
+                    backgroundColor: "var(--bg-secondary)",
+                    borderBottom: "1px solid var(--border-default)",
+                    position: "sticky",
+                    top: "57px",
+                    zIndex: 39,
+                  }}
+                >
+                  <span style={{ fontSize: "12px", color: "var(--text-tertiary)" }}>Run:</span>
+                  {runs.map((label, i) => (
+                    <button
+                      key={label}
+                      onClick={() => setSelectedRunIndex(i)}
+                      aria-pressed={i === selectedRunIndex}
+                      style={{
+                        padding: "4px 12px",
+                        fontSize: "12px",
+                        fontWeight: i === selectedRunIndex ? 600 : 400,
+                        color: i === selectedRunIndex ? "var(--text-primary)" : "var(--text-secondary)",
+                        backgroundColor: i === selectedRunIndex ? "var(--bg-tertiary)" : "transparent",
+                        border: "1px solid",
+                        borderColor: i === selectedRunIndex ? "var(--border-default)" : "transparent",
+                        borderRadius: "6px",
+                        cursor: "pointer",
+                        transition: "all 0.15s ease",
+                      }}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              )}
               <TabPanels>
+                {(() => {
+                  const r = selectedRunIndex;
+                  return (
+                    <>
                 <TabPanel index={0}>
-                  <Info info={info} isDark={isDark} />
+                  <Info info={reportText[r] ?? ""} dirPath={dirPath[r] ?? ""} isDark={isDark} />
                 </TabPanel>
                 <TabPanel index={1}>
                   <Plots
-                    componentData={componentData}
-                    componentFigures={componentFigures}
-                    originalData={originalData}
-                    mixingMatrix={mixingMatrix}
-                    niftiBuffer={niftiBuffer}
-                    niftiUrl={niftiUrl}
-                    maskBuffer={maskBuffer}
-                    crossComponentMetrics={crossComponentMetrics}
-                    externalRegressorsFigure={externalRegressorsFigure}
-                    repetitionTime={repetitionTime}
+                    componentData={[componentData?.[r]]}
+                    componentFigures={componentFigures?.[r] || []}
+                    originalData={[originalData?.[r]]}
+                    mixingMatrix={mixingMatrix?.[r]}
+                    niftiBuffer={niftiBuffer?.[r]}
+                    niftiUrl={niftiUrl?.[r]}
+                    maskBuffer={maskBuffer?.[r]}
+                    crossComponentMetrics={crossComponentMetrics?.[r]}
+                    externalRegressorsFigure={externalRegressorsFigure?.[r]}
+                    repetitionTime={repetitionTime?.[r]}
                     isDark={isDark}
                   />
                 </TabPanel>
                 <TabPanel index={2}>
-                  <Carpets images={carpetFigures} isDark={isDark} />
+                  <Carpets images={carpetFigures?.[r] || []} isDark={isDark} />
                 </TabPanel>
                 <TabPanel index={3}>
                   <Diagnostics
-                    images={diagnosticFigures}
-                    qcNiftiBuffers={qcNiftiBuffers}
-                    maskBuffer={maskBuffer}
+                    images={diagnosticFigures?.[r] || []}
+                    qcNiftiBuffers={qcNiftiBuffers?.[r] || {}}
+                    maskBuffer={maskBuffer?.[r]}
                     isDark={isDark}
                   />
                 </TabPanel>
-                {decisionTreeData && statusTableData && (
+                {decisionTreeData?.[r] && statusTableData?.[r] && (
                   <TabPanel index={4}>
                     <DecisionTreeTab
-                      decisionTreeData={decisionTreeData}
-                      statusTableData={statusTableData}
-                      componentData={componentData}
-                      mixingMatrix={mixingMatrix}
-                      niftiBuffer={niftiBuffer}
-                      niftiUrl={niftiUrl}
-                      maskBuffer={maskBuffer}
+                      decisionTreeData={decisionTreeData[r]}
+                      statusTableData={statusTableData[r]}
+                      componentData={[componentData?.[r]]}
+                      mixingMatrix={mixingMatrix?.[r]}
+                      niftiBuffer={niftiBuffer?.[r]}
+                      niftiUrl={niftiUrl?.[r]}
+                      maskBuffer={maskBuffer?.[r]}
                       isDark={isDark}
                     />
                   </TabPanel>
                 )}
+                    </>
+                  );
+                })()}
               </TabPanels>
             </AnimatedTabs>
           )}

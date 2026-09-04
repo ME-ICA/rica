@@ -165,6 +165,11 @@ function Plots({ componentData, componentFigures, originalData, mixingMatrix, ni
     initializeData();
   }, [initializeData]);
 
+  // Reset to first component when the run changes
+  useEffect(() => {
+    setSelectedIndex(0);
+  }, [componentData]);
+
   // Find and display component image
   const findComponentImage = useCallback(
     (index, data) => {

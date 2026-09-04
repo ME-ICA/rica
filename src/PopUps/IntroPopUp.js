@@ -7,6 +7,7 @@ import { extractTRFromNifti } from "../utils/niftiUtils";
 import { LOGO_DATA_URL } from "../constants/logo";
 import { VERSION_DISPLAY } from "../constants/version";
 import { trackDatasetLoaded } from "../utils/analytics";
+import { parseRunLabel, deriveRunLabels } from "../utils/pathUtils";
 
 // Convert blob to data URL
 function blobToDataURL(blob) {
@@ -166,34 +167,45 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
 
       setLoadingProgress({ current: 0, total: relevantFiles.length });
 
-      const compFigures = [];
-      const carpetFigures = [];
-      const diagnosticFigures = [];
-      let info = "";
-      let components = [];
-      let originalData = [];
-      let dirPath = basePath || "";
-      let mixingMatrix = null;
-      let niftiBuffer = null;
-      let niftiUrl = null;
-      let maskBuffer = null;
-      let crossComponentMetrics = null;
-      // QC NIfTI buffers
-      const qcNiftiBuffers = {};
-      // External regressors correlation figure
-      let externalRegressorsFigure = null;
-      // Manual classification data
-      let manualClassificationData = null;
-      // Decision tree data
-      let decisionTreeData = null;
-      let statusTableData = null;
-      // Repetition time from registry
-      let repetitionTime = null;
+      // Detect BIDS run entities across all relevant files
+      const allFilenames = relevantFiles.map((f) => f.split("/").pop());
+      const runLabels = deriveRunLabels(allFilenames);
+      const N = runLabels.length || 1;
+      const runIndexOf = new Map(runLabels.map((l, i) => [l, i]));
+
+      // Returns the run index(es) a file belongs to.
+      // Files without a run entity are "shared" and broadcast to all runs.
+      const getTargets = (filename) => {
+        const label = parseRunLabel(filename);
+        if (label && runIndexOf.has(label)) return [runIndexOf.get(label)];
+        return [...Array(N).keys()];
+      };
+
+      // Per-run accumulators (indexed arrays)
+      const compFigures = Array.from({ length: N }, () => []);
+      const carpetFigures = Array.from({ length: N }, () => []);
+      const diagnosticFigures = Array.from({ length: N }, () => []);
+      const info = new Array(N).fill("");
+      const components = new Array(N).fill(null).map(() => []);
+      const originalData = new Array(N).fill(null).map(() => []);
+      const dirPath = new Array(N).fill(basePath || "");
+      const mixingMatrix = new Array(N).fill(null);
+      const niftiBuffer = new Array(N).fill(null);
+      const niftiUrl = new Array(N).fill(null);
+      const maskBuffer = new Array(N).fill(null);
+      const crossComponentMetrics = new Array(N).fill(null);
+      const qcNiftiBuffers = Array.from({ length: N }, () => ({}));
+      const externalRegressorsFigure = new Array(N).fill(null);
+      const manualClassificationData = new Array(N).fill(null);
+      const decisionTreeData = new Array(N).fill(null);
+      const statusTableData = new Array(N).fill(null);
+      const repetitionTime = new Array(N).fill(null);
 
       // Process files via HTTP fetch (parallel)
       try {
       const filePromises = relevantFiles.map(async (filepath) => {
         const filename = filepath.split("/").pop();
+        const targets = getTargets(filename);
 
         try {
           // Component figures (PNG)
@@ -201,7 +213,7 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
             const response = await fetch(`/${filepath}`);
             const blob = await response.blob();
             const dataUrl = await blobToDataURL(blob);
-            compFigures.push({ name: filename, img: dataUrl });
+            for (const i of targets) compFigures[i].push({ name: filename, img: dataUrl });
             setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
 
@@ -210,13 +222,12 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
             const response = await fetch(`/${filepath}`);
             const blob = await response.blob();
             const dataUrl = await blobToDataURL(blob);
-            // Separate carpet plots, external regressors, and diagnostic figures
             if (filename.includes("carpet_")) {
-              carpetFigures.push({ name: filename, img: dataUrl });
+              for (const i of targets) carpetFigures[i].push({ name: filename, img: dataUrl });
             } else if (filename.includes("confound_correlations")) {
-              externalRegressorsFigure = dataUrl;
+              for (const i of targets) externalRegressorsFigure[i] = dataUrl;
             } else {
-              diagnosticFigures.push({ name: filename, img: dataUrl });
+              for (const i of targets) diagnosticFigures[i].push({ name: filename, img: dataUrl });
             }
             setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
@@ -224,7 +235,8 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
           // Report info
           if (filename.endsWith("report.txt")) {
             const response = await fetch(`/${filepath}`);
-            info = await response.text();
+            const text = await response.text();
+            for (const i of targets) info[i] = text;
             setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
 
@@ -237,9 +249,12 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
               skipEmptyLines: true,
               dynamicTyping: true,
             });
-            originalData = JSON.parse(JSON.stringify(parsed.data));
+            const orig = JSON.parse(JSON.stringify(parsed.data));
             rankComponents(parsed.data);
-            components = parsed.data;
+            for (const i of targets) {
+              originalData[i] = orig;
+              components[i] = parsed.data;
+            }
             setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
 
@@ -252,7 +267,7 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
               if (line.includes("Using output directory:")) {
                 const match = line.match(/Using output directory:\s*(.+)/);
                 if (match) {
-                  dirPath = match[1].trim();
+                  for (const i of targets) dirPath[i] = match[1].trim();
                   break;
                 }
               }
@@ -264,7 +279,8 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
           if (filename.includes("_mixing.tsv") && !filename.toLowerCase().includes("pca") && !filename.toLowerCase().includes("orth")) {
             const response = await fetch(`/${filepath}`);
             const text = await response.text();
-            mixingMatrix = parseMixingMatrix(text);
+            const mx = parseMixingMatrix(text);
+            for (const i of targets) mixingMatrix[i] = mx;
             setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
 
@@ -274,33 +290,38 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
             // decompress the header from gzip), independent of loading the full file.
             // Only trust 206 Partial Content — if the proxy doesn't forward Range headers,
             // the server returns 200 with the full file, which would hang on arrayBuffer().
-            if (!repetitionTime) {
-              try {
-                const headerResponse = await fetch(`/${filepath}`, {
-                  headers: { Range: "bytes=0-4095" },
-                });
-                if (headerResponse.status === 206) {
-                  const headerBuffer = await headerResponse.arrayBuffer();
-                  const tr = await extractTRFromNifti(headerBuffer);
-                  if (tr) {
-                    repetitionTime = tr;
-                    console.log("[Rica] Extracted RepetitionTime from NIfTI header (Range):", repetitionTime);
+            for (const i of targets) {
+              if (!repetitionTime[i]) {
+                try {
+                  const headerResponse = await fetch(`/${filepath}`, {
+                    headers: { Range: "bytes=0-4095" },
+                  });
+                  if (headerResponse.status === 206) {
+                    const headerBuffer = await headerResponse.arrayBuffer();
+                    const tr = await extractTRFromNifti(headerBuffer);
+                    if (tr) {
+                      repetitionTime[i] = tr;
+                      console.log("[Rica] Extracted RepetitionTime from NIfTI header (Range):", tr);
+                    }
                   }
+                } catch {
+                  // Range requests not supported; TR won't be extracted from header
                 }
-              } catch {
-                // Range requests not supported; TR won't be extracted from header
               }
+              // Use URL — BrainViewer prefers URL over buffer anyway, and skipping the
+              // full download avoids hanging Promise.all on large files through the proxy.
+              niftiUrl[i] = `/${filepath}`;
             }
-            // Use URL — BrainViewer prefers URL over buffer anyway, and skipping the
-            // full download avoids hanging Promise.all on large files through the proxy.
-            niftiUrl = `/${filepath}`;
             setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
 
           // Brain mask NIfTI
-          if (filename.includes("_mask.nii") && !maskBuffer) {
+          if (filename.includes("_mask.nii")) {
             const response = await fetch(`/${filepath}`);
-            maskBuffer = await response.arrayBuffer();
+            const buf = await response.arrayBuffer();
+            for (const i of targets) {
+              if (!maskBuffer[i]) maskBuffer[i] = buf;
+            }
             setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
 
@@ -308,24 +329,28 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
           if ((filename.includes("CrossComponent_metrics.json") && !filename.toLowerCase().includes("pca")) ||
               (filename.includes("cross_component_metrics.json") && !filename.toLowerCase().includes("pca"))) {
             const response = await fetch(`/${filepath}`);
-            crossComponentMetrics = await response.json();
+            const ccm = await response.json();
+            for (const i of targets) crossComponentMetrics[i] = ccm;
             setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
 
           // QC NIfTI files (T2*, S0, RMSE)
           if (filename.includes("T2starmap.nii") || filename.includes("t2svG.nii")) {
             const response = await fetch(`/${filepath}`);
-            qcNiftiBuffers.t2star = await response.arrayBuffer();
+            const buf = await response.arrayBuffer();
+            for (const i of targets) qcNiftiBuffers[i].t2star = buf;
             setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
           if ((filename.includes("S0map.nii") && !filename.includes("limited")) || filename === "s0vG.nii.gz") {
             const response = await fetch(`/${filepath}`);
-            qcNiftiBuffers.s0 = await response.arrayBuffer();
+            const buf = await response.arrayBuffer();
+            for (const i of targets) qcNiftiBuffers[i].s0 = buf;
             setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
           if (filename.includes("rmse_statmap.nii") || filename === "rmse.nii.gz") {
             const response = await fetch(`/${filepath}`);
-            qcNiftiBuffers.rmse = await response.arrayBuffer();
+            const buf = await response.arrayBuffer();
+            for (const i of targets) qcNiftiBuffers[i].rmse = buf;
             setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
 
@@ -333,8 +358,9 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
           if (filename === "manual_classification.tsv") {
             const response = await fetch(`/${filepath}`);
             const text = await response.text();
-            manualClassificationData = parseManualClassification(text);
-            console.log("[Rica] Loaded manual_classification.tsv with", manualClassificationData?.length || 0, "entries");
+            const mcd = parseManualClassification(text);
+            console.log("[Rica] Loaded manual_classification.tsv with", mcd?.length || 0, "entries");
+            for (const i of targets) manualClassificationData[i] = mcd;
             setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
 
@@ -342,8 +368,9 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
           if (filename.includes("decision_tree.json")) {
             const response = await fetch(`/${filepath}`);
             const text = await response.text();
-            decisionTreeData = JSON.parse(text);
-            console.log("[Rica] Loaded decision tree with", decisionTreeData?.nodes?.length || 0, "nodes");
+            const dtd = JSON.parse(text);
+            console.log("[Rica] Loaded decision tree with", dtd?.nodes?.length || 0, "nodes");
+            for (const i of targets) decisionTreeData[i] = dtd;
             setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
 
@@ -357,8 +384,8 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
               dynamicTyping: false, // Keep as strings for classification states
               delimiter: "\t",
             });
-            statusTableData = parsed.data;
-            console.log("[Rica] Loaded status table with", statusTableData?.length || 0, "components");
+            console.log("[Rica] Loaded status table with", parsed.data?.length || 0, "components");
+            for (const i of targets) statusTableData[i] = parsed.data;
             setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
 
@@ -370,8 +397,10 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
                 const registry = await response.json();
                 const rt = registry?.RepetitionTime;
                 if (typeof rt === "number" && Number.isFinite(rt) && rt > 0) {
-                  repetitionTime = rt;
-                  console.log("[Rica] Loaded RepetitionTime from registry:", repetitionTime);
+                  for (const i of targets) {
+                    if (!repetitionTime[i]) repetitionTime[i] = rt;
+                  }
+                  console.log("[Rica] Loaded RepetitionTime from registry:", rt);
                 }
               }
             } catch (registryError) {
@@ -385,24 +414,27 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
       });
       await Promise.all(filePromises);
 
-      // Sort component figures by name
-      compFigures.sort((a, b) => a.name.localeCompare(b.name));
-      carpetFigures.sort((a, b) => a.name.localeCompare(b.name));
-      diagnosticFigures.sort((a, b) => a.name.localeCompare(b.name));
-
-      // Apply manual classifications if available
-      applyManualClassifications(components, manualClassificationData);
+      // Sort figures by name per run, apply manual classifications
+      for (let i = 0; i < N; i++) {
+        compFigures[i].sort((a, b) => a.name.localeCompare(b.name));
+        carpetFigures[i].sort((a, b) => a.name.localeCompare(b.name));
+        diagnosticFigures[i].sort((a, b) => a.name.localeCompare(b.name));
+        applyManualClassifications(components[i], manualClassificationData[i]);
+      }
 
       trackDatasetLoaded();
 
+      const displayLabels = runLabels.length ? runLabels : ["run-01"];
+
       // Pass all data to parent
       onDataLoad({
+        runs: displayLabels,
         componentFigures: compFigures,
         carpetFigures,
         diagnosticFigures,
-        components: [components],
+        components,
         info,
-        originalData: [originalData],
+        originalData,
         dirPath,
         mixingMatrix,
         niftiBuffer,
@@ -411,21 +443,22 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
         crossComponentMetrics,
         qcNiftiBuffers,
         externalRegressorsFigure,
-        hasManualClassifications: manualClassificationData && manualClassificationData.length > 0,
-        // Decision tree data
+        hasManualClassifications: manualClassificationData.some((m) => m && m.length > 0),
         decisionTreeData,
         statusTableData,
         repetitionTime,
       });
       } catch (err) {
         console.error("[Rica] loadFromServer failed:", err);
+        const displayLabels = runLabels.length ? runLabels : ["run-01"];
         onDataLoad({
+          runs: displayLabels,
           componentFigures: compFigures,
           carpetFigures,
           diagnosticFigures,
-          components: [components],
+          components,
           info,
-          originalData: [originalData],
+          originalData,
           dirPath,
           mixingMatrix,
           niftiBuffer,
@@ -434,7 +467,7 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
           crossComponentMetrics,
           qcNiftiBuffers,
           externalRegressorsFigure,
-          hasManualClassifications: manualClassificationData && manualClassificationData.length > 0,
+          hasManualClassifications: manualClassificationData.some((m) => m && m.length > 0),
           decisionTreeData,
           statusTableData,
           repetitionTime,
@@ -504,59 +537,70 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
 
       setLoadingProgress({ current: 0, total: totalFiles });
 
-      const compFigures = [];
-      const carpetFigures = [];
-      const diagnosticFigures = [];
-      let info = "";
-      let components = [];
-      let originalData = [];
-      let dirPath = "";
-      let mixingMatrix = null;
-      let niftiBuffer = null;
-      let niftiUrl = null;
-      let maskBuffer = null;
-      let crossComponentMetrics = null;
-      // QC NIfTI buffers
-      const qcNiftiBuffers = {};
-      // External regressors correlation figure
-      let externalRegressorsFigure = null;
-      // Manual classification data
-      let manualClassificationData = null;
-      // Decision tree data
-      let decisionTreeData = null;
-      let statusTableData = null;
-      // Repetition time from registry
-      let repetitionTime = null;
+      // Detect BIDS run entities across all relevant files
+      const allFilenames = files.map((f) => f.name);
+      const runLabels = deriveRunLabels(allFilenames);
+      const N = runLabels.length || 1;
+      const runIndexOf = new Map(runLabels.map((l, i) => [l, i]));
+
+      // Returns the run index(es) a file belongs to.
+      // Files without a run entity are "shared" and broadcast to all runs.
+      const getTargets = (filename) => {
+        const label = parseRunLabel(filename);
+        if (label && runIndexOf.has(label)) return [runIndexOf.get(label)];
+        return [...Array(N).keys()];
+      };
+
+      // Per-run accumulators (indexed arrays)
+      const compFigures = Array.from({ length: N }, () => []);
+      const carpetFigures = Array.from({ length: N }, () => []);
+      const diagnosticFigures = Array.from({ length: N }, () => []);
+      const info = new Array(N).fill("");
+      const components = new Array(N).fill(null).map(() => []);
+      const originalData = new Array(N).fill(null).map(() => []);
+      const dirPath = new Array(N).fill("");
+      const mixingMatrix = new Array(N).fill(null);
+      const niftiBuffer = new Array(N).fill(null);
+      const niftiUrl = new Array(N).fill(null);
+      const maskBuffer = new Array(N).fill(null);
+      const crossComponentMetrics = new Array(N).fill(null);
+      const qcNiftiBuffers = Array.from({ length: N }, () => ({}));
+      const externalRegressorsFigure = new Array(N).fill(null);
+      const manualClassificationData = new Array(N).fill(null);
+      const decisionTreeData = new Array(N).fill(null);
+      const statusTableData = new Array(N).fill(null);
+      const repetitionTime = new Array(N).fill(null);
 
       // Process all files in parallel using Promise.all
       const filePromises = files.map(async (file) => {
         const filename = file.name;
+        const targets = getTargets(filename);
 
         try {
           // Component figures (PNG)
           if (filename.includes("comp_") && filename.endsWith(".png")) {
             const dataUrl = await readFileAsDataURL(file);
-            compFigures.push({ name: filename, img: dataUrl });
+            for (const i of targets) compFigures[i].push({ name: filename, img: dataUrl });
             setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
 
           // SVG figures (carpet plots vs diagnostic figures vs external regressors)
           if (filename.endsWith(".svg")) {
             const dataUrl = await readFileAsDataURL(file);
-            // Separate carpet plots, external regressors, and diagnostic figures
             if (filename.includes("carpet_")) {
-              carpetFigures.push({ name: filename, img: dataUrl });
+              for (const i of targets) carpetFigures[i].push({ name: filename, img: dataUrl });
             } else if (filename.includes("confound_correlations")) {
-              externalRegressorsFigure = dataUrl;
+              for (const i of targets) externalRegressorsFigure[i] = dataUrl;
             } else {
-              diagnosticFigures.push({ name: filename, img: dataUrl });
+              for (const i of targets) diagnosticFigures[i].push({ name: filename, img: dataUrl });
             }
             setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
 
           // Report info
           if (filename.endsWith("report.txt")) {
-            info = await readFileAsText(file);
+            const text = await readFileAsText(file);
+            for (const i of targets) info[i] = text;
             setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
 
@@ -568,9 +612,12 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
               skipEmptyLines: true,
               dynamicTyping: true,
             });
-            originalData = JSON.parse(JSON.stringify(parsed.data));
+            const orig = JSON.parse(JSON.stringify(parsed.data));
             rankComponents(parsed.data);
-            components = parsed.data;
+            for (const i of targets) {
+              originalData[i] = orig;
+              components[i] = parsed.data;
+            }
             setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
 
@@ -583,7 +630,7 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
               if (line.includes("Using output directory:")) {
                 const match = line.match(/Using output directory:\s*(.+)/);
                 if (match) {
-                  dirPath = match[1].trim();
+                  for (const i of targets) dirPath[i] = match[1].trim();
                   break;
                 }
               }
@@ -594,7 +641,8 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
           // ICA Mixing matrix (time series data for Niivue, exclude PCA and Orth variants)
           if (filename.includes("_mixing.tsv") && !filename.toLowerCase().includes("pca") && !filename.toLowerCase().includes("orth")) {
             const text = await readFileAsText(file);
-            mixingMatrix = parseMixingMatrix(text);
+            const mx = parseMixingMatrix(text);
+            for (const i of targets) mixingMatrix[i] = mx;
             setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
 
@@ -602,28 +650,33 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
           if ((filename.includes("_components.nii.gz") && filename.toLowerCase().includes("ica") && !filename.includes("stat-z") && !filename.includes("echo-")) || filename === "betas_OC.nii.gz") {
             // Extract TR from first 4KB only — enough to decompress the NIfTI header
             // from gzip — independent of loading the full (potentially huge) file.
-            if (!repetitionTime) {
-              const headerBuffer = await file.slice(0, 4096).arrayBuffer();
-              const tr = await extractTRFromNifti(headerBuffer);
-              if (tr) {
-                repetitionTime = tr;
-                console.log("[Rica] Extracted RepetitionTime from NIfTI header (4KB slice):", repetitionTime);
+            for (const i of targets) {
+              if (!repetitionTime[i]) {
+                const headerBuffer = await file.slice(0, 4096).arrayBuffer();
+                const tr = await extractTRFromNifti(headerBuffer);
+                if (tr) {
+                  repetitionTime[i] = tr;
+                  console.log("[Rica] Extracted RepetitionTime from NIfTI header (4KB slice):", tr);
+                }
               }
-            }
-            // Always set URL so BrainViewer can load even if buffer fails
-            niftiUrl = URL.createObjectURL(file);
-            // Also try loading the full buffer (fails gracefully for very large files)
-            try {
-              niftiBuffer = await readFileAsArrayBuffer(file);
-            } catch {
-              console.warn("[Rica] NIfTI too large for ArrayBuffer, Niivue will load from blob URL");
+              // Always set URL so BrainViewer can load even if buffer fails
+              niftiUrl[i] = URL.createObjectURL(file);
+              // Also try loading the full buffer (fails gracefully for very large files)
+              try {
+                niftiBuffer[i] = await readFileAsArrayBuffer(file);
+              } catch {
+                console.warn("[Rica] NIfTI too large for ArrayBuffer, Niivue will load from blob URL");
+              }
             }
             setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
 
           // Brain mask NIfTI (for masking stat maps in Niivue)
-          if (filename.includes("_mask.nii") && !maskBuffer) {
-            maskBuffer = await readFileAsArrayBuffer(file);
+          if (filename.includes("_mask.nii")) {
+            const buf = await readFileAsArrayBuffer(file);
+            for (const i of targets) {
+              if (!maskBuffer[i]) maskBuffer[i] = buf;
+            }
             setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
 
@@ -631,37 +684,43 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
           if ((filename.includes("CrossComponent_metrics.json") && !filename.toLowerCase().includes("pca")) ||
               (filename.includes("cross_component_metrics.json") && !filename.toLowerCase().includes("pca"))) {
             const text = await readFileAsText(file);
-            crossComponentMetrics = JSON.parse(text);
+            const ccm = JSON.parse(text);
+            for (const i of targets) crossComponentMetrics[i] = ccm;
             setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
 
           // QC NIfTI files (T2*, S0, RMSE)
           if (filename.includes("T2starmap.nii") || filename.includes("t2svG.nii")) {
-            qcNiftiBuffers.t2star = await readFileAsArrayBuffer(file);
+            const buf = await readFileAsArrayBuffer(file);
+            for (const i of targets) qcNiftiBuffers[i].t2star = buf;
             setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
           if ((filename.includes("S0map.nii") && !filename.includes("limited")) || filename === "s0vG.nii.gz") {
-            qcNiftiBuffers.s0 = await readFileAsArrayBuffer(file);
+            const buf = await readFileAsArrayBuffer(file);
+            for (const i of targets) qcNiftiBuffers[i].s0 = buf;
             setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
           if (filename.includes("rmse_statmap.nii") || filename === "rmse.nii.gz") {
-            qcNiftiBuffers.rmse = await readFileAsArrayBuffer(file);
+            const buf = await readFileAsArrayBuffer(file);
+            for (const i of targets) qcNiftiBuffers[i].rmse = buf;
             setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
 
           // Manual classification file
           if (filename === "manual_classification.tsv") {
             const text = await readFileAsText(file);
-            manualClassificationData = parseManualClassification(text);
-            console.log("[Rica] Loaded manual_classification.tsv with", manualClassificationData?.length || 0, "entries");
+            const mcd = parseManualClassification(text);
+            console.log("[Rica] Loaded manual_classification.tsv with", mcd?.length || 0, "entries");
+            for (const i of targets) manualClassificationData[i] = mcd;
             setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
 
           // Decision tree JSON
           if (filename.includes("decision_tree.json")) {
             const text = await readFileAsText(file);
-            decisionTreeData = JSON.parse(text);
-            console.log("[Rica] Loaded decision tree with", decisionTreeData?.nodes?.length || 0, "nodes");
+            const dtd = JSON.parse(text);
+            console.log("[Rica] Loaded decision tree with", dtd?.nodes?.length || 0, "nodes");
+            for (const i of targets) decisionTreeData[i] = dtd;
             setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
 
@@ -674,8 +733,8 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
               dynamicTyping: false, // Keep as strings for classification states
               delimiter: "\t",
             });
-            statusTableData = parsed.data;
-            console.log("[Rica] Loaded status table with", statusTableData?.length || 0, "components");
+            console.log("[Rica] Loaded status table with", parsed.data?.length || 0, "components");
+            for (const i of targets) statusTableData[i] = parsed.data;
             setLoadingProgress((prev) => ({ ...prev, current: prev.current + 1 }));
           }
 
@@ -686,8 +745,10 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
               const registry = JSON.parse(text);
               const rt = registry?.RepetitionTime;
               if (typeof rt === "number" && Number.isFinite(rt) && rt > 0) {
-                repetitionTime = rt;
-                console.log("[Rica] Loaded RepetitionTime from registry:", repetitionTime);
+                for (const i of targets) {
+                  if (!repetitionTime[i]) repetitionTime[i] = rt;
+                }
+                console.log("[Rica] Loaded RepetitionTime from registry:", rt);
               }
             } catch (registryError) {
               console.error(`Error parsing registry.json:`, registryError);
@@ -702,26 +763,28 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
       // Wait for all files to be processed
       await Promise.all(filePromises);
 
-      // Sort component figures by name for consistent ordering
-      compFigures.sort((a, b) => a.name.localeCompare(b.name));
-      carpetFigures.sort((a, b) => a.name.localeCompare(b.name));
-      diagnosticFigures.sort((a, b) => a.name.localeCompare(b.name));
-
-      // Apply manual classifications if available
-      applyManualClassifications(components, manualClassificationData);
+      // Sort figures by name per run, apply manual classifications
+      for (let i = 0; i < N; i++) {
+        compFigures[i].sort((a, b) => a.name.localeCompare(b.name));
+        carpetFigures[i].sort((a, b) => a.name.localeCompare(b.name));
+        diagnosticFigures[i].sort((a, b) => a.name.localeCompare(b.name));
+        applyManualClassifications(components[i], manualClassificationData[i]);
+      }
 
       trackDatasetLoaded();
 
+      const displayLabels = runLabels.length ? runLabels : ["run-01"];
+
       // Pass all data to parent at once - no delays!
       onDataLoad({
+        runs: displayLabels,
         componentFigures: compFigures,
         carpetFigures,
         diagnosticFigures,
-        components: [components],
+        components,
         info,
-        originalData: [originalData],
+        originalData,
         dirPath,
-        // New data for Niivue integration
         mixingMatrix,
         niftiBuffer,
         niftiUrl,
@@ -729,8 +792,7 @@ function IntroPopup({ onDataLoad, onLoadingStart, closePopup, isLoading, isDark 
         crossComponentMetrics,
         qcNiftiBuffers,
         externalRegressorsFigure,
-        hasManualClassifications: manualClassificationData && manualClassificationData.length > 0,
-        // Decision tree data
+        hasManualClassifications: manualClassificationData.some((m) => m && m.length > 0),
         decisionTreeData,
         statusTableData,
         repetitionTime,

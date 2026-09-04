@@ -3,9 +3,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFolder } from "@fortawesome/free-solid-svg-icons";
 import { getFolderName } from "../utils/pathUtils";
 
-function Info({ info, isDark }) {
+function Info({ info, dirPath, isDark }) {
   const [showTooltip, setShowTooltip] = useState(false);
-  if (!info?.length) {
+  if (!info && !dirPath) {
     return (
       <div style={{
         display: 'flex',
@@ -59,7 +59,7 @@ function Info({ info, isDark }) {
             onMouseEnter={() => setShowTooltip(true)}
             onMouseLeave={() => setShowTooltip(false)}
           >
-            {getFolderName(info[1])}
+            {getFolderName(dirPath)}
             {showTooltip && (
               <span
                 style={{
@@ -78,7 +78,7 @@ function Info({ info, isDark }) {
                   zIndex: 1000,
                 }}
               >
-                {info[1]}
+                {dirPath}
               </span>
             )}
           </span>
@@ -100,7 +100,7 @@ function Info({ info, isDark }) {
           textAlign: 'left',
           margin: 0,
         }}>
-          {info[0]}
+          {info}
         </p>
       </div>
     </div>
